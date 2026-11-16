@@ -996,9 +996,12 @@ addEventListener("resize",()=>{if($("stage").classList.contains("words"))wordZon
 
 const IMG_FOCUS={ai:[20,0],w_rainbow:[30,0],w_whale:[0,0],w_camellia:[0,0],w_tangerine:[0,0],w_shootingstar:[0,0],w_hareubang:[0,0],w_haenyeo:[0,0],w_wind:[0,0],w_hallasan:[0,0],w_baengnokdam:[0,0],c2_orum:[22,0],c2_name:[22,0],c2_seed:[28,0],c2_soil:[50,0],c2_soft:[30,0],c2_tall:[22,50],c2_rest:[0,12],c2_sky:[0,12],c2_splash:[30,0],c3_wish:[8,0],c3_palm:[10,0],c3_people:[30,0],c3_silk:[50,45]};  // 그림별 초점 [가로%, 세로%] — 잘리는 화면에서도 얼굴이 보이도록 조정
 const IMG_EXT=["jpg","png","webp","gif","mp4"], imgCache={};
+/* 영상(mp4)이 있는 그림 이름: 이 이름은 jpg·png·webp·gif 를 먼저 뒤지지 않고(없는 파일을 4번 물어보느라 느려졌다) 바로 영상을 찾는다. 영상을 새로 넣으면 여기에 이름을 더한다 */
+const MP4_IDS=new Set(["ai", "ai_result", "c1_dark", "c2_soil", "c3_people", "start", "w_baengnokdam", "w_camellia", "w_haenyeo", "w_hallasan", "w_hareubang", "w_rainbow", "w_shootingstar", "w_tangerine", "w_whale", "w_wind"]);
 function findImage(id){ // images/<id>.jpg|png|webp 를 차례로 찾는다. 없으면 false (→ 코드 그림 사용)
   if(!id) return Promise.resolve(false);
   if(id in imgCache) return Promise.resolve(imgCache[id]);
+  const IMG_EXT=MP4_IDS.has(id)?["mp4"]:["jpg","png","webp","gif"];
   return new Promise(res=>{let i=0;const next=()=>{
     if(i>=IMG_EXT.length){imgCache[id]=false;return res(false)}
     const ext=IMG_EXT[i++], u=`images/${id}.${ext}`;
@@ -1009,6 +1012,8 @@ function findImage(id){ // images/<id>.jpg|png|webp 를 차례로 찾는다. 없
     next()})}
 /* 영상(mp4) 안에 좌우 검은 띠가 같이 들어 있는 장면: 장면 이름 → 한쪽 띠의 폭(영상 가로의 %). 예) 4:3 그림을 16:9 영상에 넣은 경우 12.5. 띠가 없어지도록 위쪽 기준으로 확대한다 */
 const VIDEO_PAD={c2_soil:12.5,c3_people:7.8,w_rainbow:7.8,w_whale:7.8,w_camellia:7.8,w_hareubang:7.8,w_haenyeo:7.8,w_baengnokdam:7.8,w_hallasan:7.8,w_wind:10.9,ai_result:7.8,ai:7.8,w_shootingstar:7.8};   // 연·바람 영상은 영상 속 그림이 8초 동안 서서히 작아져서 띠 폭이 7.7% → 10.6% 로 커진다. 가장 큰 폭(10.9%)에 맞춰 배율을 고정한다 (배율을 계속 바꾸면 화면이 흔들려 보임). 배열 [처음, 끝] 로 쓰면 재생에 맞춰 배율이 변한다
+/* 영상이 도착하기 전에 먼저 보이는 첫 화면 사진(포스터): images/p_<이름>.jpg */
+const posterOf=id=>(typeof EMB!=="undefined"&&EMB["p_"+id+".jpg"])||`images/p_${id}.jpg`;
 let paintToken=0;
 async function paint(a,chapter,id){
   $("stage").classList.remove("words");window.__kb=undefined;
@@ -1017,7 +1022,7 @@ async function paint(a,chapter,id){
   stage.querySelectorAll(":scope > svg,:scope > .chapter,:scope > .bgwrap,:scope > .wbub").forEach(e=>e.remove());
   if(url){ const isVid=/\.mp4(#|\?|$)/i.test(url), fo=IMG_FOCUS[id]||[50,0];
            stage.insertAdjacentHTML("afterbegin",isVid
-             ?`<div class="bgwrap"><video src="${url}" autoplay muted loop playsinline preload="auto" aria-label="${(a.alt||"").replace(/"/g,"")}" style="object-position:${fo[0]}% ${fo[1]}%"></video></div>`
+             ?`<div class="bgwrap"><video src="${url}" poster="${posterOf(id)}" autoplay muted loop playsinline preload="auto" aria-label="${(a.alt||"").replace(/"/g,"")}" style="object-position:${fo[0]}% ${fo[1]}%"></video></div>`
              :`<div class="bgwrap"><img src="${url}" alt="${(a.alt||"").replace(/"/g,"")}" style="object-position:${fo[0]}% ${fo[1]}%;transform-origin:${fo[0]}% ${fo[1]}%"></div>`);
            if(isVid){const vd=stage.querySelector(".bgwrap video");vd.muted=true;const pp=vd.play();if(pp&&pp.catch)pp.catch(()=>{});
              const pad=VIDEO_PAD[id]||0;
@@ -1198,8 +1203,18 @@ const bgmA=new Audio(); bgmA.loop=true; bgmA.preload="auto"; bgmA.volume=0;
 bgmA.src=(typeof EMB!=="undefined"&&EMB["bgm.mp3"])||BGM_TRACK;       // 단일 HTML 파일에서는 안에 들어 있는 곡을 쓴다
 const bgmTarget=()=>(typeof VOICE!=="undefined"&&VOICE.id&&!VOICE.a.paused)?BGM_VOL*.3:BGM_VOL;   // 목소리가 읽는 중이면 배경 음악은 작게
 function bgmFade(to,ms=1800,done){
+  if(bgmA._swap&&!(to===0&&!done&&ms===700))return;   // 곡을 바꾸는 중에는 다른 음량 조절을 무시 (곡 바꾸기 자신의 줄이기는 통과)
   clearInterval(bgmA._f); const from=bgmA.volume,t0=performance.now();
   bgmA._f=setInterval(()=>{const k=Math.min(1,(performance.now()-t0)/ms); bgmA.volume=Math.max(0,Math.min(1,from+(to-from)*k)); if(k>=1){clearInterval(bgmA._f);done&&done()}},40);
+}
+/* 첫 화면만 다른 곡(images/bgm_start.mp3), 이야기가 시작되면 원래 곡(images/bgm.mp3). 곡이 바뀔 때는 서서히 작아졌다가 새 곡이 서서히 커진다 */
+const BGM_START="images/bgm_start.mp3"; bgmA._file=BGM_TRACK;
+const bgmSrcOf=f=>(typeof EMB!=="undefined"&&EMB[f.replace("images/","")])||f;
+function bgmSwap(id){
+  const f=id==="start"?BGM_START:BGM_TRACK; if(bgmA._file===f)return;
+  const was=!bgmA.paused;
+  const apply=()=>{bgmA._swap=false; bgmA._file=f; bgmA.src=bgmSrcOf(f); bgmA.currentTime=0; bgmA.volume=0; if(was&&BGM.on){const p=bgmA.play(); if(p&&p.catch)p.catch(()=>{}); bgmFade(bgmTarget(),1400)}};
+  if(was){bgmFade(0,700); bgmA._swap=true; setTimeout(apply,760)} else apply();   // 곡이 바뀌는 동안(0.7초)은 목소리가 시작해도 음량을 건드리지 않는다
 }
 function bgmSet(name){
   if(BGM_TRACK)return;                                                   // 한 곡이 계속 이어지므로 장이 바뀌어도 그대로 둔다
@@ -1243,8 +1258,8 @@ const voiceSrc=k=>(typeof EMB!=="undefined"&&EMB[voiceFile(k)])||`images/${voice
 function voiceKey(id,sc){                       // 오백장군 길에서 나오는 단어 선택 글처럼 글이 달라지는 장면은 따로 만든 목소리(ai_stones)를 쓴다
   const k=(sc&&sc.textBy&&sc.textBy[st.end])?id+"_"+String(st.end).replace(/^e_/,""):id;
   return VOICE_IDS.includes(k)?k:null }
-function voicePreload(){ const L=LANG; VOICE_IDS.forEach(k=>{ if(VOICE.dur[L+":"+k])return; const a=new Audio();a.preload="metadata";a.onloadedmetadata=()=>{VOICE.dur[L+":"+k]=a.duration};a.src=voiceSrc(k)}) }   // 지금 언어의 목소리 길이를 미리 알아 둔다
-voicePreload();
+function voicePreload(only){ const L=LANG; (only||VOICE_IDS).forEach(k=>{ if(VOICE.dur[L+":"+k])return; const a=new Audio();a.preload="metadata";a.onloadedmetadata=()=>{VOICE.dur[L+":"+k]=a.duration};a.src=voiceSrc(k)}) }   // 지금 언어의 목소리 길이를 미리 알아 둔다
+voicePreload(["start","c1_dark"]); setTimeout(()=>voicePreload(),5000);   // 첫 화면 목소리 길이만 먼저 알아 두고, 나머지는 첫 화면이 뜬 뒤에 (처음에 영상보다 먼저 내려받느라 느려지지 않게)
 VOICE.a.preload="auto"; VOICE.a.volume=1;
 VOICE.a.addEventListener("ended",()=>voiceDone()); VOICE.a.addEventListener("pause",()=>{if(VOICE.a.ended)return});
 function voiceDone(){ VOICE.id=null; if(BGM.on&&!bgmA.paused)bgmFade(BGM_VOL,1400) }
@@ -1290,7 +1305,7 @@ function restart(){st={warm:0,curious:0,brave:0,end:"",path:[],aiScene:null};HIS
 function go(id,choiceText,trait,isBack){
   const sc=S[id]; if(!sc)return;
   if(!isBack&&cur&&cur!==id){HIST.push({id:cur,st:copySt()});if(HIST.length>80)HIST.shift()}
-  bgmSet(bgmMoodOf(id));                       // 장(챕터)에 맞는 배경 음악으로 이어 간다
+  bgmSwap(id); bgmSet(bgmMoodOf(id));                       // 장(챕터)에 맞는 배경 음악으로 이어 간다
   if(choiceText) st.path.push(choiceText);
   if(trait) st[trait]=(st[trait]||0)+1;
   if(sc.set) st.end=sc.set;
@@ -1343,13 +1358,13 @@ async function runAI(){
   $("title").textContent=sc.title;
   setTag({t:sc.source==="ai"?U("tagAI"):U("tagLocal"),cls:"ai"});
   $("ai").className="ai show"; $("hint").hidden=false;
-  const wvk=(LANG==="ko"&&sc.source!=="ai"&&wid&&VOICE_W.includes(wid))?"w_"+wid:null;   // 한국어 + 오프라인 장면(녹음한 글과 같은 글)일 때만 읽어 준다
+  const wvk=(sc.source!=="ai"&&wid&&VOICE_W.includes(wid))?"w_"+wid:null;   // 오프라인 장면(녹음한 글과 같은 글)일 때만 읽어 준다 (한국어·영어·일본어·중국어)
   sc._vk=wvk; if(wvk){voicePlay(wvk,true)}
   typeText(sc.paragraphs,()=>{
     const pk=wimg?"w_"+wid:"ai_result", rk="res:"+pk;
     const q=hp(rk,2,null)||RES_POS[pk]||RES_POS.default;   // 편집 모드로 끌어 저장한 자리 > RES_POS(그림마다 얼굴을 피한 자리)
     hot([{x:q[0][0],y:q[0][1],pin:"down",ic:"tap",label:U("cont"),fn:()=>go(resolveEnd())},
-         {x:q[1][0],y:q[1][1],pin:"down",ic:"refresh",label:U("again"),fn:()=>{voicePlay(null);hot([]);cur="ai";paint(S.ai.art,null,"ai");$("title").textContent=sceneView("ai",S.ai).title;setTag(null);$("ai").className="ai show";wordZones.force=true;wordZones()}}],rk)},wvk&&VOICE.on&&VOICE.dur["ko:"+wvk]?VOICE.dur["ko:"+wvk]*1000*.78:0);   // 목소리가 있으면 글이 목소리 길이에 맞춰 나온다
+         {x:q[1][0],y:q[1][1],pin:"down",ic:"refresh",label:U("again"),fn:()=>{voicePlay(null);hot([]);cur="ai";paint(S.ai.art,null,"ai");$("title").textContent=sceneView("ai",S.ai).title;setTag(null);$("ai").className="ai show";wordZones.force=true;wordZones()}}],rk)},wvk&&VOICE.on&&VOICE.dur[LANG+":"+wvk]?VOICE.dur[LANG+":"+wvk]*1000*.78:0);   // 목소리가 있으면 글이 목소리 길이에 맞춰 나온다
 }
 $("make").onclick=runAI; $("word").addEventListener("keydown",e=>{if(e.key==="Enter")runAI()});
 
