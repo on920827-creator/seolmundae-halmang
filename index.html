@@ -77,6 +77,10 @@
   #choices button.cta,#choices[data-n="1"] button{justify-content:center;font-size:1.1rem;font-weight:700;padding:17px 22px;border:0;border-radius:999px;
        background:linear-gradient(90deg,#b8a0ff,#8d6df0);box-shadow:0 10px 28px rgba(125,91,216,.5)}
   #choices button.cta .lb,#choices[data-n="1"] button .lb{text-align:center;margin-left:1.3em}
+  #choices.endrow{flex-direction:row;flex-wrap:wrap}   /* 결말: 두 버튼을 나란히 (좁은 화면에서는 아래로) */
+  #choices.endrow button{flex:1 1 240px}
+  #choices button.cta.alt{background:rgba(169,139,255,.14);border:1.5px solid rgba(190,170,255,.85);box-shadow:0 8px 22px rgba(125,91,216,.25)}
+  #choices button.cta.alt:hover,#choices button.cta.alt:focus-visible{background:rgba(169,139,255,.3)}
   #choices button .tg{font-size:.72rem;font-weight:600;color:#d9ccff;background:rgba(169,139,255,.2);border-radius:999px;padding:1px 9px;white-space:nowrap}
   .ai{margin-top:14px;display:none} .ai.show{display:block}
   .ai .row{display:flex;gap:10px;flex-wrap:wrap}
@@ -223,6 +227,44 @@
     .wbub{font-size:2.6rem}
     .chapter small{font-size:1.15rem}.chapter b{font-size:3.2rem}
   }
+  /* ── 미니게임 창 (결말 뒤 '할망의 별밤 놀이') : 글 카드와 같은 색·둥근 모서리·보라 버튼 ── */
+  .mg{position:fixed;inset:0;z-index:60;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(8,6,30,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  .mg[hidden]{display:none}
+  .mg-box{width:min(96vw,calc((100vh - 96px)*1.5));border:1.5px solid rgba(240,214,150,.55);border-radius:26px;padding:12px;
+          background:linear-gradient(180deg,rgba(60,50,140,.92),rgba(32,27,100,.92));box-shadow:0 18px 50px rgba(6,4,30,.7),0 0 30px rgba(169,139,255,.25)}
+  .mg-top{display:flex;align-items:center;gap:8px;padding:2px 4px 10px;flex-wrap:wrap}
+  .mg-top b{font-size:1.05rem;color:#fff;margin-right:auto}
+  .mg-pill{font-size:.86rem;color:#e8e5ff;background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:999px;padding:3px 12px;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+  .mg-pill[hidden]{display:none}
+  .mg-time{display:inline-block;width:clamp(70px,14vw,150px);height:7px;border-radius:9px;background:rgba(255,255,255,.18);overflow:hidden}
+  .mg-time i{display:block;height:100%;background:linear-gradient(90deg,#b8a0ff,#ffe29a);transform-origin:left}
+  .mg-top button{font:inherit;font-size:.86rem;color:#fff;cursor:pointer;background:rgba(169,139,255,.16);border:1px solid rgba(169,139,255,.55);border-radius:999px;padding:4px 12px}
+  .mg-top button:hover,.mg-top button:focus-visible{background:rgba(169,139,255,.32);outline:none}
+  .mg-top button.x{width:34px;height:34px;padding:0;display:grid;place-items:center;font-size:1rem}
+  .mg-stage{position:relative;aspect-ratio:1280/853;border-radius:18px;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;background:#0b0a26}
+  .mg-stage>img,.mg-stage>canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .mg-board{position:absolute;inset:0}
+  .mg-tile{position:absolute;background-repeat:no-repeat;cursor:grab;box-shadow:inset 0 0 0 1px rgba(8,6,30,.75);transition:left .25s ease,top .25s ease,box-shadow .3s;touch-action:none}
+  .mg-tile.sel{box-shadow:inset 0 0 0 3px #ffe29a,0 0 18px rgba(255,226,154,.7);z-index:2}
+  .mg-tile.drag{transition:none;z-index:5;cursor:grabbing;box-shadow:0 8px 26px rgba(0,0,0,.55),inset 0 0 0 2px #fff}
+  .mg-tile.ok{box-shadow:inset 0 0 0 1px rgba(255,226,154,.35)}
+  .mg-board.solved .mg-tile{box-shadow:none;transition:box-shadow .8s}
+  .mg-peek{opacity:0;pointer-events:none;transition:opacity .25s;z-index:6}
+  .mg-peek.on{opacity:.92}
+  .mg-toast{position:absolute;left:50%;top:7%;transform:translateX(-50%);z-index:7;background:rgba(10,8,40,.78);border:1px solid var(--line);border-radius:999px;padding:6px 16px;font-size:.95rem;color:#fff;pointer-events:none;opacity:0;transition:opacity .4s;white-space:nowrap}
+  .mg-toast.on{opacity:1}
+  .mg-card{position:absolute;inset:0;z-index:8;display:flex;align-items:center;justify-content:center;padding:12px;background:rgba(8,6,30,.45)}
+  .mg-card[hidden]{display:none}
+  .mg-card>div{max-width:min(500px,94%);text-align:center;border:1px solid var(--line);border-radius:24px;padding:clamp(14px,3vw,24px);
+               background:linear-gradient(180deg,rgba(60,50,140,.88),rgba(32,27,100,.88));box-shadow:0 18px 44px rgba(6,4,30,.6)}
+  .mg-card h3{margin:0 0 6px;font-size:clamp(1.05rem,2.6vw,1.4rem);color:#fff}
+  .mg-card h3::after{content:"";display:block;width:40px;height:4px;border-radius:4px;background:var(--acc);margin:10px auto 10px}
+  .mg-card p{margin:4px 0;color:#e0dcff;font-size:clamp(.86rem,1.8vw,1rem);line-height:1.6;word-break:keep-all}
+  .mg-card p.note{color:var(--mute);font-size:.82rem}
+  .mg-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+  .mg-btns button{font:inherit;font-size:.98rem;font-weight:700;color:#fff;cursor:pointer;border-radius:999px;padding:11px 20px;border:1.5px solid rgba(190,170,255,.85);background:rgba(169,139,255,.14)}
+  .mg-btns button.main{border:0;background:linear-gradient(90deg,#b8a0ff,#8d6df0);box-shadow:0 8px 22px rgba(125,91,216,.45)}
+  .mg-btns button:hover,.mg-btns button:focus-visible{filter:brightness(1.1);outline:2px solid #fff;outline-offset:2px}
 </style>
 </head>
 <body>
@@ -577,7 +619,12 @@ const S={
   art:{mood:"golden",alt:"포근한 산이 된 할망",mount:.9,orum:10,village:true,p:["petal",22],fg:"flowers"}},
  e_flavors:{end:true,mine:true,hidden:true,title:"오백 가지 맛의 죽",
   text:["오백 명의 아들과 이웃들은 저마다 호기심이 많았습니다. “이걸 넣으면 어떤 맛일까?” 한 명은 유채꽃을, 한 명은 동백잎을, 또 한 명은 바다에서 건진 미역을, 또 다른 한 명은 새콤달콤한 귤을 솥에 넣었지요.","죽은 한 숟갈마다 맛이 달랐습니다. 달콤하고, 구수하고, 짭짤하고, 향긋했어요. 흉년의 밤이 갑자기 잔칫날처럼 떠들썩해졌습니다.","새로운 것을 궁금해하는 마음이 가장 따뜻한 밥상을 만들었습니다. 이것은 당신이 호기심으로 열어 낸 숨은 결말입니다."],
-  art:{mood:"ember",alt:"오백 가지 맛이 담긴 죽 잔치",mount:1,orum:6,pot:true,potSafe:true,lights:24,p:["petal",18],fg:"flowers"}}
+  art:{mood:"ember",alt:"오백 가지 맛이 담긴 죽 잔치",mount:1,orum:6,pot:true,potSafe:true,lights:24,p:["petal",18],fg:"flowers"}},
+ /* 미니게임 고르기: 결말 화면의 '미니게임으로 넘어가기'에서 온다. 그림은 images/game.jpg, 놀이는 아래 MG 가 연다 */
+ game:{ch:["번외","할망의 별밤 놀이"],title:"할망의 별밤 놀이",
+  text:["이야기를 마친 밤, 할망이 오름 꼭대기에서 은하수에 별을 한 줌 뿌렸습니다.","“얘들아, 잠들기 전에 별이랑 조금만 더 놀다 가렴.”","그림 속 반짝이는 곳을 눌러 마음에 드는 놀이를 하나 골라 보세요."],
+  art:{mood:"night",alt:"오름 꼭대기에서 은하수에 별을 뿌리는 할망",mount:1,orum:10,village:true,fig:"stand",x:140,s:.85,arms:"up",p:["star",3],fg:"flowers"},
+  choices:[["떨어지는 별똥별을 받아 마을을 밝힌다","mg:stars"],["별을 이어 별자리를 만든다","mg:const"],["흩어진 밤하늘 그림을 맞춘다","mg:puzzle"]]}
 };
 const ENDINGS=["e_bridge","e_ninety","e_stones","e_porridge","e_star","e_boat","e_mountain","e_flavors"];
 const HIDDEN=["e_star","e_boat","e_mountain","e_flavors"];
@@ -784,7 +831,7 @@ const IC={
  silk:'<path d="M6 3c4 4-4 7 0 11s-4 5 0 7M13 3c4 4-4 7 0 11s-4 5 0 7"/>',
  bundle:'<path d="M5 8l7-4 7 4v8l-7 4-7-4zM5 8l7 4 7-4M12 12v8"/>',
  refresh:'<path d="M20 12a8 8 0 11-2.5-5.8M20 4v5h-5"/>'};
-const IC_BY={c1_push:"up",c1_listen:"ear",c1_feel:"heart",c1_walk:"tap",c2_dive:"wave",c2_soil:"soil",c2_tall:"mtn",c2_soft:"heart",c2_orum:"soil",c2_name:"voice",c2_seed:"flower",c2_rest:"moon",c2_splash:"drop",c2_sky:"star",c3_people:"people",c3_listen:"ear",c3_palm:"tap",c3_wish:"star",c3_silk:"silk",c3_weave:"thread",c3_ninety:"bundle",c4_sons:"people",c4_pot:"pot",c4_together:"people",ai:"star"};
+const IC_BY={c1_push:"up",c1_listen:"ear",c1_feel:"heart",c1_walk:"tap",c2_dive:"wave",c2_soil:"soil",c2_tall:"mtn",c2_soft:"heart",c2_orum:"soil",c2_name:"voice",c2_seed:"flower",c2_rest:"moon",c2_splash:"drop",c2_sky:"star",c3_people:"people",c3_listen:"ear",c3_palm:"tap",c3_wish:"star",c3_silk:"silk",c3_weave:"thread",c3_ninety:"bundle",c4_sons:"people",c4_pot:"pot",c4_together:"people",ai:"star","mg:stars":"star","mg:const":"star","mg:puzzle":"tap"};
 const IC_TR={warm:"heart",curious:"star",brave:"mtn"};
 const HPOS={1:[[50,58]],2:[[24,60],[76,60]],3:[[17,60],[50,60],[83,60]]}; // 하단: 1개=가운데, 2개=왼쪽·오른쪽, 3개=왼쪽·가운데·오른쪽
 /* ── 버튼 위치(장면마다 다르게) ──────────────────────────────────────────────
@@ -1148,7 +1195,7 @@ function bgmMoodOf(id){
   if(id.startsWith("c3_"))return "village";
   if(id.startsWith("c4_"))return "hearth";
   if(id==="ai")return "wish";
-  if(id.startsWith("e_"))return "glow";
+  if(id.startsWith("e_")||id==="game")return "glow";
   return "dawn";
 }
 function bgmInit(){
@@ -1327,15 +1374,15 @@ function renderChoices(id,sc){
     $("recap").innerHTML=`<div class="recap">${epi?`<p>${esc(epi)}</p>`:""}<b>${esc(U("path"))}</b><ul>${st.path.map(p=>`<li>${esc(pathText(p))}</li>`).join("")}</ul>
       ${st.aiScene?`<b>${esc(U("made",st.aiScene.title))}</b><blockquote>${esc(st.aiScene.paragraphs.join(" "))}</blockquote>`:""}
       <div class="found2">${esc(U("foundCount",loadFound().length,ENDINGS.length,loadFound().length>=ENDINGS.length))}</div>${loadFound().filter(x=>HIDDEN.includes(x)).length<HIDDEN.length?`<div class="found2">${esc(U("hiddenHint",HIDDEN.length))}</div>`:""}</div>`;
-    box.dataset.n=1; box.innerHTML=`<button data-to="start" data-reset="1"><span class="lb">${esc(U("restart"))}</span></button>`;
+    box.dataset.n=2; box.innerHTML=`<button class="cta" data-to="start" data-reset="1"><span class="lb">${esc(U("restart"))}</span></button><button class="cta alt" data-to="game"><span class="lb">${esc(U("toGame"))}</span></button>`;   // 결말: 처음부터 다시 / 미니게임으로
   }else{
     const pos=hp(id,sc.choices.length,HPOS[Math.min(3,sc.choices.length)]);
     const gl=GLOW[id]&&GLOW[id].length>=sc.choices.length?GLOW[id].map(g=>{const q=bodyToStage(id,g[0],g[1]);const wide=innerWidth>=900&&g[3];return q?[q[0],q[1],wide||g[2]||"down",wide?(g[4]||0):0]:null}):null;
     const useGlow=gl&&gl.every(Boolean);
     hot(sc.choices.map(([t,to,tr],i)=>({x:useGlow?gl[i][0]:pos[i][0],y:useGlow?gl[i][1]:pos[i][1],pin:useGlow?gl[i][2]:"",off:useGlow?gl[i][3]:0,ic:IC_BY[to]||IC_TR[tr]||"tap",label:tr_(t),tr:tr||"",
-      fn:()=>go(to,id==="start"?"":t,tr||undefined)})),id);
+      fn:()=>to.startsWith("mg:")?MG.open(to.slice(3)):go(to,id==="start"?"":t,tr||undefined)})),id);   // mg:… 는 미니게임 창을 연다
   }
-  if(sc.end) box.className="show";
+  if(sc.end) box.className="show endrow";
 }
 $("choices").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
   if(b.dataset.reset){restart();return}
@@ -1377,6 +1424,228 @@ $("home").onclick=()=>{ if(confirm(U("confirm")))restart() };
   menu.addEventListener("click",e=>{const b=e.target.closest("button[data-l]");if(!b)return;e.stopPropagation();close();setLang(b.dataset.l)});
   document.addEventListener("click",close); document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});
 })();
+/* ═══════════════════════════ 미니게임 (결말 뒤 '할망의 별밤 놀이') ═══════════════════════════
+   결말 화면 → '미니게임으로 넘어가기' → game 장면 → 반짝이 3개 중 하나 → 이 창(MG)에서 놀이.
+   놀이 결과는 이야기 점수·결말에 영향을 주지 않는다. 좌표는 모두 그림(images/game.jpg, 1280×853) 기준.
+   영어·일본어·중국어 문구는 직접 번역한 것이라 검수가 필요하다. */
+Object.assign(UI.ko,{toGame:"미니게임으로 넘어가기"}); Object.assign(UI.en,{toGame:"Go to the mini games"}); Object.assign(UI.ja,{toGame:"ミニゲームへ進む"}); Object.assign(UI.zh,{toGame:"进入小游戏"});
+SCN.en.game={t:"Grandmother's Starry Night Games",ch:["Extra","Grandmother's Starry Night Games"],x:["When the story was over, Grandmother scattered a handful of stars into the Milky Way from the top of the oreum.","“Children, stay and play with the stars a little longer before you sleep.”","Tap a sparkling spot in the picture to pick a game you like."]};
+SCN.ja.game={t:"ハルマンの星夜あそび",ch:["番外","ハルマンの星夜あそび"],x:["お話が終わった夜、ハルマンはオルムのてっぺんから天の川へ星をひとつかみまきました。","「みんな、眠る前にもう少しだけ星と遊んでいきなさい。」","絵の中のきらめく場所を押して、好きなあそびをひとつ選んでください。"]};
+SCN.zh.game={t:"奶奶的星夜游戏",ch:["番外","奶奶的星夜游戏"],x:["故事结束的那个夜晚，奶奶站在岳的山顶，把一把星星撒进了银河。","“孩子们，睡觉前再和星星玩一会儿吧。”","点击画面中闪闪发光的地方，选一个你喜欢的游戏。"]};
+Object.assign(CHO.en,{"떨어지는 별똥별을 받아 마을을 밝힌다":"Catch falling stars to light up the village","별을 이어 별자리를 만든다":"Connect the stars into constellations","흩어진 밤하늘 그림을 맞춘다":"Put the scattered night sky back together"});
+Object.assign(CHO.ja,{"떨어지는 별똥별을 받아 마을을 밝힌다":"流れ星を受けとめて村を明るくする","별을 이어 별자리를 만든다":"星をつないで星座をつくる","흩어진 밤하늘 그림을 맞춘다":"ばらばらの夜空の絵を元にもどす"});
+Object.assign(CHO.zh,{"떨어지는 별똥별을 받아 마을을 밝힌다":"接住流星，点亮村庄","별을 이어 별자리를 만든다":"把星星连成星座","흩어진 밤하늘 그림을 맞춘다":"拼回散落的夜空图画"});
+const MGT={
+ ko:{t:{stars:"✨ 별똥별 받기",const:"🌟 별자리 잇기",puzzle:"🧩 밤하늘 그림 맞추기"},
+  intro:{stars:"할망이 뿌린 별이 떨어져요. 떨어지는 별을 <b>눌러서</b> 받으면 아래 마을 집에 불이 켜져요.<br>45초 안에 <b>집 8채</b>를 모두 밝혀 보세요. 분홍빛 큰 별은 두 채를 밝혀요.",
+   const:"하늘에 <b>번호가 붙은 별</b>이 있어요. <b>1번부터 차례로</b> 누르거나 끌어서 이어 보세요.<br>별자리 세 개를 완성하면 할망의 밤하늘이 완성돼요.",
+   puzzle:"그림이 조각조각 흩어졌어요. 조각을 <b>끌어서</b> 다른 조각 위에 놓으면 자리가 바뀌어요. (두 조각을 차례로 <b>눌러도</b> 돼요)<br>막히면 <b>완성 그림 보기</b>를 누르고 있는 동안 완성된 그림이 보여요."},
+  start:"시작하기",again:"다시 하기",other:"다른 놀이 고르기",close:"놀이 닫기",easy:"쉬움 3×3",normal:"보통 4×4",hard:"어려움 5×5",peek:"👁 완성 그림 보기",
+  houses:(n,g)=>`🏠 ${n} / ${g}`,constProg:(s,s2,n,N)=>`별자리 ${s} / ${s2} · ${n} / ${N}`,puzProg:(k,N)=>`맞춘 조각 ${k} / ${N}`,moves:n=>`이동 ${n}`,
+  lit:["따스한 불빛이 켜졌어요","집이 환해졌어요","별빛이 내려앉았어요"],
+  winS:"🏡 마을이 모두 밝아졌어요!",winSp:"할망이 뿌린 별빛이 집집마다 내려앉았습니다.<br>오늘 밤 마을 사람들은 따뜻하게 잠들 거예요.",
+  loseS:n=>`🌙 ${n}채를 밝혔어요`,loseSp:r=>`아직 어두운 집이 ${r}채 남았어요.<br>한 번 더 해 볼까요?`,noteS:(c,m)=>`받은 별 ${c}개 · 놓친 별 ${m}개`,
+  cnames:[["동백 별자리","겨울에도 지지 않는 제주의 꽃"],["한라산 별자리","할망이 치마폭으로 흙을 날라 쌓은 산"],["돌하르방 별자리","마을 어귀를 지키는 돌 할아버지"]],
+  cfirst:"1번 별부터 이어 보세요",cwrong:"번호 순서대로 이어 보세요",
+  winC:"🌟 할망의 밤하늘이 완성됐어요",winCp:"동백, 한라산, 돌하르방이 별이 되어 제주를 내려다봅니다.<br>사람들은 길을 잃을 때마다 이 별자리를 보고 집을 찾아왔대요.",noteC:m=>`틀린 순서로 누른 횟수 ${m}번`,
+  pok:["딱 맞았어요!","제자리를 찾았어요","좋아요!"],phint:"조각을 끌어서 자리를 바꿔요",
+  winP:"✨ 그림이 완성됐어요!",winPp:"흩어졌던 밤하늘이 다시 하나가 되었어요.<br>할망이 뿌린 별이 오름과 마을을 비춥니다.",noteP:(n,mv,s)=>`${n}×${n} · 이동 ${mv}번 · ${Math.floor(s/60)}분 ${s%60}초`},
+ en:{t:{stars:"✨ Catch the Shooting Stars",const:"🌟 Connect the Constellations",puzzle:"🧩 Night Sky Puzzle"},
+  intro:{stars:"Grandmother's stars are falling. <b>Tap</b> a falling star to catch it, and a house in the village below lights up.<br>Light all <b>8 houses</b> within 45 seconds. A big pink star lights two.",
+   const:"Some stars in the sky have <b>numbers</b>. Tap them <b>in order from 1</b>, or drag through them.<br>Finish three constellations to complete Grandmother's night sky.",
+   puzzle:"The picture has been scattered. <b>Drag</b> a piece onto another to swap them (or <b>tap</b> two pieces one after the other).<br>Stuck? Hold <b>Show picture</b> to see the finished image."},
+  start:"Start",again:"Play again",other:"Choose another game",close:"Close game",easy:"Easy 3×3",normal:"Normal 4×4",hard:"Hard 5×5",peek:"👁 Show picture",
+  houses:(n,g)=>`🏠 ${n} / ${g}`,constProg:(s,s2,n,N)=>`Constellation ${s} / ${s2} · ${n} / ${N}`,puzProg:(k,N)=>`In place ${k} / ${N}`,moves:n=>`Moves ${n}`,
+  lit:["A warm light came on","The house is bright now","Starlight settled in"],
+  winS:"🏡 The whole village is lit!",winSp:"The starlight Grandmother scattered has settled on every home.<br>Tonight the villagers will sleep warm.",
+  loseS:n=>`🌙 You lit ${n} houses`,loseSp:r=>`${r} houses are still dark.<br>Shall we try once more?`,noteS:(c,m)=>`Stars caught ${c} · missed ${m}`,
+  cnames:[["Camellia","The Jeju flower that blooms even in winter"],["Hallasan","The mountain Grandmother built with soil carried in her skirt"],["Dolhareubang","The stone grandfather who guards the village"]],
+  cfirst:"Start from star number 1",cwrong:"Connect the stars in number order",
+  winC:"🌟 Grandmother's night sky is complete",winCp:"The camellia, Hallasan and the dolhareubang have become stars watching over Jeju.<br>They say people found their way home by these stars whenever they got lost.",noteC:m=>`Wrong taps: ${m}`,
+  pok:["Perfect fit!","Found its place","Nice!"],phint:"Drag the pieces to swap them",
+  winP:"✨ The picture is complete!",winPp:"The scattered night sky is whole again.<br>Grandmother's stars shine over the oreum and the village.",noteP:(n,mv,s)=>`${n}×${n} · ${mv} moves · ${Math.floor(s/60)}m ${s%60}s`},
+ ja:{t:{stars:"✨ 流れ星キャッチ",const:"🌟 星座つなぎ",puzzle:"🧩 夜空のパズル"},
+  intro:{stars:"ハルマンがまいた星が落ちてきます。落ちてくる星を<b>押して</b>受けとめると、下の村の家に明かりがともります。<br>45秒以内に<b>家8軒</b>をすべて明るくしましょう。ピンクの大きな星は2軒を明るくします。",
+   const:"空には<b>番号のついた星</b>があります。<b>1番から順に</b>押すか、なぞってつないでください。<br>星座を3つ完成させると、ハルマンの夜空が完成します。",
+   puzzle:"絵がばらばらになりました。ピースを<b>ドラッグ</b>してほかのピースの上に置くと入れかわります（2つのピースを順に<b>押して</b>もOK）。<br>困ったら<b>完成図を見る</b>を押している間、完成した絵が見えます。"},
+  start:"はじめる",again:"もう一度",other:"ほかのあそびを選ぶ",close:"あそびを閉じる",easy:"かんたん 3×3",normal:"ふつう 4×4",hard:"むずかしい 5×5",peek:"👁 完成図を見る",
+  houses:(n,g)=>`🏠 ${n} / ${g}`,constProg:(s,s2,n,N)=>`星座 ${s} / ${s2} · ${n} / ${N}`,puzProg:(k,N)=>`そろったピース ${k} / ${N}`,moves:n=>`移動 ${n}`,
+  lit:["あたたかい明かりがともりました","家が明るくなりました","星の光が降りてきました"],
+  winS:"🏡 村じゅうが明るくなりました！",winSp:"ハルマンのまいた星の光が、どの家にも降りそそぎました。<br>今夜、村の人たちはあたたかく眠れるでしょう。",
+  loseS:n=>`🌙 ${n}軒を明るくしました`,loseSp:r=>`まだ暗い家が${r}軒あります。<br>もう一度やってみましょうか？`,noteS:(c,m)=>`受けとめた星 ${c}個 · 逃した星 ${m}個`,
+  cnames:[["椿の星座","冬にも散らない済州の花"],["漢拏山の星座","ハルマンがチマで土を運んで積み上げた山"],["トルハルバンの星座","村の入り口を守る石のおじいさん"]],
+  cfirst:"1番の星からつないでみましょう",cwrong:"番号の順につないでみましょう",
+  winC:"🌟 ハルマンの夜空が完成しました",winCp:"椿、漢拏山、トルハルバンが星になって済州を見守っています。<br>人々は道に迷うたび、この星座を見て家に帰ったそうです。",noteC:m=>`順番をまちがえた回数 ${m}回`,
+  pok:["ぴったり！","元の場所にもどりました","いいね！"],phint:"ピースをドラッグして入れかえましょう",
+  winP:"✨ 絵が完成しました！",winPp:"ばらばらだった夜空が、またひとつになりました。<br>ハルマンのまいた星がオルムと村を照らします。",noteP:(n,mv,s)=>`${n}×${n} · 移動 ${mv}回 · ${Math.floor(s/60)}分${s%60}秒`},
+ zh:{t:{stars:"✨ 接流星",const:"🌟 连星座",puzzle:"🧩 夜空拼图"},
+  intro:{stars:"奶奶撒下的星星正在落下。<b>点击</b>落下的星星接住它，下面村子里的房子就会亮起灯。<br>在45秒内点亮全部<b>8座房子</b>吧。粉色的大星星可以点亮两座。",
+   const:"天空中有<b>带编号的星星</b>。<b>从1号开始依次</b>点击，或用手指划过把它们连起来。<br>完成三个星座，奶奶的夜空就完成了。",
+   puzzle:"图画被打散了。把一块拼图<b>拖到</b>另一块上，它们就会交换位置（也可以依次<b>点击</b>两块）。<br>卡住了吗？按住<b>查看完整图</b>就能看到完成的图画。"},
+  start:"开始",again:"再玩一次",other:"选择别的游戏",close:"关闭游戏",easy:"简单 3×3",normal:"普通 4×4",hard:"困难 5×5",peek:"👁 查看完整图",
+  houses:(n,g)=>`🏠 ${n} / ${g}`,constProg:(s,s2,n,N)=>`星座 ${s} / ${s2} · ${n} / ${N}`,puzProg:(k,N)=>`已拼对 ${k} / ${N}`,moves:n=>`移动 ${n}次`,
+  lit:["温暖的灯光亮起来了","房子变亮了","星光落下来了"],
+  winS:"🏡 整个村子都亮起来了！",winSp:"奶奶撒下的星光落进了家家户户。<br>今晚村里的人们会睡得暖暖的。",
+  loseS:n=>`🌙 点亮了${n}座房子`,loseSp:r=>`还有${r}座房子是暗的。<br>再试一次吧？`,noteS:(c,m)=>`接住的星星 ${c}颗 · 错过 ${m}颗`,
+  cnames:[["山茶花星座","冬天也不凋谢的济州之花"],["汉拿山星座","奶奶用裙摆运土堆成的山"],["石头爷爷星座","守护村口的石头爷爷"]],
+  cfirst:"从1号星星开始连吧",cwrong:"请按编号顺序连接",
+  winC:"🌟 奶奶的夜空完成了",winCp:"山茶花、汉拿山和石头爷爷变成了星星，守望着济州。<br>据说人们每次迷路时，都会看着这些星座找到回家的路。",noteC:m=>`按错顺序 ${m}次`,
+  pok:["正好拼上！","找到位置了","太棒了！"],phint:"拖动拼图来交换位置",
+  winP:"✨ 图画完成了！",winPp:"散落的夜空又合而为一。<br>奶奶撒下的星星照亮了岳和村庄。",noteP:(n,mv,s)=>`${n}×${n} · 移动${mv}次 · ${Math.floor(s/60)}分${s%60}秒`}
+};
+const mt=(k,...a)=>{const v=(MGT[LANG]&&MGT[LANG][k]!==undefined)?MGT[LANG][k]:MGT.ko[k];return typeof v==="function"?v(...a):v};
+const MG=(()=>{
+  const W=1280,H=853, el=id=>document.getElementById(id);
+  document.body.insertAdjacentHTML("beforeend",`<div class="mg" id="mg" hidden role="dialog" aria-modal="true" aria-labelledby="mgTitle"><div class="mg-box">
+    <div class="mg-top"><b id="mgTitle"></b><span class="mg-pill" id="mgA" hidden></span><span class="mg-pill" id="mgB" hidden></span><button type="button" id="mgPeek" hidden></button><button type="button" class="x" id="mgX">✕</button></div>
+    <div class="mg-stage" id="mgStage"><img id="mgImg" alt=""><canvas id="mgCv" width="${W}" height="${H}" aria-hidden="true"></canvas><div class="mg-board" id="mgBoard" hidden></div>
+      <img class="mg-peek" id="mgPeekImg" alt=""><canvas id="mgFx" width="${W}" height="${H}" aria-hidden="true" style="pointer-events:none;z-index:7"></canvas><div class="mg-toast" id="mgToast" aria-live="polite"></div>
+      <div class="mg-card" id="mgCard"><div><h3 id="mgCT"></h3><p id="mgCP"></p><p class="note" id="mgCN"></p><div class="mg-btns" id="mgCB"></div></div></div></div></div></div>`);
+  const stage=el("mgStage"), cv=el("mgCv"), c=cv.getContext("2d"), fx=el("mgFx").getContext("2d"), board=el("mgBoard");
+  let kind=null, on=false, G={}, raf=0, last=0, ac=null, imgUrl="images/game.jpg", back=null, bits=[], lastN=3;
+
+  /* 공통 도우미 */
+  function sprite(stops){const s=document.createElement("canvas");s.width=s.height=64;const g=s.getContext("2d"),r=g.createRadialGradient(32,32,0,32,32,32);stops.forEach(x=>r.addColorStop(x[0],x[1]));g.fillStyle=r;g.fillRect(0,0,64,64);return s}
+  const GOLD=sprite([[0,"rgba(255,252,225,1)"],[.25,"rgba(255,226,140,.8)"],[1,"rgba(255,200,90,0)"]]), PINK=sprite([[0,"rgba(255,245,250,1)"],[.25,"rgba(255,150,190,.85)"],[1,"rgba(255,120,170,0)"]]);
+  const WARM=sprite([[0,"rgba(255,230,160,.95)"],[.4,"rgba(255,180,90,.45)"],[1,"rgba(255,150,60,0)"]]), SHADE=sprite([[0,"rgba(8,6,30,.85)"],[.55,"rgba(8,6,30,.5)"],[1,"rgba(8,6,30,0)"]]);
+  const WHITE=sprite([[0,"rgba(255,255,255,1)"],[.2,"rgba(255,240,200,.85)"],[1,"rgba(255,220,150,0)"]]);
+  const rand=a=>a[(Math.random()*a.length)|0];
+  function toast(m,ms){const e=el("mgToast");e.innerHTML=m;e.classList.add("on");clearTimeout(toast.h);toast.h=setTimeout(()=>e.classList.remove("on"),ms||1300)}
+  function pill(id,html){const e=el(id);e.hidden=html==null;if(html!=null)e.innerHTML=html}
+  function card(t,p,note,btns){el("mgCT").textContent=t;el("mgCP").innerHTML=p;el("mgCN").textContent=note||"";el("mgCN").hidden=!note;
+    const box=el("mgCB");box.innerHTML="";btns.forEach(b=>{const x=document.createElement("button");x.type="button";x.textContent=b[0];if(b[1])x.className="main";x.onclick=b[2];box.appendChild(x)});
+    el("mgCard").hidden=false;const f=box.querySelector("button");f&&f.focus({preventScroll:true})}
+  const toXY=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H]};
+  function sound(f,len,vol,type){if(!ac)return;const t=ac.currentTime,o=ac.createOscillator(),g=ac.createGain();o.type=type||"sine";o.frequency.value=f;
+    g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.01);g.gain.exponentialRampToValueAtTime(.0005,t+len);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+len+.05)}
+  function audioOn(){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();ac.resume()}catch(e){}}
+  function confetti(){for(let i=0;i<90;i++)bits.push({x:Math.random()*W,y:-20-Math.random()*400,vy:80+Math.random()*140,vx:(Math.random()-.5)*60,r:2+Math.random()*4,h:Math.random()<.5?"#ffe29a":"#d8c9ff"})}
+  function clear(){on=false;G={};c.clearRect(0,0,W,H);board.innerHTML="";board.hidden=true;board.classList.remove("solved");pill("mgA",null);pill("mgB",null);el("mgPeek").hidden=true;el("mgPeekImg").classList.remove("on");el("mgToast").classList.remove("on")}
+  function finishCard(t,p,note){on=false;card(t,p,note,[[mt("again"),1,()=>start()],[mt("other"),0,close]])}
+
+  /* ───── 1) 별똥별 받기 ───── */
+  const HAND={x:705,y:168}, HOUSES=[[215,688],[268,684],[318,682],[758,742],[845,746],[948,728],[1022,710],[1068,725]], GOAL=8, TIME=45, CLOUD_Y=640;
+  const lit=()=>G.lit.filter(v=>v>0).length;
+  function starsHud(){pill("mgA",mt("houses",lit(),GOAL));pill("mgB",`⏳ <span class="mg-time"><i style="transform:scaleX(${Math.max(0,G.left/TIME)})"></i></span>`)}
+  function starsStart(){G={t:0,left:TIME,stars:[],flies:[],pops:[],lit:HOUSES.map(()=>0),next:.3,caught:0,missed:0};on=true;starsHud()}
+  function spawn(){const big=Math.random()<.12,sl=reduce?.6:1;G.stars.push({x:HAND.x-30+Math.random()*220,y:HAND.y-90+Math.random()*80,vx:(Math.random()*2-1)*260*sl,vy:(40+Math.random()*90)*sl,g:(55+Math.random()*40)*sl,r:big?17:10+Math.random()*4,big,tw:Math.random()*6,trail:[]})}
+  function catchAt(x,y){let best=-1,bd=1e9;G.stars.forEach((s,i)=>{const d=Math.hypot(s.x-x,s.y-y);if(d<s.r+44&&d<bd){bd=d;best=i}});if(best<0)return false;
+    const s=G.stars.splice(best,1)[0];G.caught++;sound(rand([523,587,659,784,880])*(s.big?.5:1),1.2,.09);
+    for(let k=0;k<(s.big?2:1);k++){const h=G.lit.findIndex((v,i)=>v===0&&!G.flies.some(f=>f.h===i));if(h<0)break;G.flies.push({x0:s.x,y0:s.y,h,t0:G.t+k*.15,dur:.9,big:s.big})}
+    for(let j=0;j<10;j++)G.pops.push({x:s.x,y:s.y,vx:(Math.random()-.5)*240,vy:(Math.random()-.5)*240,t0:G.t,c:s.big?PINK:GOLD});return true}
+  function starsStep(dt){
+    G.t+=dt;G.left-=dt;G.next-=dt;if(G.next<=0){spawn();G.next=Math.max(.55,1.25-G.t*.012)*(.7+Math.random()*.6)}
+    G.stars.forEach(s=>{s.trail.push([s.x,s.y]);if(s.trail.length>12)s.trail.shift();s.vy+=s.g*dt;s.x+=s.vx*dt;s.y+=s.vy*dt});
+    G.stars=G.stars.filter(s=>{if(s.y>CLOUD_Y||s.x<-40||s.x>W+40){G.missed++;return false}return true});
+    G.flies=G.flies.filter(f=>{if(G.t-f.t0>=f.dur){G.lit[f.h]=.001;toast(rand(mt("lit")));return false}return true});
+    G.lit=G.lit.map(v=>v>0?Math.min(1,v+dt*1.5):0);G.pops=G.pops.filter(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;return G.t-p.t0<.7});starsHud();
+    if(lit()>=GOAL&&!G.flies.length)finishCard(mt("winS"),mt("winSp"),mt("noteS",G.caught,G.missed));
+    else if(G.left<=0)finishCard(mt("loseS",lit()),mt("loseSp",GOAL-lit()),mt("noteS",G.caught,G.missed));
+  }
+  function starsDraw(){
+    c.clearRect(0,0,W,H);const dark=.62*(1-lit()/GOAL),g=c.createLinearGradient(0,600,0,H);g.addColorStop(0,"rgba(8,6,30,0)");g.addColorStop(.25,`rgba(8,6,30,${dark})`);g.addColorStop(1,`rgba(8,6,30,${dark})`);c.fillStyle=g;c.fillRect(0,600,W,H-600);
+    HOUSES.forEach((p,i)=>{const v=G.lit[i];if(v===0){c.globalAlpha=.7;c.drawImage(SHADE,p[0]-40,p[1]-24,80,48)}else{const s=70+10*Math.sin(G.t*3+i);c.globalAlpha=v*.9;c.drawImage(WARM,p[0]-s,p[1]-s*.7,s*2,s*1.4)}});
+    G.stars.forEach(s=>{s.trail.forEach((q,k)=>{const a=k/s.trail.length,r=s.r*(.6+a);c.globalAlpha=a*.5;c.drawImage(s.big?PINK:GOLD,q[0]-r,q[1]-r,r*2,r*2)});
+      const R=s.r*2.6*(1+.15*Math.sin(G.t*10+s.tw));c.globalAlpha=1;c.drawImage(s.big?PINK:GOLD,s.x-R,s.y-R,R*2,R*2);
+      c.strokeStyle="rgba(255,255,255,.9)";c.lineWidth=1.5;c.beginPath();c.moveTo(s.x-s.r*1.6,s.y);c.lineTo(s.x+s.r*1.6,s.y);c.moveTo(s.x,s.y-s.r*1.6);c.lineTo(s.x,s.y+s.r*1.6);c.stroke()});
+    G.flies.forEach(f=>{const a=Math.max(0,Math.min(1,(G.t-f.t0)/f.dur)),e=a*a*(3-2*a),h=HOUSES[f.h],x=f.x0+(h[0]-f.x0)*e,y=f.y0+(h[1]-f.y0)*e-Math.sin(a*Math.PI)*80,R=22-a*8;c.globalAlpha=1;c.drawImage(f.big?PINK:GOLD,x-R,y-R,R*2,R*2)});
+    G.pops.forEach(p=>{c.globalAlpha=1-(G.t-p.t0)/.7;c.drawImage(p.c,p.x-8,p.y-8,16,16)});c.globalAlpha=1;
+  }
+
+  /* ───── 2) 별자리 잇기 ───── */
+  const flower=(cx,cy,R,r)=>{const p=[];for(let k=0;k<5;k++){const a=(-90+72*k)*Math.PI/180,b=a+36*Math.PI/180;p.push([cx+R*Math.cos(a),cy+R*Math.sin(a)],[cx+r*Math.cos(b),cy+r*Math.sin(b)])}return p};
+  const SETS=[{close:true,color:"#ff9ab8",pts:flower(300,128,78,34)},
+    {close:false,color:"#bfe3ff",pts:[[400,150],[460,98],[498,66],[515,74],[532,74],[550,66],[588,98],[648,150]]},
+    {close:true,color:"#ffe08a",pts:[[1020,110],[1045,70],[1075,70],[1100,110],[1095,175],[1100,250],[1080,300],[1040,300],[1020,250],[1025,175]]}], HIT=36;
+  const curSet=()=>SETS[G.set];
+  function constHud(){const s=curSet();pill("mgA",s?mt("constProg",G.set+1,SETS.length,G.n,s.pts.length):mt("constProg",SETS.length,SETS.length,SETS[2].pts.length,SETS[2].pts.length))}
+  function constStart(){G={t:0,set:0,n:0,done:[],idle:0,drag:false,ptr:null,shake:0,flash:0,miss:0};on=true;constHud();toast(mt("cfirst"))}
+  function tryConnect(x,y,tap){const s=curSet();if(!s||!on)return false;const p=s.pts[G.n];
+    if(Math.hypot(p[0]-x,p[1]-y)<HIT){G.n++;G.idle=0;const sc=[0,2,4,7,9,12,14,16,19,21,24];sound(392*Math.pow(2,sc[(G.n-1)%sc.length]/12),1,.08);constHud();
+      if(G.n>=s.pts.length){const nm=mt("cnames")[G.set];G.done.push({set:G.set,t0:G.t});G.flash=1;toast(`<b>${esc(nm[0])}</b> · ${esc(nm[1])}`,2600);G.set++;G.n=0;G.drag=false;constHud();
+        if(G.set>=SETS.length){on=false;setTimeout(()=>{if(kind==="const"&&!el("mg").hidden){confetti();finishCard(mt("winC"),mt("winCp"),mt("noteC",G.miss))}},2200)}}
+      return true}
+    if(tap&&s.pts.some(q=>Math.hypot(q[0]-x,q[1]-y)<HIT)){G.shake=.5;G.miss++;sound(330,.3,.04,"triangle");toast(mt("cwrong"))}return false}
+  function line(pts,close,n,color,a,w){if(n<2)return;c.save();c.globalAlpha=a;c.strokeStyle=color;c.lineWidth=w;c.shadowColor=color;c.shadowBlur=12;c.lineJoin="round";c.beginPath();for(let i=0;i<n;i++)i?c.lineTo(pts[i][0],pts[i][1]):c.moveTo(pts[i][0],pts[i][1]);if(close&&n===pts.length)c.closePath();c.stroke();c.restore()}
+  const dot=(x,y,r,a)=>{c.globalAlpha=a;c.drawImage(WHITE,x-r*2,y-r*2,r*4,r*4);c.globalAlpha=1};
+  function constDraw(dt){
+    G.t+=dt;G.idle+=dt;G.shake=Math.max(0,G.shake-dt);G.flash=Math.max(0,G.flash-dt*.7);c.clearRect(0,0,W,H);
+    G.done.forEach(d=>{const s=SETS[d.set],a=Math.min(1,(G.t-d.t0)/1.2);c.save();c.globalAlpha=.25*a;c.fillStyle=s.color;c.beginPath();s.pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));if(s.close){c.closePath();c.fill()}c.restore();
+      line(s.pts,s.close,s.pts.length,s.color,.9*a,3);s.pts.forEach(p=>dot(p[0],p[1],14,.95));
+      if(d.set===2){c.globalAlpha=.8*a;c.fillStyle=s.color;[[1045,150],[1075,150]].forEach(q=>{c.beginPath();c.arc(q[0],q[1],4,0,7);c.fill()});c.beginPath();c.ellipse(1060,180,7,14,0,0,7);c.fill();c.globalAlpha=1}});
+    const s=curSet();if(!s||!on)return;
+    line(s.pts,false,G.n,"#ffffff",.95,3);
+    if(G.drag&&G.n>0&&G.ptr){const l=s.pts[G.n-1];c.globalAlpha=.5;c.strokeStyle="#fff";c.setLineDash([6,8]);c.lineWidth=2;c.beginPath();c.moveTo(l[0],l[1]);c.lineTo(G.ptr[0],G.ptr[1]);c.stroke();c.setLineDash([]);c.globalAlpha=1}
+    s.pts.forEach((p,i)=>{const nx=i===G.n,dn=i<G.n,dx=nx&&G.shake?Math.sin(G.t*60)*5:0,pu=nx?1+.25*Math.sin(G.t*6)+(G.idle>4?.5+.3*Math.sin(G.t*8):0):1;
+      dot(p[0]+dx,p[1],(dn?13:10)*pu,dn?1:nx?.95:.6);
+      if(!dn){c.font="bold 15px sans-serif";c.textAlign="center";c.lineWidth=3;c.strokeStyle="rgba(10,8,40,.85)";c.strokeText(i+1,p[0]+dx,p[1]-16);c.fillStyle=nx?"#ffe29a":"rgba(255,255,255,.75)";c.fillText(i+1,p[0]+dx,p[1]-16)}
+      if(nx&&G.idle>4){c.globalAlpha=.6;c.strokeStyle="#ffe29a";c.lineWidth=2;c.beginPath();c.arc(p[0],p[1],22+10*Math.sin(G.t*5),0,7);c.stroke();c.globalAlpha=1}});
+    if(G.flash){c.globalAlpha=G.flash*.25;c.fillStyle="#fff6d0";c.fillRect(0,0,W,H);c.globalAlpha=1}
+  }
+
+  /* ───── 3) 밤하늘 그림 맞추기 ───── */
+  const okCount=()=>G.slots.reduce((k,id,i)=>k+(id===i),0);
+  function place(t,slot){const N=G.N;t.style.left=(slot%N*100/N)+"%";t.style.top=(((slot/N)|0)*100/N)+"%"}
+  function puzPaint(){G.slots.forEach((id,slot)=>{place(G.tiles[id],slot);G.tiles[id].classList.toggle("ok",id===slot)});pill("mgA",mt("puzProg",okCount(),G.N*G.N));pill("mgB",mt("moves",G.moves))}
+  function puzStart(n){
+    G={N:n,slots:[],tiles:[],sel:null,moves:0,t0:performance.now(),drag:null};board.innerHTML="";board.hidden=false;
+    for(let id=0;id<n*n;id++){const t=document.createElement("div"),r=(id/n)|0,cc=id%n;t.className="mg-tile";t.style.width=t.style.height=(100/n)+"%";
+      t.style.backgroundImage=`url("${imgUrl}")`;t.style.backgroundSize=`${n*100}% ${n*100}%`;t.style.backgroundPosition=`${cc*100/(n-1)}% ${r*100/(n-1)}%`;
+      t.dataset.id=id;t.tabIndex=0;t.setAttribute("role","button");board.appendChild(t);G.tiles.push(t);G.slots.push(id)}
+    do{for(let i=G.slots.length-1;i>0;i--){const j=(Math.random()*(i+1))|0;[G.slots[i],G.slots[j]]=[G.slots[j],G.slots[i]]}}while(okCount()>Math.max(1,n-2));
+    on=true;el("mgPeek").hidden=false;el("mgPeek").textContent=mt("peek");puzPaint();toast(mt("phint"));
+  }
+  const slotOf=t=>G.slots.indexOf(+t.dataset.id);
+  function slotAt(x,y){const r=board.getBoundingClientRect();if(x<r.left||y<r.top||x>=r.right||y>=r.bottom)return -1;return(((y-r.top)/r.height*G.N)|0)*G.N+(((x-r.left)/r.width*G.N)|0)}
+  function swap(a,b){if(a===b||a<0||b<0)return;[G.slots[a],G.slots[b]]=[G.slots[b],G.slots[a]];G.moves++;puzPaint();
+    if(G.slots[a]===a||G.slots[b]===b){toast(rand(mt("pok")),900);sound(659,.6,.06)}
+    if(okCount()===G.N*G.N){on=false;board.classList.add("solved");confetti();const sec=Math.round((performance.now()-G.t0)/1000);setTimeout(()=>finishCard(mt("winP"),mt("winPp"),mt("noteP",G.N,G.moves,sec)),1400)}}
+  function tapTile(t){if(!G.sel){G.sel=t;t.classList.add("sel")}else{const a=G.sel;a.classList.remove("sel");G.sel=null;if(a!==t)swap(slotOf(a),slotOf(t))}}
+  board.addEventListener("pointerdown",e=>{const t=e.target.closest(".mg-tile");if(!t||!on)return;G.drag={t,x:e.clientX,y:e.clientY,moved:false};try{t.setPointerCapture(e.pointerId)}catch(_){}});
+  board.addEventListener("pointermove",e=>{const d=G.drag;if(!d)return;const dx=e.clientX-d.x,dy=e.clientY-d.y;
+    if(!d.moved&&Math.hypot(dx,dy)>6){d.moved=true;d.t.classList.add("drag");if(G.sel){G.sel.classList.remove("sel");G.sel=null}}if(d.moved)d.t.style.transform=`translate(${dx}px,${dy}px)`});
+  board.addEventListener("pointerup",e=>{const d=G.drag;if(!d)return;d.t.classList.remove("drag");d.t.style.transform="";G.drag=null;
+    if(d.moved)swap(slotOf(d.t),slotAt(e.clientX,e.clientY));else tapTile(d.t)});
+  board.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList.contains("mg-tile")&&on){e.preventDefault();tapTile(e.target)}});
+  const pk=el("mgPeek");["pointerdown","keydown"].forEach(v=>pk.addEventListener(v,()=>el("mgPeekImg").classList.add("on")));["pointerup","pointerleave","keyup","blur"].forEach(v=>pk.addEventListener(v,()=>el("mgPeekImg").classList.remove("on")));
+
+  /* ───── 누르기 (별 받기·별자리) ───── */
+  stage.addEventListener("pointerdown",e=>{if(!on)return;const[x,y]=toXY(e);
+    if(kind==="stars")catchAt(x,y);
+    else if(kind==="const"){G.ptr=[x,y];G.drag=true;try{stage.setPointerCapture(e.pointerId)}catch(_){}tryConnect(x,y,true)}});
+  stage.addEventListener("pointermove",e=>{if(!on||kind!=="const")return;G.ptr=toXY(e);if(G.drag)tryConnect(G.ptr[0],G.ptr[1],false)});
+  addEventListener("pointerup",()=>{if(kind==="const"&&G)G.drag=false});
+
+  /* ───── 화면 돌리기 ───── */
+  function frame(now){
+    const dt=Math.min(.05,(now-last)/1000||0);last=now;
+    if(on&&kind==="stars")starsStep(dt);
+    if(kind==="stars"&&G.lit)starsDraw(); else if(kind==="const"&&G.done)constDraw(dt);
+    fx.clearRect(0,0,W,H);bits=bits.filter(b=>{b.y+=b.vy*dt;b.x+=b.vx*dt;fx.fillStyle=b.h;fx.globalAlpha=.9;fx.beginPath();fx.arc(b.x,b.y,b.r,0,7);fx.fill();return b.y<H+30});fx.globalAlpha=1;
+    raf=requestAnimationFrame(frame);
+  }
+  function start(n){
+    audioOn();clear();el("mgCard").hidden=true;
+    if(kind==="stars")starsStart(); else if(kind==="const")constStart(); else{lastN=n||lastN;puzStart(lastN)}   // 퍼즐 '다시 하기'는 같은 난이도로
+  }
+  function intro(){clear();
+    const btns=kind==="puzzle"?[[mt("easy"),1,()=>start(3)],[mt("normal"),1,()=>start(4)],[mt("hard"),0,()=>start(5)]]:[[mt("start"),1,()=>start()],[mt("close"),0,close]];
+    card(mt("t")[kind],mt("intro")[kind],"",btns)}
+  async function open(k){
+    back=document.activeElement;kind=k;try{voicePlay(null)}catch(e){}
+    const u=await findImage("game");imgUrl=u||"images/game.jpg";el("mgImg").src=imgUrl;el("mgPeekImg").src=imgUrl;
+    el("mgTitle").textContent=mt("t")[k];el("mgX").setAttribute("aria-label",mt("close"));el("mgX").title=mt("close");
+    el("mg").hidden=false;document.body.style.overflow="hidden";bits=[];intro();cancelAnimationFrame(raf);last=performance.now();raf=requestAnimationFrame(frame);
+  }
+  function close(){clear();cancelAnimationFrame(raf);el("mg").hidden=true;document.body.style.overflow="";kind=null;
+    if(cur==="game"){renderChoices("game",S.game);const f=document.querySelector("#hot .hs");f&&f.focus({preventScroll:true})}   // 반짝이(놀이 3개)를 다시 보여 준다
+    else if(back&&back.isConnected&&back.focus)back.focus({preventScroll:true})}
+  el("mgX").onclick=close;
+  document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!el("mg").hidden)close()});
+  return {open,close,get state(){return{kind,on,G}},catchAt:(x,y)=>catchAt(x,y),tap:(x,y)=>tryConnect(x,y,true),SETS,swap:(a,b)=>swap(a,b),
+    solveAllButOne:()=>{G.slots=G.slots.map((_,i)=>i);[G.slots[0],G.slots[1]]=[G.slots[1],G.slots[0]];puzPaint()}};   // 마지막 줄은 확인(테스트)용
+})();
+
 applyLang(); showTraits();
 {const q=new URLSearchParams(location.search).get("scene");   // 주소 끝 ?scene=장면이름 → 그 장면부터 시작 (예: ?scene=ai)
  if(q&&S[q]){st.curious=st.curious||2;go(q)}else go("start")}
