@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>설문대할망 · 제주를 빚은 거인</title>
+<style>
+  :root{--bg:#12113a;--ink:#f1efff;--mute:#a7a4d3;--acc:#a98bff;--acc2:#7a5bd8;--line:rgba(255,255,255,.13);--mint:#8fe3c8}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:linear-gradient(180deg,#26236e 0%,#1a1852 38%,#12113a 100%) fixed;color:var(--ink);min-height:100vh;
+       font-family:"Pretendard","Noto Sans KR","Malgun Gothic","Apple SD Gothic Neo",sans-serif;line-height:1.7;display:flex;justify-content:center;padding:0 0 40px}
+  main{width:100%;max-width:760px}
+  /* ── 위쪽 줄: 뒤로가기·제목·칩 ── */
+  .bar{display:flex;align-items:center;gap:10px;padding:16px 16px 4px}
+  .bgmbtn{position:fixed;right:14px;bottom:14px;z-index:60;width:46px;height:46px;border-radius:50%;border:1.5px solid rgba(240,214,150,.75);background:rgba(26,22,80,.82);color:#f3efff;cursor:pointer;display:grid;place-items:center;padding:0;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);box-shadow:0 4px 16px rgba(0,0,0,.4);transition:transform .15s,background .2s}
+  .bgmbtn:hover{transform:scale(1.07);background:rgba(60,50,150,.9)} .bgmbtn:focus-visible{outline:3px solid #8fe3c8;outline-offset:2px}
+  .bgmbtn svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .bgmbtn.off{color:#a9a1e0}
+  /* 언어 선택 (오른쪽 위 지구본 버튼) */
+  .langbox{position:relative;flex:none;margin-left:6px}
+  .langbtn{display:flex;align-items:center;gap:6px;height:34px;padding:0 12px 0 9px;border-radius:999px;border:1px solid rgba(169,139,255,.5);background:rgba(26,22,80,.55);color:#f3efff;font:inherit;font-size:.8rem;font-weight:600;cursor:pointer;white-space:nowrap}
+  .langbtn:hover{background:rgba(60,50,150,.75)} .langbtn:focus-visible{outline:3px solid #8fe3c8;outline-offset:2px}
+  .langbtn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round}
+  .langmenu{position:absolute;right:0;top:40px;z-index:80;margin:0;padding:6px;list-style:none;min-width:130px;border-radius:14px;border:1px solid rgba(240,214,150,.6);background:rgba(26,22,80,.96);box-shadow:0 10px 30px rgba(0,0,0,.5)}
+  .langmenu[hidden]{display:none}
+  .langmenu button{display:block;width:100%;text-align:left;padding:8px 12px;border:0;border-radius:10px;background:none;color:#f3efff;font:inherit;font-size:.9rem;cursor:pointer}
+  .langmenu button:hover,.langmenu button:focus-visible{background:rgba(169,139,255,.25);outline:none} .langmenu button.on{color:#8fe3c8;font-weight:700}
+  /* 일본어·중국어는 띄어쓰기가 없어 한국어용 '낱말 단위 줄바꿈'을 풀고, 글꼴도 맞춘다 */
+  html[lang="ja"] *,html[lang="zh"] *{word-break:normal!important;overflow-wrap:anywhere;line-break:strict}
+  html[lang="ja"] body{font-family:"Yu Gothic","Meiryo","Hiragino Sans","Noto Sans JP","Malgun Gothic",sans-serif}
+  html[lang="zh"] body{font-family:"Microsoft YaHei","PingFang SC","Noto Sans SC","Malgun Gothic",sans-serif}
+  html[lang="en"] #text p{word-break:normal!important}
+  html:not([lang="ko"]) .tapnote{white-space:normal;border-radius:18px;line-height:1.35}   /* 영어는 안내 글이 길어서 줄을 바꿔 보여 준다 */
+  @media(max-width:420px){.bar h2{font-size:.95rem}.langbtn span{display:none}.langbtn{padding:0 9px}}
+  .vcbtn{right:68px} .vcbtn[hidden]{display:none}
+  .back{width:36px;height:36px;border:0;background:none;color:var(--ink);cursor:pointer;display:grid;place-items:center;border-radius:50%;flex:none}
+  .back[hidden]{display:grid;visibility:hidden} .back:hover{background:rgba(255,255,255,.12)} .back svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+  .bar h2{font-size:1.15rem;font-weight:700;letter-spacing:-.01em}
+  .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 16px 14px}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:.86rem;color:#d9d4ff;background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:999px;padding:5px 14px 5px 11px;transition:.3s}
+  .chip svg{width:16px;height:16px;fill:currentColor} .chip b{font-weight:700;color:#fff}
+  .chip.on{background:rgba(169,139,255,.24);border-color:rgba(169,139,255,.65);color:#fff}
+  .found{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-size:.86rem;color:#d9d4ff;padding-left:12px;border-left:1px solid var(--line)}
+  .found svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linejoin:round} .found b{color:#fff;font-weight:700} .found b.acc{color:var(--acc)}
+  /* ── 무대 ── */
+  #stage{position:relative;aspect-ratio:16/9;overflow:hidden;background:#0b0a26;-webkit-mask-image:linear-gradient(#000 80%,transparent);mask-image:linear-gradient(#000 80%,transparent)}
+  @media(max-width:640px){#stage{aspect-ratio:4/3}}
+  #stage svg{position:absolute;inset:0;width:100%;height:100%;animation:fadein 1.4s ease both}
+  @keyframes fadein{from{opacity:0;filter:blur(8px)}to{opacity:1;filter:none}}
+  .vig{position:absolute;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at 50% 50%,transparent 60%,rgba(10,8,40,.45) 100%)}
+  .grain{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:.08;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>")}
+  .bgwrap{position:absolute;inset:0;overflow:hidden;animation:fadein 1.4s ease both;transform:translate(calc(var(--mx,0)*-9px),calc(var(--my,0)*-4px));transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+  .bgwrap img{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block;transform-origin:50% 30%;animation:kb 28s ease-in-out infinite alternate}
+  .bgwrap video{width:100%;height:100%;object-fit:cover;object-position:50% 30%;display:block;pointer-events:none}   /* 움직이는 그림(mp4)은 그림 자체가 움직이므로 천천히 확대하는 효과는 쓰지 않는다 */
+  @keyframes kb{from{transform:scale(1.02)}to{transform:scale(1.07) translate(-.8%,0)}}
+  .chapter{position:absolute;inset:0;z-index:4;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;
+    text-shadow:0 2px 24px #000;animation:chap 3.6s ease both;opacity:0}
+  .chapter small{letter-spacing:.5em;color:#d9ccff;font-size:.85rem} .chapter b{font-size:clamp(1.3rem,4.6vw,2.4rem);letter-spacing:.08em;font-weight:800}
+  @keyframes chap{0%{opacity:0;transform:translateY(10px)}18%{opacity:1;transform:none}70%{opacity:1}100%{opacity:0}}
+  /* ── 글 카드 ── */
+  .book{position:relative;z-index:5;margin:-30px 14px 0;padding:26px 22px 22px;border:1px solid var(--line);border-radius:28px;
+        background:linear-gradient(180deg,rgba(255,255,255,.11),rgba(255,255,255,.05));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 18px 50px rgba(8,6,40,.5)}
+  .tag{display:inline-block;font-size:.75rem;font-weight:700;color:#1a1340;background:var(--acc);border-radius:999px;padding:1px 12px;margin-bottom:8px}
+  .tag[hidden]{display:none} .tag.mine{background:var(--mint)} .tag.ai{background:#d8c9ff}
+  h1{font-size:1.75rem;font-weight:800;color:#fff;letter-spacing:-.02em;line-height:1.3}
+  h1::after{content:"";display:block;width:44px;height:4px;border-radius:4px;background:var(--acc);margin:12px 0 16px}
+  #text p{margin:0 0 .4em;font-size:1.04rem;color:#e8e5ff;word-break:keep-all;white-space:pre-line}
+  .hint{font-size:.78rem;color:var(--mute);margin-top:-2px}
+  #choices{display:flex;flex-direction:column;gap:12px;margin-top:18px;opacity:0;transform:translateY(8px);transition:.7s}
+  #choices.show{opacity:1;transform:none}
+  #choices button{font:inherit;font-size:1.02rem;font-weight:600;color:#fff;cursor:pointer;display:flex;align-items:center;gap:10px;text-align:left;
+       background:rgba(255,255,255,.07);border:1px solid rgba(169,139,255,.45);border-radius:18px;padding:15px 18px;transition:.2s}
+  #choices button .lb{flex:1}
+  #choices button::after{content:"→";font-size:1.25rem;opacity:.9}
+  #choices button:hover,#choices button:focus-visible{background:rgba(169,139,255,.22);border-color:var(--acc);transform:translateY(-1px);outline:none}
+  #choices button.cta,#choices[data-n="1"] button{justify-content:center;font-size:1.1rem;font-weight:700;padding:17px 22px;border:0;border-radius:999px;
+       background:linear-gradient(90deg,#b8a0ff,#8d6df0);box-shadow:0 10px 28px rgba(125,91,216,.5)}
+  #choices button.cta .lb,#choices[data-n="1"] button .lb{text-align:center;margin-left:1.3em}
+  #choices button .tg{font-size:.72rem;font-weight:600;color:#d9ccff;background:rgba(169,139,255,.2);border-radius:999px;padding:1px 9px;white-space:nowrap}
+  .ai{margin-top:14px;display:none} .ai.show{display:block}
+  .ai .row{display:flex;gap:10px;flex-wrap:wrap}
+  .ai input{flex:1;min-width:160px;font:inherit;font-size:1.05rem;color:#fff;background:rgba(10,8,40,.45);border:1px solid rgba(169,139,255,.45);border-radius:18px;padding:14px 18px}
+  .ai input::placeholder{color:#8f8bbd} .ai input:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px rgba(169,139,255,.25)}
+  .ai button.go{font:inherit;font-size:1.02rem;font-weight:700;color:#fff;cursor:pointer;border:0;border-radius:999px;padding:14px 24px;background:linear-gradient(90deg,#b8a0ff,#8d6df0);box-shadow:0 8px 22px rgba(125,91,216,.45)}
+  .ai button.go:disabled{opacity:.6;cursor:wait}
+  .ai .chips{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 2px}
+  .ai .chips button{font:inherit;font-size:.86rem;color:#d9ccff;background:rgba(169,139,255,.12);border:1px solid rgba(169,139,255,.4);border-radius:999px;padding:3px 14px;cursor:pointer}
+  .ai .chips button:hover{background:rgba(169,139,255,.3)}
+  .spin{display:none;color:#d9ccff;margin-top:12px} .spin.show{display:block}
+  .recap{margin-top:16px;font-size:.9rem;color:#c9c5ee;border-top:1px solid var(--line);padding-top:14px}
+  .recap li{margin-left:1.2em} .recap blockquote{border-left:3px solid var(--acc);padding-left:12px;margin:8px 0;color:#e0dcff}
+  .recap .found2{margin-top:10px;color:#d9ccff;font-size:.92rem;font-weight:600}
+  .foot{display:flex;gap:8px;align-items:flex-start;justify-content:center;color:var(--mute);font-size:.82rem;padding:18px 28px 0;line-height:1.55}
+  .foot svg{flex:none;width:18px;height:18px;margin-top:2px;stroke:currentColor;fill:none;stroke-width:1.6}
+  /* ── 그림 애니메이션 ── */
+  .px{transform:translate(calc(var(--mx,0)*var(--d)*1px),calc(var(--my,0)*var(--d)*.35px));transition:transform .6s cubic-bezier(.2,.7,.2,1)}
+  .cam{animation:cam 28s ease-in-out infinite alternate;transform-box:view-box;transform-origin:480px 340px} @keyframes cam{from{transform:scale(1.03)}to{transform:scale(1.085) translate(-6px,-3px)}}
+  .cloud{animation:cl linear infinite alternate} @keyframes cl{from{transform:translateX(-90px)}to{transform:translateX(90px)}}
+  .tw{animation:tw 2.2s ease-in-out infinite alternate} @keyframes tw{from{opacity:.15}to{opacity:1}}
+  .wave1{animation:wv 9s linear infinite} .wave2{animation:wv 14s linear infinite reverse} @keyframes wv{to{transform:translateX(-240px)}}
+  .spk{animation:spk 2.8s ease-in-out infinite alternate} @keyframes spk{from{opacity:.1}to{opacity:.85}}
+  .breathe{animation:br 5s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%} @keyframes br{50%{transform:scale(1.012,1.018)}}
+  .hair{animation:hr 6s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 0} @keyframes hr{to{transform:skewX(-3deg) rotate(1.2deg)}}
+  .scarf{animation:sc 3.2s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:0 50%} @keyframes sc{to{transform:skewY(6deg) scaleX(1.06)}}
+  .sway{animation:sw 5s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 0} @keyframes sw{to{transform:rotate(6deg)}}
+  .grass{animation:gs 4s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%} @keyframes gs{to{transform:rotate(4deg)}}
+  .glow{animation:gl 2.6s ease-in-out infinite alternate} @keyframes gl{from{opacity:.5}to{opacity:1}}
+  .blink{animation:bk 6s infinite;transform-box:fill-box;transform-origin:center} @keyframes bk{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.08)}}
+  .ray{animation:ry 7s ease-in-out infinite alternate;mix-blend-mode:screen} @keyframes ry{from{opacity:.55}to{opacity:1}}
+  .ff,.pt,.sp,.bb,.du{transform-box:fill-box;transform-origin:center}
+  .ff{animation:ff 7s ease-in-out infinite} @keyframes ff{0%{transform:translate(0,0);opacity:0}20%{opacity:1}50%{transform:translate(var(--dx),var(--dy))}80%{opacity:1}100%{transform:translate(0,0);opacity:0}}
+  .pt{animation:pt 9s linear infinite} @keyframes pt{from{transform:translate(0,-30px) rotate(0)}to{transform:translate(var(--dx),590px) rotate(420deg)}}
+  .sp{animation:sp 4s ease-out infinite} @keyframes sp{from{transform:translate(0,0);opacity:1}to{transform:translate(var(--dx),-260px);opacity:0}}
+  .bb{animation:bb 8s ease-in infinite} @keyframes bb{from{transform:translate(0,0);opacity:.8}to{transform:translate(var(--dx),-420px);opacity:0}}
+  .du{animation:du 12s ease-in-out infinite} @keyframes du{0%,100%{transform:translate(0,0);opacity:0}30%,70%{opacity:.9}50%{transform:translate(var(--dx),var(--dy))}}
+  .shoot{animation:sh 9s ease-in infinite;opacity:0} @keyframes sh{0%{transform:translate(0,0);opacity:0}4%{opacity:1}12%{transform:translate(-340px,190px);opacity:0}100%{opacity:0}}
+  .bird{animation:bd linear infinite} @keyframes bd{from{transform:translateX(-80px)}to{transform:translateX(1060px)}}
+  .flap{animation:fl .55s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center} @keyframes fl{to{transform:scaleY(.35)}}
+  .flame{animation:fm .35s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%} @keyframes fm{to{transform:scale(.88,1.12) skewX(4deg)}}
+  .steam{animation:up 3.6s ease-in infinite;transform-box:fill-box;transform-origin:center} @keyframes up{from{opacity:.55;transform:translateY(0) scale(.8)}to{opacity:0;transform:translateY(-90px) scale(1.8)}}
+  .drop{animation:dr 2.8s ease-in infinite} @keyframes dr{from{opacity:.9;transform:translateY(0)}to{opacity:0;transform:translateY(38px)}}
+  .dash{stroke-dasharray:16 12;animation:ds 1.6s linear infinite} @keyframes ds{to{stroke-dashoffset:-28}}
+  .ripple{animation:rp 3s ease-out infinite;transform-box:fill-box;transform-origin:center} @keyframes rp{from{transform:scale(.3);opacity:.9}to{transform:scale(1.8);opacity:0}}
+  .lab{animation:lb 5s ease-in-out infinite alternate} @keyframes lb{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  @media(max-width:560px){.book{padding:22px 18px 20px}h1{font-size:1.6rem}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  .hot{position:absolute;inset:0;z-index:6;pointer-events:none}
+  .hs{position:absolute;transform:translate(-50%,-50%);pointer-events:auto;border:0;background:none;color:#fff;font:inherit;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;width:max-content;max-width:78vw;opacity:0;animation:hsIn .5s .1s ease forwards;-webkit-tap-highlight-color:transparent}
+  .hs .ic{position:relative;width:62px;height:62px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle,rgba(255,240,180,.97),rgba(169,139,255,.8));box-shadow:0 0 24px rgba(255,226,140,.85),0 0 0 3px rgba(255,255,255,.6);animation:hsPulse 1.8s ease-in-out infinite;transition:transform .15s}
+  .hs .ic svg{width:32px;height:32px;stroke:#2a1a5c;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .hs .ring{position:absolute;left:50%;top:31px;width:62px;height:62px;margin:-31px 0 0 -31px;border-radius:50%;border:2px solid rgba(255,240,180,.95);animation:hsRing 1.8s ease-out infinite;pointer-events:none}
+  .hs.body{width:auto}
+  .hs.body.up .lbl{top:auto;bottom:calc(50% + 16px)}
+  .hs.body .lbl{position:absolute;top:calc(50% + 16px);left:50%;white-space:normal;width:max-content;max-width:min(46vw,190px);text-align:center;transform:translateX(calc(-50% + var(--shift,0px)))}
+  .hs.body .ic{width:50px;height:50px}.hs.body .ic svg{width:26px;height:26px}.hs.body .ring{width:50px;height:50px;margin:-25px 0 0 -25px;top:25px}
+  .hs .lbl{font-size:.74rem;line-height:1.3;text-align:center;background:rgba(10,8,40,.72);padding:3px 10px;border-radius:12px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;word-break:keep-all}
+  .hs:hover .ic,.hs:focus-visible .ic{transform:scale(1.12)}.hs:active .ic{transform:scale(.92)}.hs:focus-visible{outline:none}.hs:focus-visible .ic{box-shadow:0 0 0 4px #fff}
+  @keyframes hsIn{to{opacity:1}}@keyframes hsPulse{50%{transform:scale(1.08)}}@keyframes hsRing{from{transform:scale(1);opacity:.9}to{transform:scale(1.8);opacity:0}}
+
+  /* ── 그림에 녹아든 선택 영역: 독립된 버튼 대신, 그림 속 그 부분이 은은히 숨 쉬듯 빛나고 직접 누르면 선택됩니다 ── */
+  .hs .ic{width:96px;height:96px;background:radial-gradient(circle,rgba(255,246,205,.62) 0%,rgba(255,226,150,.30) 38%,rgba(255,226,150,0) 70%);box-shadow:none;mix-blend-mode:screen;animation:zoneBreath 2.8s ease-in-out infinite;border-radius:50%}
+  .hs .ic svg{display:none}
+  .hs .ic::after{content:"";width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:0 0 10px 3px rgba(255,240,180,.95);animation:zoneSpark 1.6s ease-in-out infinite}
+  .hs .ring{display:none}
+  .hs.body .ic{width:96px;height:96px}
+  .hs .lbl{background:rgba(10,8,40,.5);font-size:clamp(.98rem,3.9vw,1.15rem);font-weight:600;line-height:1.35;padding:4px 12px;max-width:min(72vw,320px);opacity:.95;text-shadow:0 1px 6px rgba(0,0,0,.7);transition:opacity .2s,background .2s}
+  .hs:hover .ic,.hs:focus-visible .ic{transform:scale(1.2);animation-play-state:paused;background:radial-gradient(circle,rgba(255,250,220,.85) 0%,rgba(255,226,150,.45) 40%,rgba(255,226,150,0) 72%)}
+  .hs:hover .lbl,.hs:focus-visible .lbl{opacity:1;background:rgba(10,8,40,.78)}
+  .hs:focus-visible .ic{box-shadow:none;outline:2px solid #fff;outline-offset:-10px}
+  @keyframes zoneBreath{0%,100%{transform:scale(.86);opacity:.7}50%{transform:scale(1.08);opacity:1}}
+  @keyframes zoneSpark{0%,100%{opacity:.45;transform:scale(.7)}50%{opacity:1;transform:scale(1.15)}}
+  /* 직접 입력한 단어: 고정 그림 위에 단어를 크게 빛나는 말풍선으로 띄운다 */
+  .wbub{position:absolute;left:50%;top:60%;transform:translate(-50%,-50%);z-index:5;max-width:82%;padding:.3em 1.2em;border-radius:999px;font-weight:800;font-size:clamp(1.3rem,5.6vw,2.3rem);line-height:1.3;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+    background:radial-gradient(ellipse at 50% 30%,rgba(255,236,170,.95),rgba(169,139,255,.88));box-shadow:0 0 28px 6px rgba(255,226,140,.75),0 0 0 3px rgba(255,255,255,.7);text-shadow:0 2px 8px rgba(60,30,120,.8);pointer-events:none;animation:wbubIn .7s cubic-bezier(.2,1.4,.4,1) both}
+  @keyframes wbubIn{from{opacity:0;transform:translate(-50%,-30%) scale(.5)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+  /* 안내 문구는 그림 위가 아니라 그림 바로 위 줄에 둔다 (할망 얼굴을 가리지 않게). 선택지가 없을 때는 보이지 않게만 해서 자리는 그대로 둔다 */
+  /* 빛 = 그림 속 특정 부분, 글자 = 그 아래(또는 위) */
+  .hs.pin{width:0;height:0;display:block}
+  .hs.pin .ic{position:absolute;left:-48px;top:-48px}
+  .hs.pin .lbl{position:absolute;left:0;top:30px;translate:-50% 0;width:max-content;max-width:78vw}
+  .hs.pin.up .lbl{top:auto;bottom:30px}
+  .hs.pin.right .lbl{left:calc(30px + var(--lx,0px));top:0;translate:0 -50%;white-space:nowrap}   /* 빛의 오른쪽, 한 줄 */
+  .hs.pin.right .lbl br{display:none}
+  .hs.pin.left .lbl{left:auto;right:30px;top:0;translate:0 -50%}   /* 빛의 왼쪽 */
+  .tapnote{display:block;width:max-content;max-width:94%;margin:-4px auto 10px;text-align:center;white-space:nowrap;font-size:clamp(.7rem,3.55vw,1.1rem);font-weight:700;line-height:1.35;color:#fff;background:rgba(169,139,255,.2);border:1px solid rgba(169,139,255,.45);padding:4px 16px;border-radius:999px;pointer-events:none;transition:opacity .35s}
+  .tapnote[hidden]{display:block;visibility:hidden;opacity:0}
+  /* 장 제목이 떠 있는 동안에는 그림 속 선택 영역을 숨겨서 제목을 가리지 않게 한다 (제목이 사라지면 나타남) */
+  .hot{transition:opacity .4s}
+  #stage:has(.chapter) .hot{opacity:0;pointer-events:none}
+  .chapter{z-index:8}
+
+  /* ── AI 단어 화면: 그림에 그려진 단어 버튼(한라산·백록담·무지개·별똥별) 위를 직접 누른다 ── */
+  #stage.words{-webkit-mask-image:none;mask-image:none}
+  #stage.words .bgwrap img{animation:none;transform:none}   /* 단어 그림은 확대 효과를 끄고, 눌리는 영역과 그려진 버튼이 정확히 겹치게 한다 */
+  #stage.words ~ .book{margin-top:8px}   /* 단어 그림은 아래 버튼까지 보여야 하므로, 이 화면만 글 카드가 그림을 덮지 않게 한다 */
+  .wz{position:absolute;z-index:7;border:0;background:transparent;border-radius:999px;cursor:pointer;pointer-events:auto;-webkit-tap-highlight-color:transparent;transition:transform .15s,box-shadow .15s}
+  .wz:hover,.wz:focus-visible{transform:scale(1.045);box-shadow:0 0 0 3px rgba(255,255,255,.95),0 0 26px 8px rgba(255,255,255,.65);outline:none}
+  .wz:active{transform:scale(.97)}
+  .pop{position:absolute;z-index:7;transform:translate(-50%,-50%);font-weight:800;color:#fff;text-shadow:0 2px 10px #000;animation:popUp .9s ease forwards;pointer-events:none}
+  @keyframes popUp{to{transform:translate(-50%,-150%);opacity:0}}
+  @media(prefers-reduced-motion:reduce){.hs{opacity:1}}
+  #text p.gap{margin-top:.95em}
+
+  /* ── 넓은 화면(컴퓨터): 칸을 넓히고 글자·빛을 키운다 ─────────────────────────── */
+  main{position:relative;z-index:1}
+  #bgfx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:none}
+  @media(min-width:900px){
+    /* 넓은 화면 배경: 제주 황혼 그림(images/bg_wide) 위에 남보라 막을 덮어 이야기가 돋보이게 한다 */
+    body.hasbg{background:linear-gradient(180deg,rgba(38,35,110,.40) 0%,rgba(26,24,82,.22) 42%,rgba(18,17,58,.44) 100%),url(images/bg_wide.webp) 6% 100%/cover no-repeat fixed;background-color:#12113a}   /* 왼쪽(동백 가지) 쪽에 맞춰 화면이 좁아도 동백이 잘리지 않게 */
+    main{max-width:1000px}
+    /* 배경이 깔린 장면: 이야기 그림에 얇은 금빛 테두리와 그림자를 둬서 배경과 구분한다 (아래 흐림 처리는 빼고 모서리를 둥글게) */
+    body.hasbg #stage{-webkit-mask-image:none;mask-image:none;border-radius:26px;border:2px solid rgba(240,214,150,.78);box-shadow:0 0 0 1px rgba(26,19,80,.65),0 18px 44px rgba(6,4,30,.65),0 0 34px rgba(169,139,255,.28)}
+    /* 글 카드도 같은 금빛 테두리로 묶고, 안쪽을 조금 더 진하게 해서 뒤 배경이 비쳐도 글이 또렷하게 */
+    body.hasbg .book{border:1.5px solid rgba(240,214,150,.7);background:linear-gradient(180deg,rgba(60,50,140,.62),rgba(32,27,100,.58));box-shadow:0 0 0 1px rgba(26,19,80,.6),0 18px 44px rgba(6,4,30,.6),0 0 30px rgba(169,139,255,.22)}
+    .bar h2{font-size:1.45rem}
+    .bar{padding:22px 20px 6px}
+    .meta{padding:10px 20px 16px;gap:10px}
+    .chip{font-size:1.02rem;padding:7px 18px 7px 14px}
+    .tapnote{font-size:1.2rem;padding:6px 22px;margin:-4px auto 14px}
+    .book{margin:-44px 28px 0;padding:36px 44px 32px;border-radius:34px}
+    h1{font-size:2.3rem}
+    .tag{font-size:.92rem;padding:2px 16px;margin-bottom:12px}
+    #text p{font-size:1.32rem;line-height:1.75;margin:0 0 .5em}
+    #text p.gap{margin-top:1.1em}
+    .hint{font-size:.95rem}
+    #choices button{font-size:1.25rem;padding:20px 28px}
+    .ai input{font-size:1.25rem;padding:17px 22px}
+    .ai button.go{font-size:1.2rem;padding:17px 30px}
+    .ai .chips button{font-size:1.02rem;padding:5px 18px}
+    .recap{font-size:1.1rem}
+    .recap .found2{font-size:1.12rem}
+    .foot{font-size:.98rem;padding:22px 28px 6px}
+    .foot svg{width:20px;height:20px}
+    .hs .lbl{font-size:1.42rem;padding:6px 18px;max-width:460px;border-radius:16px}
+    .hs .ic,.hs.body .ic{width:124px;height:124px}
+    .hs .ic::after{width:11px;height:11px}
+    .hs.pin .ic{left:-62px;top:-62px}
+    .hs.pin .lbl{top:40px}
+    .hs.pin.up .lbl{bottom:40px}
+    .hs.pin.right .lbl{left:calc(42px + var(--lx,0px))}
+    .hs.pin.left .lbl{right:42px}
+    .wbub{font-size:2.6rem}
+    .chapter small{font-size:1.15rem}.chapter b{font-size:3.2rem}
+  }
+</style>
+</head>
+<body>
+<main>
+  <header class="bar">
+    <button class="back" id="back" hidden aria-label="이전 장면으로" title="이전 장면으로"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <h2 id="hdr">설문대할망 · 제주를 빚은 거인</h2>
+    <button class="back" id="home" hidden aria-label="처음부터 다시" title="처음부터 다시" style="margin-left:auto"><svg viewBox="0 0 24 24"><path d="M3 11l9-7.5 9 7.5M5.5 9.5V20h13V9.5"/></svg></button>
+    <div class="langbox"><button class="langbtn" id="langbtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="언어 선택" title="언어 선택"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg><span id="langcur">한국어</span></button><ul class="langmenu" id="langmenu" role="menu" hidden></ul></div>
+  </header>
+  <div class="meta" title="선택이 이야기에 영향을 줘요">
+    <span class="chip" id="c-warm"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.7 5 6 5c2 0 3.4 1.1 4 2.2C10.6 6.1 12 5 14 5c3.3 0 5.1 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg><span data-i="warm">따뜻함</span> <b id="t-warm"></b></span>
+    <span class="chip" id="c-curious"><svg viewBox="0 0 24 24"><path d="M12 2l2.3 6.4L21 10.8l-6.7 2.4L12 20l-2.3-6.8L3 10.8l6.7-2.4z"/></svg><span data-i="curious">호기심</span> <b id="t-curious"></b></span>
+    <span class="chip" id="c-brave"><svg viewBox="0 0 24 24"><path d="M2 20l6.5-11 4 6.2 3-4.2L22 20z"/></svg><span data-i="brave">용기</span> <b id="t-brave"></b></span>
+    <span class="found" id="found"></span>
+  </div>
+  <p class="tapnote" id="tapnote" data-i="tapnote" hidden>그림 속 반짝이는 곳을 눌러 이야기를 이어 가요</p>
+  <div id="stage" aria-live="polite"><div class="vig"></div><div class="grain"></div><div class="hot" id="hot"></div></div>
+  <section class="book" id="book">
+    <span class="tag" id="tag" hidden></span>
+    <h1 id="title"></h1>
+    <div id="text"></div>
+    <p class="hint" id="hint" data-i="hint">글을 누르면 바로 다 나타나요</p>
+    <div class="ai" id="ai">
+      <div class="row"><input id="word" maxlength="12" placeholder="예: 무지개, 고래, 동백꽃, 귤, 별똥별" aria-label="장면에 넣을 단어"><button class="go" id="make" data-i="make">✨ 장면 만들기</button></div>
+      <div class="chips" id="chips"></div>
+      <div class="spin" id="spin" data-i="spin">할망이 장면을 그려 내는 중…</div>
+    </div>
+    <div id="choices"></div>
+    <div id="recap"></div>
+  </section>
+  <p class="foot"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.6v.2" stroke-linecap="round"/></svg><span data-ih="foot">제주 신화를 바탕으로 한 인터랙티브 스토리입니다.<br>이야기의 선택은 관람자가 합니다.</span></p>
+</main>
+<button class="bgmbtn vcbtn" id="voice" type="button" aria-label="본문 읽어주기 켜기 또는 끄기" title="본문 읽어주기" hidden></button>
+<button class="bgmbtn" id="bgm" type="button" aria-label="배경 음악 켜기 또는 끄기" title="배경 음악"></button>
+
+<script>
+/* ═══════════════════════════ 설정 ═══════════════════════════
+   AI 장면 서버 주소. 서버가 꺼져 있거나 키가 없으면 '오프라인 장면'이 대신 나옵니다. (?api=local → 내 컴퓨터 서버)   */
+const STORY_API = new URLSearchParams(location.search).get("api")==="local" ? "http://127.0.0.1:8000"
+                : "https://day3backend-production-11c38819.up.railway.app";
+
+/* ═══════════════════════════ 그림 엔진 ═══════════════════════════ */
+const H=540, HZ=372;
+const MOODS={
+ void:{sky:["#010207","#050818","#0a0f2c"],sun:null,sea:["#0a1432","#02050f"],far:"#0a1030",mid:"#0c1830",fog:"#25356a",rim:"#7f92d8",stars:1},
+ dawn:{sky:["#26286a","#d97c9c","#ffd8a0"],sun:{x:690,y:HZ-8,c:"#fff0c8",r:230},sea:["#3a6aa8","#101f4a"],far:"#8a78b0",mid:"#566e78",fog:"#ffd9cf",rim:"#ffe2b0"},
+ day:{sky:["#3a8ad6","#86c8f0","#e6f5ff"],sun:{x:770,y:118,c:"#fffbe0",r:200},sea:["#2fa4d0","#0a4684"],far:"#8db0d4",mid:"#4e9a68",fog:"#f2fbff",rim:"#fff6d0"},
+ golden:{sky:["#33449a","#f09a58","#ffe0a0"],sun:{x:770,y:HZ-34,c:"#fff2c0",r:250},sea:["#3a6ab0","#102a58"],far:"#9a86b8",mid:"#5a8a5a",fog:"#ffe9c8",rim:"#ffe2a0"},
+ dusk:{sky:["#181646","#9a467a","#f08a58"],sun:{x:170,y:HZ-6,c:"#ffc07a",r:210},sea:["#35508e","#0e1a42"],far:"#6a4a8a",mid:"#3e5a58",fog:"#f0a890",rim:"#ffc090"},
+ night:{sky:["#030614","#0c1442","#26306a"],sun:{x:190,y:104,c:"#eef2ff",r:130,moon:1},sea:["#14265e","#040a1e"],far:"#161e48",mid:"#183040",fog:"#4a5a9a",rim:"#a8b8ff",stars:1},
+ storm:{sky:["#12182c","#2e3a56","#5a6a88"],sun:null,sea:["#2a3a5a","#0a1226"],far:"#2a3452",mid:"#2a3a42",fog:"#7a88aa",rim:"#a8b8d8"},
+ mist:{sky:["#8ea6b6","#c8d8d8","#eef3ee"],sun:{x:480,y:150,c:"#ffffff",r:260},sea:["#6a98a8","#2a4a60"],far:"#a8bcc4",mid:"#6a9a88",fog:"#ffffff",rim:"#ffffff"},
+ ember:{sky:["#220c2c","#9a3a3a","#ffa84a"],sun:{x:480,y:HZ,c:"#ffb050",r:270},sea:["#4a2a4a","#140a1e"],far:"#5a2a4a",mid:"#3a2a2a",fog:"#ff9a60",rim:"#ffb878"},
+ deep:{sky:["#052a46","#0f6a88","#2aa8b4"],sun:{x:480,y:-20,c:"#d8fff4",r:300},sea:["#0f6a88","#062c48"],far:"#0b4a68",mid:"#0b4a68",fog:"#6adcd8",rim:"#bff6f0"}
+};
+const rnd=(i,k=0)=>{const v=Math.sin(i*127.1+k*311.7+13.37)*43758.5453;return v-Math.floor(v)};
+const P=(d,inner)=>`<g class="px" style="--d:${d}"><g>${inner}</g></g>`;
+
+function ridge(seed,base,amp,col,op=1){
+  const pts=[];for(let x=-60;x<=1020;x+=40){pts.push([x,base-amp*(.55*Math.sin(x/130+seed)+.3*Math.sin(x/57+seed*2.3)+.35)])}
+  let d=`M-60 ${H} L${pts[0][0]} ${pts[0][1]}`;
+  for(let i=1;i<pts.length;i++){const[x0,y0]=pts[i-1],[x1,y1]=pts[i];d+=` Q${x0} ${y0} ${(x0+x1)/2} ${(y0+y1)/2}`}
+  return `<path d="${d} L1020 ${H} Z" fill="${col}" opacity="${op}"/>`;
+}
+function clouds(m,n){let s="";
+  for(let i=0;i<n;i++){const x=(i*263+60)%1000,y=50+(i*71)%190,sc=.7+(i%3)*.35;
+    s+=`<g class="cloud" style="animation-duration:${55+i*19}s;animation-delay:-${i*11}s" opacity="${.28+(i%3)*.1}"><g transform="translate(${x} ${y}) scale(${sc})"><ellipse rx="115" ry="22" fill="${m.fog}"/><ellipse cx="-52" cy="-14" rx="62" ry="22" fill="${m.fog}"/><ellipse cx="32" cy="-21" rx="72" ry="26" fill="${m.fog}"/></g></g>`}
+  return `<g filter="url(#soft)">${s}</g>`}
+function stars(){let s="";for(let i=0;i<70;i++){const x=rnd(i)*960,y=rnd(i,1)*270;
+  s+=`<circle class="tw" style="animation-delay:${(i%11)*.27}s;animation-duration:${1.6+rnd(i,2)*2}s" cx="${x}" cy="${y}" r="${.6+rnd(i,3)*1.5}" fill="#fff"/>`}
+  return s}
+function sunGlow(sun){ if(!sun)return "";
+  let s=`<circle cx="${sun.x}" cy="${sun.y}" r="${sun.r}" fill="url(#sunG)"/>`;
+  s+= sun.moon ? `<circle cx="${sun.x}" cy="${sun.y}" r="34" fill="${sun.c}"/><circle cx="${sun.x-9}" cy="${sun.y-6}" r="6" fill="#c9d0ee" opacity=".6"/><circle cx="${sun.x+10}" cy="${sun.y+10}" r="4" fill="#c9d0ee" opacity=".5"/>`
+                : `<circle cx="${sun.x}" cy="${sun.y}" r="${Math.min(46,sun.r/5)}" fill="${sun.c}" opacity=".95"/>`;
+  return s}
+function rays(sun){ if(!sun)return ""; let s="";
+  for(let i=0;i<8;i++){const a0=(-18+i*24+rnd(i)*8)*Math.PI/180,a1=a0+.07+rnd(i,1)*.05,R=1300;
+    s+=`<polygon class="ray" style="animation-delay:-${i*.9}s" points="${sun.x},${sun.y} ${sun.x+Math.cos(a0)*R},${sun.y+Math.sin(a0)*R} ${sun.x+Math.cos(a1)*R},${sun.y+Math.sin(a1)*R}" fill="url(#rayG)"/>`}
+  return s}
+function hallasan(m,h){
+  const g="M40 10 C170 2 290 -64 392 -150 C428 -180 448 -196 470 -200 C486 -204 494 -204 510 -200 C532 -196 552 -180 588 -150 C690 -64 810 2 920 10 Z";
+  return `<g transform="translate(0 ${HZ} ) scale(1 ${h})"><path d="${g}" fill="url(#mt)"/>
+   <path d="M470 -200 C440 -150 410 -80 340 10 L40 10 C170 2 290 -64 392 -150 C428 -180 448 -196 470 -200Z" fill="#06101e" opacity=".26"/>
+   <path d="M510 -200 C532 -196 552 -180 588 -150 C690 -64 810 2 920 10 L720 10 C650 -40 580 -120 510 -200Z" fill="${m.rim}" opacity=".15"/>
+   <path d="M392 -150 C428 -180 448 -196 470 -200 C486 -204 494 -204 510 -200 C532 -196 552 -180 588 -150" stroke="${m.rim}" stroke-opacity=".5" stroke-width="2" fill="none"/>
+   <ellipse cx="490" cy="-199" rx="24" ry="4" fill="#173528" opacity=".7"/></g>
+   <ellipse cx="480" cy="${HZ+4}" rx="470" ry="26" fill="${m.fog}" opacity=".28" filter="url(#soft)"/>`}
+const OR=[[250,8,38,18],[330,10,30,14],[612,8,40,19],[704,10,32,14],[190,12,30,12],[772,12,32,13],[540,12,26,11],[400,12,24,10],[300,14,22,9],[664,14,24,10]];
+function orums(m,n,village,name){let s="";
+  for(let i=0;i<n;i++){const[o,y,rx,ry]=[OR[i][0],OR[i][1],OR[i][2],OR[i][3]];
+    s+=`<ellipse cx="${o}" cy="${HZ+y}" rx="${rx}" ry="${ry}" fill="url(#oru)"/><ellipse cx="${o+rx*.25}" cy="${HZ+y-ry*.35}" rx="${rx*.5}" ry="${ry*.3}" fill="${m.rim}" opacity=".13"/>`;
+    if(village&&i%2===0){const hx=o-rx*.1,hy=HZ+y+ry*.1;
+      s+=`<g><rect x="${hx-7}" y="${hy-6}" width="14" height="9" fill="#5a4630"/><path d="M${hx-10} ${hy-5} L${hx} ${hy-14} L${hx+10} ${hy-5}Z" fill="#c9a45c"/><rect class="glow" x="${hx-2.5}" y="${hy-3}" width="5" height="5" fill="#ffd27a"/><circle class="steam" style="animation-delay:-${i}s" cx="${hx+6}" cy="${hy-16}" r="3" fill="#fff" opacity=".5"/></g>`}}
+  if(name) s+=[[250,"다랑쉬"],[330,"용눈이"],[612,"새별"]].map(([x,t],i)=>`<text class="lab" style="animation-delay:${i*.9}s" x="${x}" y="${HZ-22}" text-anchor="middle" font-size="15" fill="#fff6d8" stroke="#000" stroke-opacity=".5" stroke-width="3" paint-order="stroke" font-family="Noto Serif KR,serif">${t}</text>`).join("");
+  return s}
+function sea(m,sun){
+  let s=`<rect x="-60" y="${HZ+4}" width="1080" height="${H-HZ}" fill="url(#sea)"/>`;
+  const wave=(y,c,o,cls)=>{let d=`M-240 ${y}`;for(let i=0;i<9;i++)d+=` q60 -12 120 0 t120 0`;return `<g class="${cls}" opacity="${o}"><path d="${d} V560 H-240 Z" fill="${c}"/></g>`};
+  s+=wave(HZ+12,"#ffffff",.07,"wave1")+wave(HZ+16,m.sea[0],.7,"wave1")+wave(HZ+44,m.sea[1],.65,"wave2");
+  if(sun){const x=Math.max(60,Math.min(900,sun.x)); for(let i=0;i<9;i++){const w=90-i*8;
+    s+=`<rect class="spk" style="animation-delay:-${i*.4}s" x="${x-w/2}" y="${HZ+10+i*15}" width="${w}" height="2.2" rx="1" fill="${sun.moon?'#dfe6ff':sun.c}"/>`}}
+  for(let i=0;i<26;i++){const x=rnd(i,5)*960,y=HZ+20+rnd(i,6)*150;
+    s+=`<rect class="spk" style="animation-delay:-${rnd(i,7)*3}s" x="${x}" y="${y}" width="${6+rnd(i,8)*14}" height="1.6" rx=".8" fill="#fff"/>`}
+  return s}
+function giant(o){
+  const x=o.x??300,sc=o.s??1,arms=o.arms||"down";
+  const armL=arms==="up"?"M-34 -262 Q-76 -330 -60 -410":arms==="reach"?"M-34 -262 Q-80 -280 -120 -250":"M-34 -262 Q-84 -170 -96 -62";
+  const armR=arms==="up"?"M34 -262 Q76 -330 60 -410":arms==="reach"?"M34 -262 Q80 -296 130 -330":"M34 -262 Q84 -170 96 -62";
+  const handL=arms==="up"?[-60,-412]:arms==="reach"?[-122,-248]:[-97,-56], handR=arms==="up"?[60,-412]:arms==="reach"?[132,-332]:[97,-56];
+  return `<g transform="translate(${x} ${HZ+52}) scale(${sc})"><g class="breathe">
+   <g class="hair"><path d="M-24 -318 C-52 -306 -64 -250 -58 -170 C-54 -110 -48 -60 -32 -4 L16 -8 C32 -70 48 -130 54 -190 C60 -262 46 -306 24 -318Z" fill="#090615"/><path d="M26 -300 C46 -260 50 -200 44 -150" stroke="#ffe2b0" stroke-opacity=".35" stroke-width="2" fill="none"/></g>
+   <path d="M-38 -214 Q0 -204 38 -214 L112 -6 Q0 24 -112 -6Z" fill="url(#cloth)"/>
+   <path d="M-20 -206 L-48 -2 M0 -204 L0 12 M22 -206 L50 -4" stroke="#8fb0ff" stroke-opacity=".18" stroke-width="2" fill="none"/>
+   <path d="M38 -214 L112 -6" stroke="${o.rim||'#ffe2b0'}" stroke-opacity=".6" stroke-width="2.4" fill="none"/>
+   <path d="M-32 -266 Q0 -278 32 -266 L38 -214 Q0 -204 -38 -214Z" fill="#273264"/>
+   <rect x="-8" y="-280" width="16" height="16" fill="#2a2038"/>
+   <path d="${armL}" stroke="#273264" stroke-width="17" stroke-linecap="round" fill="none"/><path d="${armR}" stroke="#2f3b72" stroke-width="17" stroke-linecap="round" fill="none"/>
+   <circle cx="${handL[0]}" cy="${handL[1]}" r="8" fill="#b98c70"/><circle cx="${handR[0]}" cy="${handR[1]}" r="8" fill="#b98c70"/>
+   <ellipse cx="0" cy="-300" rx="26" ry="29" fill="#120e26"/><path d="M-4 -326 Q22 -318 24 -292" stroke="#ffe2b0" stroke-opacity=".4" stroke-width="2" fill="none"/>
+   ${o.soil?`<path d="M-98 -58 Q0 -150 98 -58 Q0 -18 -98 -58Z" fill="#6a4a2c"/><path d="M-60 -90 Q0 -130 60 -90" stroke="#a87a44" stroke-width="5" fill="none" stroke-linecap="round"/><circle class="glow" cx="0" cy="-110" r="5" fill="#ffd98a"/>`:""}
+   <path class="scarf" d="M30 -262 C70 -272 100 -246 132 -268 S176 -300 206 -278" stroke="#e8a0a8" stroke-width="7" fill="none" stroke-linecap="round"/>
+  </g></g>`}
+function lying(o){ // 한라산 오른쪽 비탈을 따라 옆으로 누운 모습 (머리는 봉우리, 발은 바다)
+  return `<g transform="translate(0 ${HZ})"><g class="breathe">
+   <g class="hair"><path d="M476 -234 C440 -226 410 -186 378 -146 C326 -88 262 -34 190 -4 C272 -30 338 -80 392 -132 C432 -170 460 -200 490 -214Z" fill="#090615"/>
+     <path d="M470 -226 C436 -204 396 -150 338 -92" stroke="#ffe2b0" stroke-opacity=".35" stroke-width="2" fill="none"/></g>
+   <path d="M500 -226 C540 -222 572 -192 602 -166 C690 -96 810 -34 906 -20 L912 10 C810 0 690 -62 592 -136 C562 -160 534 -186 500 -200Z" fill="url(#cloth)"/>
+   <path d="M530 -206 C600 -176 640 -140 700 -104 C760 -70 830 -40 892 -26" stroke="#8fb0ff" stroke-opacity=".22" stroke-width="2" fill="none"/>
+   <path d="M500 -226 C540 -222 572 -192 602 -166 C690 -96 810 -34 906 -20" stroke="#ffe2b0" stroke-opacity=".6" stroke-width="2.4" fill="none"/>
+   <path d="M492 -220 C520 -214 540 -196 556 -176" stroke="#273264" stroke-width="15" stroke-linecap="round" fill="none"/><circle cx="560" cy="-172" r="7" fill="#b98c70"/>
+   <circle cx="478" cy="-214" r="25" fill="#150f2c"/><ellipse cx="492" cy="-210" rx="9" ry="12" fill="#b98c70" opacity=".55"/>
+   <ellipse cx="920" cy="-2" rx="16" ry="8" fill="#b98c70" opacity=".85"/></g>
+   ${o.splash?`<ellipse class="ripple" cx="930" cy="14" rx="60" ry="12" fill="none" stroke="#cfe9ff" stroke-width="3"/><ellipse class="ripple" style="animation-delay:-1.4s" cx="930" cy="14" rx="60" ry="12" fill="none" stroke="#cfe9ff" stroke-width="2"/>`:""}</g>`}
+function eyes(){return `<g class="blink"><path d="M360 300 Q430 250 500 300 Q430 335 360 300Z" fill="#1a1204"/><ellipse cx="432" cy="300" rx="26" ry="24" fill="#ffcf7a"/><circle cx="432" cy="300" r="11" fill="#2a1a04"/><circle cx="440" cy="292" r="5" fill="#fff"/></g>
+   <g class="blink"><path d="M540 300 Q610 250 680 300 Q610 335 540 300Z" fill="#1a1204"/><ellipse cx="610" cy="300" rx="26" ry="24" fill="#ffcf7a"/><circle cx="610" cy="300" r="11" fill="#2a1a04"/><circle cx="618" cy="292" r="5" fill="#fff"/></g>
+   <ellipse cx="520" cy="300" rx="260" ry="90" fill="#ffcf7a" opacity=".12" filter="url(#soft)"/>`}
+function pot(o){const cx=o.px??480;
+  return `<g transform="translate(${cx} ${HZ+86})"><ellipse cx="0" cy="22" rx="150" ry="22" fill="#ff9a3c" opacity=".35" class="glow" filter="url(#soft)"/>
+   <g class="flame"><path d="M-46 14 Q-60 -22 -34 -40 Q-36 -14 -20 -10 Q-14 -34 0 -48 Q8 -22 22 -16 Q40 -26 38 -38 Q64 -14 46 14Z" fill="url(#flame)"/></g>
+   <path d="M-96 -92 L96 -92 L118 -4 Q0 26 -118 -4Z" fill="#14100e" stroke="#e6c68a" stroke-opacity=".35" stroke-width="2"/><ellipse cx="0" cy="-92" rx="96" ry="15" fill="${o.potSafe?'#f4e0a8':'#8a6338'}"/>
+   <path d="M60 -110 L130 -170" stroke="#6a4a2c" stroke-width="7" stroke-linecap="round"/>
+   ${[-46,0,46].map((x,i)=>`<circle class="steam" style="animation-delay:${-i*1.1}s" cx="${x}" cy="-108" r="15" fill="#fff" opacity=".5" filter="url(#soft)"/>`).join("")}</g>`}
+function stones(n){let s="";for(let i=0;i<n;i++){const x=70+i*(820/(n-1||1)),y=HZ-6+((i*37)%30),rx=14+(i%4)*3,ry=20+(i%3)*6;
+  s+=`<g><ellipse cx="${x}" cy="${y}" rx="${rx}" ry="${ry}" fill="#6c7080"/><ellipse cx="${x-rx*.3}" cy="${y-ry*.35}" rx="${rx*.4}" ry="${ry*.3}" fill="#d0d4e4" opacity=".4"/><circle class="drop" style="animation-delay:${-(i%7)*.45}s" cx="${x+rx*.4}" cy="${y-ry*.25}" r="2.6" fill="#bfe3ff"/></g>`}return s}
+function silk(n){const col=["#e8a0a8","#f4d58a","#9fd8c0","#a7b8f0","#f2b27a","#d6a6e6"];let s="";
+  for(let i=0;i<n;i++){const x=70+i*(820/Math.max(1,n-1));
+    s+=`<path class="sway" style="animation-delay:-${i*.55}s;animation-duration:${4+i%3}s" d="M${x} -20 C${x+34} 70 ${x-34} 150 ${x} 240 S${x+26} 330 ${x} 400" stroke="${col[i%6]}" stroke-width="11" fill="none" opacity=".85" stroke-linecap="round"/>`}return s}
+function mainland(m){return `<path d="M700 ${HZ+8} Q770 ${HZ-40} 840 ${HZ-18} T990 ${HZ-34} V${HZ+8}Z" fill="${m.far}" opacity=".95"/><circle class="glow" cx="800" cy="${HZ-6}" r="2.4" fill="#ffe29a"/><circle class="glow" cx="860" cy="${HZ-12}" r="2.4" fill="#ffe29a"/><circle class="glow" cx="925" cy="${HZ-16}" r="2.4" fill="#ffe29a"/>`}
+function bridge(){const d=`M690 ${HZ+4} C790 ${HZ-160} 890 ${HZ-160} 980 ${HZ-30}`;
+  return `<path d="${d}" stroke="#ffd98a" stroke-width="12" fill="none" opacity=".9" filter="url(#soft)"/><path class="dash" d="${d}" stroke="#fff4cc" stroke-width="4" fill="none"/>`+
+   [.15,.3,.45,.6,.75,.9].map((t,i)=>{const x=690+290*t,y=(1-t)*(1-t)*(1-t)*(HZ+4)+3*(1-t)*(1-t)*t*(HZ-160)+3*(1-t)*t*t*(HZ-160)+t*t*t*(HZ-30);return `<circle class="glow" style="animation-delay:${-i*.4}s" cx="${x}" cy="${y-8}" r="5" fill="#ffe9a8"/>`}).join("")}
+function boats(n){let s="";const col=["#e8a0a8","#f4d58a","#9fd8c0","#a7b8f0","#f2b27a"];
+  for(let i=0;i<n;i++){const x=120+i*150+(i%2)*20,y=HZ+40+(i%3)*26,c=col[i%5];
+    s+=`<g class="sway" style="animation-delay:-${i*.6}s;animation-duration:${4+i%3}s"><path d="M${x-22} ${y} L${x+22} ${y} L${x+14} ${y+10} L${x-14} ${y+10}Z" fill="#6a4a2c"/><path d="M${x} ${y-4} L${x} ${y-44} L${x+24} ${y-8}Z" fill="${c}"/><path d="M${x} ${y-4} L${x} ${y-36} L${x-16} ${y-8}Z" fill="${c}" opacity=".8"/></g>`}
+  return s}
+function lights(n){let s="";for(let i=0;i<n;i++){const x=70+rnd(i,2)*820,y=HZ+60+rnd(i,3)*110;
+  s+=`<circle class="glow" style="animation-delay:${-rnd(i,4)*2}s" cx="${x}" cy="${y}" r="6" fill="#ffd27a"/><circle cx="${x}" cy="${y}" r="20" fill="#ffd27a" opacity=".2" filter="url(#soft)"/>`}return s}
+function foreground(kind){let s="";
+  if(kind==="rocks") s=`<path d="M-20 540 L-20 480 Q40 440 110 470 Q150 450 200 500 L220 540Z" fill="#05070f"/><path d="M760 540 Q800 480 860 490 Q920 470 980 520 L980 540Z" fill="#05070f"/>`;
+  else{ for(let side=0;side<2;side++)for(let i=0;i<17;i++){const x=side?740+i*14:-10+i*13,h=50+rnd(i,side+9)*85,dx=(rnd(i,side+3)-.5)*34;
+    s+=`<path class="grass" style="animation-delay:-${rnd(i,6)*3}s;animation-duration:${3+rnd(i,2)*2}s" d="M${x} 546 Q${x+dx*.4} ${546-h*.6} ${x+dx} ${546-h}" stroke="#05070f" stroke-width="${4+rnd(i,4)*3}" fill="none" stroke-linecap="round"/>`;
+    if(kind==="flowers"&&i%2===0) s+=`<circle class="glow" cx="${x+dx}" cy="${546-h}" r="4.5" fill="${side?'#ff9aae':'#ffd23a'}"/>`}}
+  return s}
+function particles(type,n){let s="";
+  for(let i=0;i<n;i++){const x=rnd(i,1)*960,y=rnd(i,2)*540,dx=(rnd(i,3)-.5)*90,dy=(rnd(i,4)-.5)*70,dl=-rnd(i,5)*8;
+    if(type==="firefly") s+=`<circle class="ff" style="animation-delay:${dl}s;animation-duration:${5+rnd(i,6)*5}s;--dx:${dx}px;--dy:${dy}px" cx="${x}" cy="${240+rnd(i,2)*280}" r="7" fill="url(#ffG)"/>`;
+    else if(type==="petal") s+=`<ellipse class="pt" style="animation-delay:${dl*1.4}s;animation-duration:${8+rnd(i,6)*6}s;--dx:${dx*1.6}px" cx="${x}" cy="0" rx="4.4" ry="2.2" fill="${i%3?'#ffd23a':'#ff9aae'}"/>`;
+    else if(type==="spark") s+=`<circle class="sp" style="animation-delay:${dl*.5}s;animation-duration:${3+rnd(i,6)*3}s;--dx:${dx}px" cx="${300+rnd(i,2)*360}" cy="${HZ+70+rnd(i,7)*110}" r="${1.4+rnd(i,8)*2}" fill="#ffb050"/>`;
+    else if(type==="bubble") s+=`<circle class="bb" style="animation-delay:${dl}s;animation-duration:${6+rnd(i,6)*6}s;--dx:${dx*.5}px" cx="${x}" cy="${380+rnd(i,2)*170}" r="${3+rnd(i,8)*8}" fill="#fff" fill-opacity=".1" stroke="#fff" stroke-opacity=".55"/>`;
+    else if(type==="dust") s+=`<circle class="du" style="animation-delay:${dl}s;animation-duration:${9+rnd(i,6)*6}s;--dx:${dx}px;--dy:${dy}px" cx="${x}" cy="${y}" r="${1+rnd(i,8)*2}" fill="#fff2c0"/>`;
+    else if(type==="bird"&&i<5) s+=`<g class="bird" style="animation-duration:${26+i*6}s;animation-delay:-${i*7}s"><g transform="translate(0 ${70+i*34+rnd(i,2)*20})"><path class="flap" d="M-10 0 Q-5 -7 0 0 Q5 -7 10 0" stroke="#1a1a30" stroke-width="2" fill="none" stroke-linecap="round" opacity=".7"/></g></g>`;
+    else if(type==="star"&&i<3) s+=`<g class="shoot" style="animation-delay:-${i*3.1}s;animation-duration:${8+i*3}s"><path d="M${620+i*120} ${30+i*40} l50 -28" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity=".9"/></g>`;
+  }
+  return s}
+
+function fxOnly(a){ // 그림(사진)이 있는 장면: 배경은 그림, 위에는 반딧불·꽃잎 같은 움직이는 입자만 얹는다
+  return `<svg viewBox="0 0 960 540" preserveAspectRatio="xMidYMid slice" aria-hidden="true" style="pointer-events:none"><defs>
+   <radialGradient id="ffG"><stop offset="0" stop-color="#fff6b0"/><stop offset=".3" stop-color="#ffe070" stop-opacity=".6"/><stop offset="1" stop-color="#ffe070" stop-opacity="0"/></radialGradient></defs>
+   <g class="cam">${a.p?P(14,particles(a.p[0],Math.ceil(a.p[1]*.7))):""}</g></svg>`}
+function art(a){
+  const m=MOODS[a.mood||"day"], sun=a.sun===false?null:(a.sun||m.sun);
+  const hasSea=a.sea!==false;
+  let s=`<svg viewBox="0 0 960 540" preserveAspectRatio="xMidYMid slice" role="img" aria-label="${a.alt||""}"><defs>
+   <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${m.sky[0]}"/><stop offset=".55" stop-color="${m.sky[1]}"/><stop offset="1" stop-color="${m.sky[2]}"/></linearGradient>
+   <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${m.sea[0]}"/><stop offset="1" stop-color="${m.sea[1]}"/></linearGradient>
+   <linearGradient id="mt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c4dcc8"/><stop offset=".35" stop-color="#6a9a70"/><stop offset="1" stop-color="#244c3a"/></linearGradient>
+   <linearGradient id="oru" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#86b878"/><stop offset="1" stop-color="#2c5a42"/></linearGradient>
+   <linearGradient id="cloth" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34569a"/><stop offset="1" stop-color="#121f44"/></linearGradient>
+   <linearGradient id="flame" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff7a1a"/><stop offset="1" stop-color="#fff0a0"/></linearGradient>
+   <radialGradient id="sunG"><stop offset="0" stop-color="${sun?sun.c:'#fff'}" stop-opacity=".9"/><stop offset=".4" stop-color="${sun?sun.c:'#fff'}" stop-opacity=".25"/><stop offset="1" stop-color="${sun?sun.c:'#fff'}" stop-opacity="0"/></radialGradient>
+   <radialGradient id="ffG"><stop offset="0" stop-color="#fff6b0"/><stop offset=".3" stop-color="#ffe070" stop-opacity=".6"/><stop offset="1" stop-color="#ffe070" stop-opacity="0"/></radialGradient>
+   ${sun?`<radialGradient id="rayG" gradientUnits="userSpaceOnUse" cx="${sun.x}" cy="${sun.y}" r="900"><stop offset="0" stop-color="${sun.c}" stop-opacity=".5"/><stop offset="1" stop-color="${sun.c}" stop-opacity="0"/></radialGradient>`:""}
+   <filter id="soft" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="7"/></filter></defs><g class="cam">`;
+  s+=`<rect x="-60" y="-60" width="1080" height="660" fill="url(#sky)"/>`;
+  if(m.stars||a.stars) s+=stars();
+  s+=P(1,sunGlow(sun));
+  if(a.rays!==false&&sun&&!sun.moon&&a.mood!=="void") s+=rays(sun);
+  s+=P(2,clouds(m,a.clouds??4));
+  if(a.seam) s+=`<rect x="-60" y="268" width="1080" height="6" fill="#ffd98a" opacity=".4" filter="url(#soft)"/><rect x="-60" y="270" width="1080" height="1.4" fill="#ffe9b0" opacity=".7"/>`;
+  if(a.far!==false) s+=P(3,ridge(1,HZ-6,64,m.far,.9)+ridge(2.7,HZ+4,40,m.mid,.8));
+  if(a.mainland) s+=P(3,mainland(m));
+  if(a.mount) s+=P(5,hallasan(m,a.mount));
+  if(a.orum) s+=P(8,orums(m,a.orum,a.village,a.name));
+  if(hasSea) s+=sea(m,sun);
+  if(a.isle) s+=`<ellipse cx="${a.isle}" cy="${HZ+10}" rx="42" ry="12" fill="#2a4634"/>`;
+  if(a.bridge) s+=bridge();
+  if(a.boats) s+=P(9,boats(a.boats));
+  if(a.stones) s+=P(8,stones(a.stones));
+  if(a.silk) s+=P(11,`<g transform="translate(0 0)">${silk(a.silk)}</g>`);
+  if(a.fig==="eyes") s+=P(6,eyes());
+  if(a.fig==="stand") s+=P(10,giant(a));
+  if(a.fig==="lie") s+=P(9,lying(a));
+  if(a.pot) s+=P(11,pot(a));
+  if(a.lights) s+=P(9,lights(a.lights));
+  s+=`<ellipse cx="480" cy="${HZ+30}" rx="620" ry="28" fill="${m.fog}" opacity=".16" filter="url(#soft)"/>`;
+  if(a.fg!=="none") s+=P(22,foreground(a.fg||"grass"));
+  if(a.p) s+=P(14,particles(a.p[0],a.p[1]));
+  return s+`</g></svg>`}
+
+/* ═══════════════════════════ 이야기 (장 · 장면 · 선택) ═══════════════════════════
+   choices: [글, 다음장면, 성향(warm 따뜻함 / curious 호기심 / brave 용기)]  */
+const TR={warm:"따뜻함",curious:"호기심",brave:"용기"};
+const S={
+ start:{title:"설문대할망",text:["아주 오랜 옛날, 제주는 섬이 아니라 끝없이 펼쳐진 푸른 바다였습니다.","그 바다 한가운데서, 하늘만큼 키가 큰 여신 설문대할망이 천천히 눈을 떴습니다.","이야기는 이미 오래전부터 전해 오지만, 이번 이야기가 어디로 흘러갈지는 당신이 고릅니다."],
+  art:{mood:"dawn",alt:"새벽 바다 위에 선 거인",fig:"stand",x:480,s:1.1,arms:"down",clouds:5,fg:"rocks"},choices:[["이야기를 시작한다","c1_dark"]]},
+ c1_dark:{ch:["제1장","아직 이름 없던 바다"],title:"하늘과 땅이 붙어 있던 때",
+  text:["세상은 온통 캄캄했습니다. 하늘과 땅이 한 덩어리로 붙어 있어서, 빛 한 줄기 바람 한 점 들어갈 틈이 없었지요.","그 어둠 속에서 잠이 깬 할망이 두 눈을 깜박였습니다. 누구도 본 적 없는 커다랗고 따뜻한 눈이었습니다.","“답답하구나. 이 세상은 왜 이렇게 좁을까?” 할망이 낮게 중얼거렸습니다."],
+  art:{mood:"void",alt:"어둠 속에서 빛나는 두 눈",fig:"eyes",sea:false,far:false,seam:true,rays:false,clouds:0,fg:"none",p:["dust",16]},
+  choices:[["손을 뻗어 위를 힘껏 밀어 본다","c1_push","brave"],["숨을 죽이고 소리에 귀를 기울여 본다","c1_listen","curious"]]},
+ c1_listen:{title:"어둠 속의 소리",
+  text:["귀를 기울이자 아주 멀리서 쏴아, 하는 소리가 들렸습니다. 어둠 아래에 끝없는 물이 출렁이고 있었어요.","소리는 마치 “여기야, 여기!” 하고 부르는 것 같았습니다. 할망의 가슴이 두근두근 뛰기 시작했습니다.","“저 위에는 무엇이 있을까?” 궁금함이 용기가 되어 할망의 팔에 힘이 차올랐습니다."],
+  art:{mood:"void",alt:"어둠 속 먼 파도 소리",sea:true,far:false,rays:false,clouds:0,stars:true,fig:"eyes",p:["firefly",14],fg:"none"},
+  choices:[["두 팔로 하늘을 밀어 올린다","c1_push","brave"]]},
+ c1_push:{title:"하늘이 열리다",
+  text:["할망이 두 손으로 있는 힘껏 하늘을 밀어 올렸습니다. 우르르, 쿠르릉! 하늘과 땅이 갈라지며 어둠에 금이 갔습니다.","그 틈으로 첫 빛이 쏟아졌습니다. 금빛이 파도 위에서 일렁이고, 바다는 처음으로 자기 색깔을 드러냈습니다.","아주 멀리 수평선이 그어지고, 그 위로 높고 드넓은 하늘이 활짝 펼쳐졌습니다."],
+  art:{mood:"dawn",alt:"하늘이 열리며 빛이 쏟아진다",fig:"stand",x:330,s:1.05,arms:"up",p:["dust",20],clouds:6,fg:"rocks"},
+  choices:[["눈을 감고 따스한 빛을 온몸으로 느껴 본다","c1_feel","warm"],["빛을 향해 성큼성큼 걸어 나간다","c1_walk","brave"]]},
+ c1_feel:{title:"첫 번째 아침",
+  text:["빛은 따뜻했습니다. 할망의 뺨에, 어깨에, 발끝에 포근한 기운이 내려앉았습니다.","“아, 이런 게 아침이구나.” 할망은 저도 모르게 웃음이 나왔습니다. 혼자여도 외롭지 않은 아침이었습니다.","바다 위에서 반짝이는 윤슬이 할망에게 인사를 건네는 듯했습니다."],
+  art:{mood:"golden",alt:"따뜻한 아침 햇살",fig:"stand",x:300,s:1,arms:"down",p:["dust",24],fg:"rocks"},
+  choices:[["빛을 따라 걸어 나간다","c1_walk"]]},
+ c1_walk:{title:"바다를 걷다",
+  text:["철벅, 철벅. 할망이 걸을 때마다 파도가 발목에서 부서졌습니다. 아무리 깊은 바다도 할망의 무릎까지밖에 오지 않았지요.","한참을 걷던 할망이 문득 걸음을 멈췄습니다. 사방이 온통 물이고, 발 디딜 땅 하나 없었습니다.","“쉴 곳이 있으면 좋겠구나. 아니, 나 말고 다른 누군가도 쉴 수 있는 곳이면 더 좋겠어.”"],
+  art:{mood:"day",alt:"바다를 걷는 할망",fig:"stand",x:260,s:1,arms:"down",p:["bird",5],fg:"rocks"},
+  choices:[["물속에 손을 넣어 땅을 찾아본다","c2_dive","curious"],["치마폭을 활짝 펼쳐 흙을 담을 준비를 한다","c2_soil","warm"]]},
+ c2_dive:{ch:["제2장","섬을 빚다"],title:"바다 밑의 흙",
+  text:["할망이 팔을 깊이 넣자 바다 밑의 세상이 손끝에 닿았습니다. 반짝이는 조개, 하늘하늘 흔들리는 해초, 그리고 단단하고 따뜻한 흙.","“이거면 되겠다!” 할망은 한 움큼, 또 한 움큼 흙을 퍼 올렸습니다. 손바닥 사이로 작은 물고기들이 놀라 달아났지요."],
+  art:{mood:"deep",alt:"푸른 바다 밑",sea:false,far:false,clouds:0,rays:true,p:["bubble",18],fg:"none"},
+  choices:[["흙을 치마폭에 가득 담는다","c2_soil"]]},
+ c2_soil:{ch:["제2장","섬을 빚다"],title:"치마폭 가득 흙을 담고",
+  text:["할망은 치마폭을 펼쳐 바다 밑의 흙을 가득 담았습니다. 치마가 불룩해지고, 걸음마다 흙이 출렁였지요.","바다 한가운데에 이르자 할망은 조심조심 치마를 기울이기 시작했습니다.","“어떤 모양으로 만들어 볼까?”"],
+  art:{mood:"day",alt:"흙을 안고 선 할망",fig:"stand",x:300,s:1,soil:true,p:["dust",16],fg:"rocks"},
+  choices:[["하늘에 닿을 만큼 높이 쌓는다","c2_tall","brave"],["넓고 포근하게 둥글게 쌓는다","c2_soft","warm"]]},
+ c2_tall:{title:"하늘 가까이 솟은 산",
+  text:["흙무더기가 쑥쑥 올라갔습니다. 구름을 뚫고 하늘 가까이까지 솟은 그 산이 바로 한라산입니다.","꼭대기에는 움푹 파인 곳이 생겼는데, 훗날 맑은 물이 고여 백록담이라 불리게 됩니다.","할망은 이마에 손을 대고 올려다보며 뿌듯하게 웃었습니다."],
+  art:{mood:"golden",alt:"하늘 가까이 솟은 한라산",mount:1,fig:"stand",x:130,s:.7,p:["bird",5],clouds:6},
+  choices:[["치마를 탈탈 털어 남은 흙을 뿌린다","c2_orum"]]},
+ c2_soft:{title:"어머니의 품 같은 산",
+  text:["할망은 손바닥으로 흙을 토닥토닥 다독였습니다. 가파르지 않고 넉넉하게 펼쳐진 한라산이 만들어졌습니다.","그 품이 얼마나 넓은지, 훗날 사람들은 한라산을 ‘어머니의 산’이라고 부르게 됩니다.","할망은 완성된 산을 쓰다듬으며 나직이 흥얼거렸습니다."],
+  art:{mood:"golden",alt:"넉넉한 한라산",mount:.82,fig:"stand",x:130,s:.7,p:["petal",14],clouds:5},
+  choices:[["치마를 탈탈 털어 남은 흙을 뿌린다","c2_orum"]]},
+ c2_orum:{title:"삼백육십여 개의 오름",
+  text:["할망이 치마를 탈탈 털자 남은 흙이 섬 곳곳에 흩어졌습니다. 그런데 오래 입은 할망의 치마는 군데군데 구멍이 나 있었습니다. 걸어 다니는 동안 구멍으로 흙이 졸졸 흘러내렸지요.","흘러내린 흙은 섬 구석구석에 작고 동글한 봉우리가 되었습니다. 그 수가 무려 삼백육십여 개, 바로 제주의 오름입니다.","할망은 오름 하나하나를 살펴보며 흐뭇하게 웃었습니다."],
+  art:{mood:"golden",alt:"오름이 가득한 섬",mount:1,orum:10,fig:"stand",x:110,s:.72,p:["dust",22],fg:"flowers"},
+  choices:[["오름마다 이름을 불러 준다","c2_name","curious"],["오름 위에 꽃씨를 뿌려 준다","c2_seed","warm"]]},
+ c2_name:{title:"이름을 얻은 오름",
+  text:["“너는 다랑쉬, 너는 용눈이, 너는 새별!” 할망이 이름을 불러 줄 때마다 오름이 으쓱으쓱 솟아오르는 듯했습니다.","이름을 얻은 오름들은 저마다 다른 모양과 표정으로 섬을 가득 채웠습니다. 이름이 있으니 이제 누구든 찾아올 수 있겠지요.","섬은 더 이상 이름 없는 땅이 아니었습니다."],
+  art:{mood:"golden",alt:"이름이 붙은 오름들",mount:1,orum:10,name:true,fig:"stand",x:110,s:.72,p:["firefly",14],fg:"flowers"},
+  choices:[["한라산 품에 안겨 쉬어 본다","c2_rest"]]},
+ c2_seed:{title:"꽃이 핀 섬",
+  text:["할망이 손끝으로 꽃씨를 뿌리자 노란 유채꽃이 파도처럼 번지고, 붉은 동백이 불꽃처럼 피어났습니다.","오름마다 다른 꽃이 피어, 섬은 한 폭의 수놓은 보자기처럼 아름다워졌습니다.","바람이 꽃잎을 싣고 바다 위로 사뿐사뿐 날아갔습니다."],
+  art:{mood:"golden",alt:"꽃이 가득 핀 오름",mount:1,orum:10,fig:"stand",x:110,s:.72,p:["petal",26],fg:"flowers"},
+  choices:[["한라산 품에 안겨 쉬어 본다","c2_rest"]]},
+ c2_rest:{title:"산을 베고 눕다",
+  text:["일을 마친 할망은 한라산 봉우리를 베개 삼아 길게 누웠습니다. 두 발은 바다 건너 관탈섬에 걸쳤지요.","포근한 산, 따뜻한 바람, 하나둘 돋아나는 별. 할망은 오랜만에 깊게 숨을 내쉬었습니다.","“이만하면 정말 좋은 섬이구나.”"],
+  art:{mood:"dusk",alt:"한라산을 베고 누운 할망",mount:1,orum:8,fig:"lie",isle:880,p:["firefly",12],stars:true,fg:"grass"},
+  choices:[["발을 담그고 첨벙첨벙 물장구를 친다","c2_splash","brave"],["누운 채 별을 하나하나 세어 본다","c2_sky","curious"]]},
+ c2_splash:{title:"첨벙첨벙 물장구",
+  text:["첨벙! 할망의 발짓에 바다가 출렁이고, 튀어 오른 물방울이 별처럼 섬 곳곳에 흩어졌습니다.","물방울이 떨어진 자리마다 맑은 샘물이 퐁퐁 솟아올랐습니다. 훗날 사람들이 마실 소중한 물이었지요.","할망은 깔깔 웃으며 한 번 더 발을 굴렀습니다."],
+  art:{mood:"dusk",alt:"물장구로 튀는 물방울",mount:1,orum:8,fig:"lie",splash:true,isle:880,p:["bubble",16],fg:"grass"},
+  choices:[["일어나 섬을 둘러본다","c3_people"]]},
+ c2_sky:{title:"별을 세는 밤",
+  text:["하나, 둘, 셋… 할망이 별을 셀 때마다 별빛이 한 줄기씩 섬 위로 내려앉았습니다.","“언젠가 이 섬에 누군가 찾아오면, 이 별들을 함께 세어 주어야지.” 할망은 소원처럼 중얼거렸습니다.","그때 별똥별 하나가 긴 꼬리를 그으며 바다로 떨어졌습니다."],
+  art:{mood:"night",alt:"별이 가득한 밤하늘",mount:1,orum:8,fig:"lie",isle:880,p:["star",3],fg:"grass"},
+  choices:[["아침이 되어 섬을 둘러본다","c3_people"]]},
+ c3_people:{ch:["제3장","섬에 온 사람들"],title:"섬에 온 사람들",
+  text:["시간이 흘러 섬에 하나둘 사람들이 찾아왔습니다. 오름 아래 초가집이 들어서고, 굴뚝마다 저녁 연기가 피어올랐습니다.","사람들은 산처럼 커다란 할망을 올려다보며 처음에는 겁을 냈습니다. 하지만 할망이 환하게 웃자 어느새 곁으로 모여들었지요.","돌담을 쌓고 밭을 일구며, 섬은 점점 사람의 냄새로 따뜻해졌습니다."],
+  art:{mood:"golden",alt:"마을이 생긴 섬",mount:1,orum:10,village:true,fig:"stand",x:110,s:.75,fg:"flowers"},
+  choices:[["사람들의 이야기를 귀 기울여 듣는다","c3_listen","warm"],["사람들을 손바닥에 올려 섬을 구경시켜 준다","c3_palm","curious"]]},
+ c3_listen:{title:"저녁 마당의 이야기",
+  text:["할망은 몸을 낮추고 사람들의 이야기를 들었습니다. 바다에서 고기를 잡는 이야기, 돌담을 쌓는 이야기, 바람 센 밤에 아이를 재우는 이야기.","이야기를 들을수록 할망은 이 섬이 얼마나 소중한지 깨달았습니다.","사람들의 웃음소리가 오름 사이로 따뜻하게 퍼져 갔습니다."],
+  art:{mood:"dusk",alt:"저녁 무렵의 마을",mount:1,orum:10,village:true,fig:"stand",x:110,s:.75,p:["firefly",16],fg:"grass"},
+  choices:[["사람들에게 소원을 물어본다","c3_wish"]]},
+ c3_palm:{title:"할망의 손바닥 위에서",
+  text:["할망이 커다란 손바닥을 내밀자 사람들이 조심조심 올라탔습니다. 할망은 하늘 높이 손을 들어 올렸지요.","“저기 봐요, 파도 위에 햇살이 부서져요!” 사람들은 처음 보는 섬의 모습에 탄성을 질렀습니다.","오름과 바다가 한눈에 펼쳐진 그날을 아이들은 오래도록 잊지 못했습니다."],
+  art:{mood:"day",alt:"하늘 높이 올린 손바닥",mount:1,orum:10,village:true,fig:"stand",x:140,s:1,arms:"reach",fg:"none"},
+  choices:[["사람들을 내려 주며 소원을 물어본다","c3_wish"]]},
+ c3_wish:{title:"육지로 가는 다리",
+  text:["할망이 소원을 묻자, 사람들이 모여 입을 모았습니다. “할망, 우리는 육지가 그리워요. 바다를 건너갈 다리를 놓아 주실 수 있을까요?”","할망은 잠시 생각하다 말했습니다. “좋다. 내 낡은 속옷을 명주 백 통으로 새로 지어 준다면, 육지까지 튼튼한 다리를 놓아 주마.”","그런데 할망에게는 또 다른 걱정이 있었습니다. 산속에서 자라는 오백 명의 아들들이었지요."],
+  art:{mood:"dusk",alt:"육지가 멀리 보이는 저녁 바다",mount:1,orum:10,village:true,mainland:true,fig:"stand",x:140,s:.8,p:["firefly",12],fg:"grass"},
+  choices:[["사람들을 도와 명주를 모으러 나선다","c3_silk","warm"],["할망 곁에 남아 오백 아들 이야기를 듣는다","c4_sons","curious"]]},
+ c3_silk:{title:"한 통씩, 한 통씩",
+  text:["마을마다 명주를 모으기 시작했습니다. 한 통, 두 통… 집집마다 아껴 둔 고운 천이 모였습니다.","하지만 날이 갈수록 모으기가 어려워졌습니다. 아흔 통, 아흔여섯 통… 드디어 아흔아홉 통이 모였습니다.","이제 단 한 통, 마지막 한 통만 남았습니다."],
+  art:{mood:"dusk",alt:"하늘에서 늘어지는 명주",mount:1,orum:10,village:true,silk:6,mainland:true,p:["dust",18],fg:"grass"},
+  choices:[["마을 사람들과 함께 밤새 베를 짠다","c3_weave","warm"],["아흔아홉 통이라도 일단 할망께 건넨다","c3_ninety","brave"]]},
+ c3_weave:{set:"e_bridge",title:"밤새 짠 마지막 한 통",
+  text:["사람들은 불을 밝히고 둘러앉아 밤새 베를 짰습니다. 아이는 실을 잡고, 어른은 북을 던지고, 노인은 노래를 불렀지요.","동이 틀 무렵, 마침내 마지막 한 통이 완성되었습니다. 백 통이 모두 채워진 것입니다.","사람들은 서로의 손을 맞잡고 환호했습니다. 이제 할망 앞에 약속의 천을 펼칠 차례였습니다."],
+  art:{mood:"night",alt:"밤새 베를 짜는 마을",mount:1,orum:10,village:true,silk:6,p:["firefly",20],fg:"grass"},
+  choices:[["할망 앞에 명주 백 통을 펼친다","ai"]]},
+ c3_ninety:{set:"e_ninety",title:"아흔아홉 통의 약속",
+  text:["아흔아홉 통의 명주가 할망 앞에 쌓였습니다. 할망은 부지런히 속옷을 짓기 시작했지만, 한 통이 모자라 끝내 완성하지 못했습니다.","할망은 아쉬운 듯 웃었습니다. 그래도 사람들의 정성은 충분히 전해졌지요.","약속은 약속이었기에, 할망은 조용히 먼 바다를 바라보았습니다."],
+  art:{mood:"dusk",alt:"쌓인 명주를 바라보는 할망",mount:1,orum:10,village:true,silk:4,mainland:true,fig:"stand",x:130,s:.85,p:["dust",14],fg:"grass"},
+  choices:[["할망 곁에 가만히 앉는다","ai"]]},
+ c4_sons:{ch:["제3장","오백 아들의 이야기"],title:"흉년이 든 해",
+  text:["할망에게는 오백 명의 아들이 있었습니다. 장난꾸러기에 먹보들이었지만, 할망에게는 세상에서 가장 귀한 보물이었지요.","그런데 어느 해 심한 흉년이 들었습니다. 들에는 곡식이 마르고 아들들은 배고프다며 울상이었습니다.","할망은 산자락에 큰 가마솥을 걸고 죽을 끓이기로 했습니다."],
+  art:{mood:"ember",alt:"큰 가마솥이 걸린 산자락",mount:1,orum:6,pot:true,p:["spark",16],fg:"grass"},
+  choices:[["솥을 직접 저으러 가까이 다가간다","c4_pot","brave"],["아들들을 불러 함께 죽을 끓인다","c4_together","warm"]]},
+ c4_pot:{set:"e_stones",title:"김이 오르는 가마솥",
+  text:["할망은 팔을 걷어붙이고 솥을 저었습니다. 김이 모락모락 오르고 구수한 냄새가 산을 넘었지요.","너무 열심히 젓던 할망은 그만 발이 미끄러져 커다란 솥 속으로 빠지고 말았습니다.","솥 안에서는 죽이 보글보글 끓고 있었고, 산에서는 아들들이 돌아오는 소리가 들려왔습니다."],
+  art:{mood:"ember",alt:"끓어오르는 가마솥",mount:1,orum:6,pot:true,p:["spark",24],fg:"rocks"},
+  choices:[["이야기를 조용히 지켜본다","ai"]]},
+ c4_together:{set:"e_porridge",title:"모두 함께 끓인 죽",
+  text:["할망이 큰 소리로 아들들을 불렀습니다. 오백 명의 아들이 우르르 몰려와 한 명은 불을 지피고, 한 명은 물을 길어 오고, 또 한 명은 솥을 저었지요.","많은 손이 모이니 죽은 금세 끓어올랐고, 아무도 다치지 않았습니다.","구수한 냄새가 마을까지 퍼져, 이웃들도 그릇을 들고 모여들었습니다."],
+  art:{mood:"ember",alt:"함께 죽을 끓이는 사람들",mount:1,orum:6,pot:true,potSafe:true,lights:16,p:["firefly",16],fg:"grass"},
+  choices:[["따뜻한 죽 한 그릇을 받아 든다","ai"]]},
+ ai:{ch:["마지막 장","당신이 지은 한 장면"],ai:true,title:"할망의 마지막 부탁",
+  textBy:{e_stones:["솥 안에서 할망의 목소리가 희미하게 들려왔습니다.","“얘들아… 이 섬에 마지막으로 하나만 더 남기고 싶구나. 네가 말해 주렴. 무엇이 있었으면 좋겠니?”","당신이 단어 하나를 말하면, 이야기의 한 장면이 새로 그려집니다."]},
+  text:["할망이 하늘을 올려다보며 말했습니다.","“이 섬에 마지막으로 하나만 더 놓고 싶구나. 네가 말해 주렴. 무엇이 있었으면 좋겠니?”","당신이 단어 하나를 말하면, 이야기의 한 장면이 새로 그려집니다."],
+  art:{mood:"night",alt:"별빛 아래 선 할망",mount:1,orum:10,village:true,fig:"stand",x:140,s:.85,p:["star",3],fg:"grass"}},
+ e_bridge:{end:true,mine:true,title:"이어진 길",
+  text:["할망은 새 속옷을 입고 활짝 웃었습니다. 그리고 약속대로 바다 위에 한 걸음, 두 걸음 돌을 놓아 길을 이어 가기 시작했습니다.","제주와 육지가 처음으로 맞닿던 날, 사람들은 서로 부둥켜안고 춤을 추었습니다. 섬은 더 이상 외롭지 않았습니다.","전해 오는 이야기에서는 단 한 통이 모자라 다리가 놓이지 못하지만, 당신이 함께한 이야기에서는 사람들이 힘을 모아 그 한 통을 채웠습니다."],
+  art:{mood:"golden",alt:"바다 위에 놓인 빛의 다리",mount:1,orum:10,village:true,bridge:true,p:["petal",24],fg:"flowers"}},
+ e_ninety:{end:true,mine:false,title:"모자란 한 통",
+  text:["한 통이 모자라 속옷은 끝내 완성되지 못했고, 할망은 다리를 놓다 멈추었습니다. 그래서 제주는 바다에 둘러싸인 섬으로 남았다고 전해집니다.","어쩌면 그 모자란 한 통 덕분에 제주만의 바람과 돌과 이야기가 오래오래 지켜졌는지도 모릅니다.","모자라서 더 아름다운 이야기도 있으니까요."],
+  art:{mood:"dusk",alt:"끝내 놓이지 못한 다리",mount:1,orum:10,village:true,silk:4,mainland:true,p:["firefly",18],fg:"grass"}},
+ e_stones:{end:true,mine:false,title:"오백장군",
+  text:["죽솥에 빠진 어머니를 모른 채 돌아온 아들들은 죽을 맛있게 먹었습니다. 그러다 맨 마지막 막내가 솥 바닥에서 어머니의 흔적을 발견했지요.","아들들은 깊은 슬픔에 빠져 한라산 영실 계곡에서 그대로 굳어 돌이 되었다고 합니다. 지금도 오백장군 바위가 오름 곁을 지키고 있어요.","할망의 사랑은 그렇게 바위가 되어 오늘도 섬을 지켜 주고 있답니다."],
+  art:{mood:"storm",alt:"눈물 흘리는 오백 개의 바위",mount:1,orum:4,stones:16,p:["firefly",12],fg:"rocks"}},
+ e_porridge:{end:true,mine:true,title:"함께 끓인 죽",
+  text:["오백 개의 그릇에 따뜻한 죽이 담기고, 산자락마다 환한 불빛이 켜졌습니다. 아들들과 이웃들은 배불리 먹고, 할망 곁에 둘러앉아 도란도란 이야기를 나누었지요.","함께하면 흉년의 밤도 따뜻해진다는 것을, 그날 섬은 알게 되었습니다.","이 이야기는 당신이 함께 써 내려간 결말입니다."],
+  art:{mood:"ember",alt:"따뜻한 불빛이 가득한 산자락",mount:1,orum:6,pot:true,potSafe:true,lights:22,p:["spark",22],fg:"grass"}},
+ e_star:{end:true,mine:true,hidden:true,title:"별로 이어진 길",
+  text:["마지막 한 통은 밤하늘의 별빛으로 짜였습니다. 호기심 많은 아이가 “이 실은 어디서 왔을까?” 하고 올려다보다가, 별빛 한 가닥을 따라 베틀에 걸었거든요.","할망이 새 속옷을 입고 웃자, 다리는 바다 위가 아니라 별이 흐르는 하늘로 놓였습니다. 육지에도, 아직 가 보지 못한 먼 섬에도 닿는 길이었지요.","궁금해하는 마음이 길을 만든다는 것을, 그날 제주는 알게 되었습니다. 이것은 당신이 호기심으로 열어 낸 숨은 결말입니다."],
+  art:{mood:"night",alt:"별빛으로 이어진 하늘의 다리",mount:1,orum:10,village:true,bridge:true,p:["star",3],fg:"flowers"}},
+ e_boat:{end:true,mine:true,hidden:true,title:"스스로 건넌 바다",
+  text:["아흔아홉 통의 명주로는 속옷을 끝내 지을 수 없었고, 다리는 놓이지 못했습니다. 사람들은 한동안 고개를 숙였지요.","그때 한 사람이 앞으로 나섰습니다. “다리가 없다면 우리가 배를 지으면 되지요!” 명주는 돛이 되고, 오름의 나무는 배가 되었습니다.","용기를 낸 사람들은 파도를 헤치고 스스로 육지에 닿았습니다. 할망은 손을 흔들며 바람을 불어 돛을 밀어 주었지요. 이것은 당신이 용기로 열어 낸 숨은 결말입니다."],
+  art:{mood:"dawn",alt:"명주 돛을 단 배들이 바다를 건넌다",mount:1,orum:10,village:true,boats:5,mainland:true,p:["bird",5],fg:"rocks"}},
+ e_mountain:{end:true,mine:true,hidden:true,title:"산이 된 할망",
+  text:["죽솥에 빠진 할망은 끝내 돌아오지 못했습니다. 돌아온 아들들은 솥 앞에서 오래오래 울었습니다.","그 눈물이 땅을 적시자 할망의 따뜻한 마음이 흙 속으로 스며들었습니다. 한라산이 한 번 크게 숨을 쉬었고, 오름마다 푸른 풀이 돋아났지요.","아들들은 돌이 되는 대신 산을 지키는 바람이 되었습니다. 지금도 한라산이 어머니의 품처럼 포근한 것은 그 때문이라고 합니다. 이것은 당신이 따뜻한 마음으로 열어 낸 숨은 결말입니다."],
+  art:{mood:"golden",alt:"포근한 산이 된 할망",mount:.9,orum:10,village:true,p:["petal",22],fg:"flowers"}},
+ e_flavors:{end:true,mine:true,hidden:true,title:"오백 가지 맛의 죽",
+  text:["오백 명의 아들과 이웃들은 저마다 호기심이 많았습니다. “이걸 넣으면 어떤 맛일까?” 한 명은 유채꽃을, 한 명은 동백잎을, 또 한 명은 바다에서 건진 미역을, 또 다른 한 명은 새콤달콤한 귤을 솥에 넣었지요.","죽은 한 숟갈마다 맛이 달랐습니다. 달콤하고, 구수하고, 짭짤하고, 향긋했어요. 흉년의 밤이 갑자기 잔칫날처럼 떠들썩해졌습니다.","새로운 것을 궁금해하는 마음이 가장 따뜻한 밥상을 만들었습니다. 이것은 당신이 호기심으로 열어 낸 숨은 결말입니다."],
+  art:{mood:"ember",alt:"오백 가지 맛이 담긴 죽 잔치",mount:1,orum:6,pot:true,potSafe:true,lights:24,p:["petal",18],fg:"flowers"}}
+};
+const ENDINGS=["e_bridge","e_ninety","e_stones","e_porridge","e_star","e_boat","e_mountain","e_flavors"];
+const HIDDEN=["e_star","e_boat","e_mountain","e_flavors"];
+// 성향이 가장 높은 한 가지가 3점 이상이면, 같은 길에서도 숨은 결말이 열린다
+const dom=()=>{const e=Object.entries(TR).map(([k])=>[k,st[k]]).sort((a,b)=>b[1]-a[1]);return e[0][1]>e[1][1]?e[0]:null};
+function resolveEnd(){
+  const base=st.end||"e_ninety", rule={e_bridge:["curious","e_star"],e_ninety:["brave","e_boat"],e_stones:["warm","e_mountain"],e_porridge:["curious","e_flavors"]}[base], d=dom();
+  return (rule&&d&&d[0]===rule[0]&&d[1]>=3)?rule[1]:base;
+}
+
+/*I18N-BEGIN*/
+/* ═══════════════════════════ 다국어 (한국어 · English · 日本語 · 中文) ═══════════════════════════
+   장면 글(제목·장·본문)은 번역 파일(설문대할망_영어/일본어/중국어.md)을 그대로 옮긴 SCN 에 들어 있고,
+   선택지·화면 안내 글은 CHO / UI 에 들어 있다. (이 두 가지는 번역 파일에 없어서 따로 번역했으니 검수가 필요하다)
+   언어는 오른쪽 위 지구본 버튼 또는 주소 끝 ?lang=en|ja|zh|ko 로 바꾼다. 목소리(읽어주기)는 언어마다 images/voice_<언어>_<장면>.mp3 로 들어 있다. */
+const LANGS=[["ko","한국어"],["en","English"],["ja","日本語"],["zh","中文"]];
+let LANG=(()=>{let v=new URLSearchParams(location.search).get("lang"); if(!v){try{v=localStorage.getItem("seolmun_lang")}catch(e){}} return LANGS.some(l=>l[0]===v)?v:"ko"})();
+const UI={
+ ko:{title:"설문대할망 · 제주를 빚은 거인",hdr:"설문대할망 · 제주를 빚은 거인",back:"이전 장면으로",home:"처음부터 다시",meta:"선택이 이야기에 영향을 줘요",
+  warm:"따뜻함",curious:"호기심",brave:"용기",found:"발견한 결말",tapnote:"그림 속 반짝이는 곳을 눌러 이야기를 이어 가요",hint:"글을 누르면 바로 다 나타나요",
+  ph:"예: 무지개, 고래, 동백꽃, 귤, 별똥별",wordAria:"장면에 넣을 단어",make:"✨ 장면 만들기",spin:"할망이 장면을 그려 내는 중…",
+  foot:"제주 신화를 바탕으로 한 인터랙티브 스토리입니다.<br>이야기의 선택은 관람자가 합니다.",bgmOff:"배경 음악 끄기",bgmOn:"배경 음악 켜기",bgmAria:"배경 음악 켜기 또는 끄기",
+  vcOff:"본문 읽어주기 끄기",vcOn:"본문 읽어주기 켜기",vcAria:"본문 읽어주기 켜기 또는 끄기",langAria:"언어 선택",
+  tagHidden:"숨은 결말 · ",tagMine:"당신이 쓴 이야기",tagOld:"전해 오는 이야기",tagAI:"AI가 지은 장면",tagLocal:"오프라인 장면",
+  epiEven:"당신은 따뜻함과 호기심과 용기를 고르게 지닌 이야기꾼이었습니다.",epiTop:n=>`당신은 ‘${n}’이 가장 빛나는 이야기꾼이었습니다.`,
+  path:"당신이 걸어온 길",made:t=>`당신이 지은 장면 · ${t}`,
+  foundCount:(n,t,all)=>`${n}/${t}개의 결말을 만났어요. ${all?"모든 결말을 만났어요!":"다른 선택을 하면 다른 결말이 열립니다."}`,
+  hiddenHint:n=>`✦ 숨은 결말 ${n}개: 따뜻함·호기심·용기 중 한 가지를 가장 높게, 3점 이상 쌓아 보세요. (같은 길에서도 다른 결말이 열려요)`,
+  restart:"처음부터 다시 걸어 본다",cont:"이야기를\n이어 간다",again:"다른 단어로 다시 지어 본다",confirm:"처음부터 다시 볼까요?",pathWord:w=>`“${w}”라는 단어로 장면을 지었다`},
+ en:{title:"Grandmother Seolmundae · The Giant Who Shaped Jeju",hdr:"Grandmother Seolmundae",back:"Previous scene",home:"Start over",meta:"Your choices shape the story",
+  warm:"Warmth",curious:"Curiosity",brave:"Courage",found:"Endings found",tapnote:"Tap the sparkling spots in the picture to continue the story",hint:"Tap the text to show it all at once",
+  ph:"e.g. rainbow, whale, camellia, tangerine, shooting star",wordAria:"Word for the scene",make:"✨ Make a scene",spin:"Grandmother is drawing the scene…",
+  foot:"An interactive story based on Jeju myth.<br>The choices are yours to make.",bgmOff:"Turn music off",bgmOn:"Turn music on",bgmAria:"Turn background music on or off",
+  vcOff:"Turn narration off",vcOn:"Turn narration on",vcAria:"Turn narration on or off",langAria:"Choose language",
+  tagHidden:"Hidden ending · ",tagMine:"A story you wrote",tagOld:"The tale as it is told",tagAI:"Scene made by AI",tagLocal:"Offline scene",
+  epiEven:"You were a storyteller with an even balance of warmth, curiosity and courage.",epiTop:n=>`Your brightest trait was “${n}”.`,
+  path:"The path you walked",made:t=>`The scene you made · ${t}`,
+  foundCount:(n,t,all)=>`You have found ${n} of ${t} endings. ${all?"You found every ending!":"Make different choices to open other endings."}`,
+  hiddenHint:n=>`✦ ${n} hidden endings: raise one of Warmth, Curiosity or Courage to the top with 3 points or more. (Even on the same path, a different ending can open.)`,
+  restart:"Walk the path again from the start",cont:"Continue\nthe story",again:"Make a scene with another word",confirm:"Start over from the beginning?",pathWord:w=>`Made a scene with the word “${w}”`},
+ ja:{title:"ソルムンデハルマン · 済州をつくった巨人",hdr:"ソルムンデハルマン",back:"前の場面へ",home:"はじめから",meta:"選択がお話に影響します",
+  warm:"あたたかさ",curious:"好奇心",brave:"勇気",found:"見つけた結末",tapnote:"絵の中のきらめく場所を押して、お話を進めましょう",hint:"文章を押すと、すぐ全部表示されます",
+  ph:"例：虹、クジラ、椿、みかん、流れ星",wordAria:"場面に入れる言葉",make:"✨ 場面をつくる",spin:"ハルマンが場面を描いています…",
+  foot:"済州の神話をもとにしたインタラクティブなお話です。<br>お話の選択は、あなたがします。",bgmOff:"音楽をオフにする",bgmOn:"音楽をオンにする",bgmAria:"背景音楽のオン・オフ",
+  vcOff:"読み上げをオフにする",vcOn:"読み上げをオンにする",vcAria:"読み上げのオン・オフ",langAria:"言語を選ぶ",
+  tagHidden:"かくれた結末 · ",tagMine:"あなたがつくったお話",tagOld:"語り継がれるお話",tagAI:"AIがつくった場面",tagLocal:"オフライン場面",
+  epiEven:"あなたは、あたたかさ、好奇心、勇気をバランスよく持った語り手でした。",epiTop:n=>`あなたは「${n}」がいちばん輝く語り手でした。`,
+  path:"あなたが歩んだ道",made:t=>`あなたがつくった場面 · ${t}`,
+  foundCount:(n,t,all)=>`${t}個の結末のうち、${n}個に出会いました。${all?"すべての結末に出会いました！":"ほかの選択をすると、別の結末が開きます。"}`,
+  hiddenHint:n=>`✦ かくれた結末が${n}つあります：あたたかさ・好奇心・勇気のうち、ひとつをいちばん高く、3点以上ためてみましょう。（同じ道でも別の結末が開きます）`,
+  restart:"はじめからもう一度歩く",cont:"お話を\n続ける",again:"ほかの言葉でつくり直す",confirm:"はじめからもう一度見ますか？",pathWord:w=>`「${w}」という言葉で場面をつくった`},
+ zh:{title:"雪门台奶奶 · 塑造济州的巨人",hdr:"雪门台奶奶",back:"返回上一个场景",home:"从头开始",meta:"你的选择会影响故事",
+  warm:"温暖",curious:"好奇心",brave:"勇气",found:"已发现的结局",tapnote:"点击画面中闪闪发光的地方，继续故事",hint:"点击文字，可立刻显示全部",
+  ph:"例如：彩虹、鲸鱼、山茶花、橘子、流星",wordAria:"放进场景的词",make:"✨ 生成场景",spin:"奶奶正在画这个场景…",
+  foot:"这是一个以济州神话为基础的互动故事。<br>故事的选择由你来做。",bgmOff:"关闭音乐",bgmOn:"开启音乐",bgmAria:"开启或关闭背景音乐",
+  vcOff:"关闭朗读",vcOn:"开启朗读",vcAria:"开启或关闭朗读",langAria:"选择语言",
+  tagHidden:"隐藏结局 · ",tagMine:"你写下的故事",tagOld:"流传下来的故事",tagAI:"AI 生成的场景",tagLocal:"离线场景",
+  epiEven:"你是一位温暖、好奇与勇气均衡的讲故事的人。",epiTop:n=>`你是一位“${n}”最闪亮的讲故事的人。`,
+  path:"你走过的路",made:t=>`你创作的场景 · ${t}`,
+  foundCount:(n,t,all)=>`你已发现 ${n}/${t} 个结局。${all?"你找到了所有结局！":"做出不同的选择，会打开其他结局。"}`,
+  hiddenHint:n=>`✦ 共有 ${n} 个隐藏结局：让温暖、好奇心、勇气中的一项最高，并累积到 3 分以上。（走同一条路，也可能打开不同的结局）`,
+  restart:"从头再走一遍",cont:"继续\n故事",again:"换一个词重新生成",confirm:"要从头再看一遍吗？",pathWord:w=>`用“${w}”这个词生成了场景`}
+};
+const U=(k,...a)=>{const v=(UI[LANG]&&UI[LANG][k]!==undefined)?UI[LANG][k]:UI.ko[k]; return typeof v==="function"?v(...a):v};
+const trName=k=>U(k);                                   // warm / curious / brave 의 이름
+/* 선택지 글 (한국어 원문 → 번역). 번역 파일에 없어서 따로 번역함 */
+const CHO={
+ en:{"이야기를 시작한다":"Begin the story","손을 뻗어 위를 힘껏 밀어 본다":"Reach out and push hard upward","숨을 죽이고 소리에 귀를 기울여 본다":"Hold your breath and listen to the sound","두 팔로 하늘을 밀어 올린다":"Push the sky up with both arms","눈을 감고 따스한 빛을 온몸으로 느껴 본다":"Close your eyes and feel the warm light all over","빛을 향해 성큼성큼 걸어 나간다":"Stride toward the light","빛을 따라 걸어 나간다":"Follow the light","물속에 손을 넣어 땅을 찾아본다":"Reach into the water to look for land","치마폭을 활짝 펼쳐 흙을 담을 준비를 한다":"Spread the skirt wide, ready to carry soil","흙을 치마폭에 가득 담는다":"Fill the skirt with soil","하늘에 닿을 만큼 높이 쌓는다":"Pile it high enough to touch the sky","넓고 포근하게 둥글게 쌓는다":"Pile it wide, soft and round","치마를 탈탈 털어 남은 흙을 뿌린다":"Shake out the skirt and scatter the leftover soil","오름마다 이름을 불러 준다":"Call out a name for each oreum","오름 위에 꽃씨를 뿌려 준다":"Scatter flower seeds over the oreum","한라산 품에 안겨 쉬어 본다":"Rest in the arms of Hallasan","발을 담그고 첨벙첨벙 물장구를 친다":"Dip your feet in and splash around","누운 채 별을 하나하나 세어 본다":"Lie back and count the stars one by one","일어나 섬을 둘러본다":"Get up and look around the island","아침이 되어 섬을 둘러본다":"Look around the island in the morning","사람들의 이야기를 귀 기울여 듣는다":"Listen closely to the people's stories","사람들을 손바닥에 올려 섬을 구경시켜 준다":"Lift the people onto your palm and show them the island","사람들에게 소원을 물어본다":"Ask the people what they wish for","사람들을 내려 주며 소원을 물어본다":"Set the people down and ask what they wish for","사람들을 도와 명주를 모으러 나선다":"Help the people go and gather silk","할망 곁에 남아 오백 아들 이야기를 듣는다":"Stay by Grandmother and hear about her five hundred sons","마을 사람들과 함께 밤새 베를 짠다":"Weave all night together with the villagers","아흔아홉 통이라도 일단 할망께 건넨다":"Hand over the ninety-nine bolts anyway","할망 앞에 명주 백 통을 펼친다":"Lay out all one hundred bolts before Grandmother","할망 곁에 가만히 앉는다":"Sit quietly beside Grandmother","솥을 직접 저으러 가까이 다가간다":"Step close to stir the pot yourself","아들들을 불러 함께 죽을 끓인다":"Call the sons and cook the porridge together","이야기를 조용히 지켜본다":"Watch the story quietly","따뜻한 죽 한 그릇을 받아 든다":"Take a bowl of warm porridge"},
+ ja:{"이야기를 시작한다":"お話をはじめる","손을 뻗어 위를 힘껏 밀어 본다":"手をのばして、上へ力いっぱい押してみる","숨을 죽이고 소리에 귀를 기울여 본다":"息をひそめて、音に耳をすましてみる","두 팔로 하늘을 밀어 올린다":"両腕で空を押し上げる","눈을 감고 따스한 빛을 온몸으로 느껴 본다":"目を閉じて、あたたかな光を全身で感じてみる","빛을 향해 성큼성큼 걸어 나간다":"光に向かって大またで歩き出す","빛을 따라 걸어 나간다":"光について歩き出す","물속에 손을 넣어 땅을 찾아본다":"水の中に手を入れて、地面を探してみる","치마폭을 활짝 펼쳐 흙을 담을 준비를 한다":"スカートを大きく広げて、土を包む準備をする","흙을 치마폭에 가득 담는다":"スカートいっぱいに土を包む","하늘에 닿을 만큼 높이 쌓는다":"空に届くほど高く積む","넓고 포근하게 둥글게 쌓는다":"広くやわらかく、まあるく積む","치마를 탈탈 털어 남은 흙을 뿌린다":"スカートをぱたぱたはたいて、残った土をまく","오름마다 이름을 불러 준다":"オルムひとつひとつに名前を呼んであげる","오름 위에 꽃씨를 뿌려 준다":"オルムの上に花の種をまいてあげる","한라산 품에 안겨 쉬어 본다":"ハルラ山の胸に抱かれて休んでみる","발을 담그고 첨벙첨벙 물장구를 친다":"足をひたして、ばしゃばしゃ水遊びをする","누운 채 별을 하나하나 세어 본다":"横になったまま、星をひとつひとつ数えてみる","일어나 섬을 둘러본다":"起き上がって島を見まわす","아침이 되어 섬을 둘러본다":"朝になって島を見まわす","사람들의 이야기를 귀 기울여 듣는다":"人々の話に耳をかたむける","사람들을 손바닥에 올려 섬을 구경시켜 준다":"人々を手のひらにのせて、島を見せてあげる","사람들에게 소원을 물어본다":"人々に願いごとをたずねる","사람들을 내려 주며 소원을 물어본다":"人々をおろしながら、願いごとをたずねる","사람들을 도와 명주를 모으러 나선다":"人々を手伝って、絹を集めに出かける","할망 곁에 남아 오백 아들 이야기를 듣는다":"ハルマンのそばに残って、五百人の息子の話を聞く","마을 사람들과 함께 밤새 베를 짠다":"村の人々といっしょに夜通し機を織る","아흔아홉 통이라도 일단 할망께 건넨다":"九十九反でも、まずハルマンにわたす","할망 앞에 명주 백 통을 펼친다":"ハルマンの前に絹百反をひろげる","할망 곁에 가만히 앉는다":"ハルマンのそばにそっとすわる","솥을 직접 저으러 가까이 다가간다":"釜を自分でかきまぜに近づく","아들들을 불러 함께 죽을 끓인다":"息子たちを呼んで、いっしょにおかゆを炊く","이야기를 조용히 지켜본다":"お話を静かに見守る","따뜻한 죽 한 그릇을 받아 든다":"あたたかいおかゆを一杯受け取る"},
+ zh:{"이야기를 시작한다":"开始故事","손을 뻗어 위를 힘껏 밀어 본다":"伸出手，使劲往上推一推","숨을 죽이고 소리에 귀를 기울여 본다":"屏住呼吸，侧耳倾听那个声音","두 팔로 하늘을 밀어 올린다":"用双臂把天推上去","눈을 감고 따스한 빛을 온몸으로 느껴 본다":"闭上眼睛，用全身感受温暖的光","빛을 향해 성큼성큼 걸어 나간다":"朝着光大步走去","빛을 따라 걸어 나간다":"循着光走出去","물속에 손을 넣어 땅을 찾아본다":"把手伸进水里，找找陆地","치마폭을 활짝 펼쳐 흙을 담을 준비를 한다":"把裙摆撑开，准备装泥土","흙을 치마폭에 가득 담는다":"把泥土装满裙子","하늘에 닿을 만큼 높이 쌓는다":"堆得高到碰到天","넓고 포근하게 둥글게 쌓는다":"堆得宽阔、柔软又圆润","치마를 탈탈 털어 남은 흙을 뿌린다":"把裙子抖一抖，撒出剩下的泥土","오름마다 이름을 불러 준다":"给每一座岳（오름）都叫上名字","오름 위에 꽃씨를 뿌려 준다":"在岳上撒下花种","한라산 품에 안겨 쉬어 본다":"依偎在汉拿山的怀里歇一歇","발을 담그고 첨벙첨벙 물장구를 친다":"把脚泡进水里，扑通扑通玩水","누운 채 별을 하나하나 세어 본다":"躺着，一颗一颗地数星星","일어나 섬을 둘러본다":"起身看看这座岛","아침이 되어 섬을 둘러본다":"天亮了，看看这座岛","사람들의 이야기를 귀 기울여 듣는다":"认真倾听人们的故事","사람들을 손바닥에 올려 섬을 구경시켜 준다":"把人们托在手掌上，带他们看岛","사람들에게 소원을 물어본다":"问问人们有什么心愿","사람들을 내려 주며 소원을 물어본다":"把人们放下来，问问他们的心愿","사람들을 도와 명주를 모으러 나선다":"帮助人们出发去收集丝绸","할망 곁에 남아 오백 아들 이야기를 듣는다":"留在奶奶身边，听她讲五百个儿子的故事","마을 사람들과 함께 밤새 베를 짠다":"和村里人一起通宵织布","아흔아홉 통이라도 일단 할망께 건넨다":"九十九匹也先交给奶奶","할망 앞에 명주 백 통을 펼친다":"在奶奶面前摊开一百匹丝绸","할망 곁에 가만히 앉는다":"静静地坐在奶奶身边","솥을 직접 저으러 가까이 다가간다":"走近前，亲自去搅锅","아들들을 불러 함께 죽을 끓인다":"叫来儿子们，一起煮粥","이야기를 조용히 지켜본다":"静静地看着故事发展","따뜻한 죽 한 그릇을 받아 든다":"接过一碗热腾腾的粥"}
+};
+const tr_=t=>(LANG==="ko"?t:((CHO[LANG]&&CHO[LANG][t])||t));
+/* 단어 입력: 영어·일본어·중국어로 입력한 단어도 미리 만들어 둔 그림과 이어 준다 */
+const WORD_ART_X={rainbow:"rainbow",whale:"whale",camellia:"camellia",tangerine:"tangerine",orange:"tangerine",mandarin:"tangerine",shootingstar:"shootingstar",meteor:"shootingstar",dolhareubang:"hareubang",hareubang:"hareubang",haenyeo:"haenyeo",wind:"wind",hallasan:"hallasan",baengnokdam:"baengnokdam",
+ "虹":"rainbow","クジラ":"whale","くじら":"whale","椿":"camellia","つばき":"camellia","みかん":"tangerine","ミカン":"tangerine","流れ星":"shootingstar","ながれぼし":"shootingstar","ドルハルバン":"hareubang","トルハルバン":"hareubang","海女":"haenyeo","あま":"haenyeo","風":"wind","かぜ":"wind","ハルラ山":"hallasan","漢拏山":"hallasan","ハルラサン":"hallasan","ペンノクダム":"baengnokdam","白鹿潭":"baengnokdam",
+ "彩虹":"rainbow","鲸鱼":"whale","鲸":"whale","山茶花":"camellia","茶花":"camellia","橘子":"tangerine","柑橘":"tangerine","蜜柑":"tangerine","流星":"shootingstar","石爷爷":"hareubang","石头爷爷":"hareubang","风":"wind","汉拿山":"hallasan","白鹿潭":"baengnokdam"};
+const CHIPS_L={ko:["무지개","고래","동백꽃","귤","별똥별","돌하르방","해녀","바람"],en:["Rainbow","Whale","Camellia","Tangerine","Shooting star","Dolhareubang","Haenyeo","Wind"],ja:["虹","クジラ","椿","みかん","流れ星","ドルハルバン","海女","風"],zh:["彩虹","鲸鱼","山茶花","橘子","流星","石头爷爷","海女","风"]};
+const WORD_ART_CHIP={"shootingstar":"shootingstar","dolhareubang":"hareubang","石头爷爷":"hareubang"};
+/* 단어로 지어지는 오프라인 장면 (AI 서버가 꺼져 있을 때) — 영어·일본어·중국어 */
+function localSceneL(word){
+  const w=word,h=[...w].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7),pick=(arr,k)=>arr[(h>>>k)%arr.length];
+  const T={
+   en:{t:[`${w} Comes to the Island`,`Grandmother's Gift: ${w}`,`The Day ${w} Arrived`],
+       a:[`Grandmother gently swept her fingertip through the air, and from somewhere ${w} appeared, sparkling.`,`Grandmother let out a soft breath, and ${w} floated up over the sea.`,`Grandmother shook her skirt, and ${w} came rolling out of her pocket.`],
+       b:[`${w} rode the wind, passed between the oreum, and settled softly on a village rooftop.`,`${w} danced to the sound of the waves and circled the whole island.`,`${w} rose all the way to the top of Hallasan and lit up the entire island.`],
+       c:[`The people looked up at ${w} and smiled, saying, "This island has such wonderful things."`,`The children played with ${w} and decided to remember this island for a very long time.`,`From that day on, whenever the people of Jeju saw ${w}, they remembered Grandmother Seolmundae's gift.`]},
+   ja:{t:[`${w}が宿った島`,`ハルマンの贈りもの、${w}`,`${w}がやって来た日`],
+       a:[`ハルマンが指先で宙をそっとなでると、どこからか${w}がきらきらと現れました。`,`ハルマンがふうっと息を吹くと、海の上に${w}がふわりと浮かびました。`,`ハルマンがスカートをゆらすと、ポケットから${w}がころころと転がり出ました。`],
+       b:[`${w}は風にのって、オルムとオルムのあいだを通り、村の屋根の上にそっと降り立ちました。`,`${w}は波の音に合わせておどりながら、島をひとまわりしました。`,`${w}はハルラ山のてっぺんまでのぼって、島じゅうをあかるく照らしました。`],
+       c:[`人々は${w}を見上げて、「この島には、こんなすてきなこともあるんだね」と笑いました。`,`子どもたちは${w}といっしょに遊びまわり、この島をいつまでも覚えていようと決めました。`,`その日から、済州の人々は${w}を見るたびに、ソルムンデハルマンの贈りものを思い出しました。`]},
+   zh:{t:[`栖息着${w}的岛`,`奶奶的礼物：${w}`,`${w}到来的那一天`],
+       a:[`奶奶用指尖轻轻在空中一划，不知从哪里，${w}闪闪发光地出现了。`,`奶奶轻轻吹了一口气，${w}悠悠地漂浮在海面上。`,`奶奶抖了抖裙子，${w}从口袋里骨碌碌地滚了出来。`],
+       b:[`${w}乘着风，穿过一座座岳，轻轻落在了村子的屋顶上。`,`${w}随着海浪的声音翩翩起舞，绕着岛转了一圈。`,`${w}一直升到汉拿山的山顶，把整座岛照得亮堂堂的。`],
+       c:[`人们抬头望着${w}，笑着说：“这座岛上还有这么美好的事呢。”`,`孩子们和${w}一起玩耍，决定要永远记住这座岛。`,`从那天起，济州的人们每次看到${w}，就会想起雪门台奶奶的礼物。`]}
+  }[LANG];
+  const el=pick(["flower","light","star","wind"],6);
+  return {source:"local",title:pick(T.t,2),paragraphs:[pick(T.a,1),pick(T.b,3),pick(T.c,5)],mood:pick(["dawn","day","golden","dusk","night","mist"],4),element:el};
+}
+/* 지금 장면의 제목·장·본문 (한국어가 아니면 번역본) */
+function sceneView(id,sc){
+  const base=(sc.textBy&&sc.textBy[st.end])||sc.text;
+  if(LANG==="ko")return {title:sc.title,text:base,ch:sc.ch};
+  const d=SCN[LANG]&&SCN[LANG][id]; if(!d)return {title:sc.title,text:base,ch:sc.ch};
+  const useVar=sc.textBy&&sc.textBy[st.end]&&d.v&&d.v[st.end];
+  return {title:d.t,text:useVar?d.v[st.end]:d.x,ch:sc.ch&&d.ch?d.ch:sc.ch};
+}
+/* '걸어온 길' 목록 글: 단어 장면 줄은 번역해서, 선택지 줄은 CHO 로 보여 준다 */
+const pathText=p=>{const m=/^“(.+)”라는 단어로 장면을 지었다$/.exec(p); return m?U("pathWord",m[1]):tr_(p)};
+/* 화면 안내 글을 지금 언어로 바꾼다 */
+function applyLang(){
+  document.documentElement.lang=LANG; document.title=U("title");
+  document.querySelectorAll("[data-i]").forEach(e=>e.textContent=U(e.dataset.i));
+  document.querySelectorAll("[data-ih]").forEach(e=>e.innerHTML=U(e.dataset.ih));
+  $("hdr").textContent=U("hdr"); $("word").placeholder=U("ph"); $("word").setAttribute("aria-label",U("wordAria"));
+  [["back","back"],["home","home"]].forEach(([id,k])=>{$(id).title=U(k);$(id).setAttribute("aria-label",U(k))});
+  document.querySelector(".meta").title=U("meta"); $("bgm").setAttribute("aria-label",U("bgmAria")); $("voice").setAttribute("aria-label",U("vcAria"));
+  $("langbtn").setAttribute("aria-label",U("langAria")); $("langbtn").title=U("langAria"); $("langcur").textContent=LANGS.find(l=>l[0]===LANG)[1];
+  $("chips").innerHTML=CHIPS_L[LANG].map(c=>`<button type="button">${c}</button>`).join("");
+  $("langmenu").innerHTML=LANGS.map(([c,n])=>`<li><button type="button" role="menuitemradio" aria-checked="${c===LANG}" data-l="${c}"${c===LANG?' class="on"':""}>${n}</button></li>`).join("");
+  showFound(); bgmBtn(); voiceBtn();
+}
+function setLang(l){
+  if(l===LANG||!LANGS.some(x=>x[0]===l))return; LANG=l; try{localStorage.setItem("seolmun_lang",l)}catch(e){}
+  applyLang(); voicePreload(); if(cur&&S[cur])go(cur,null,null,true);   // 지금 장면을 새 언어로 다시 보여 준다 (점수·기록은 그대로)
+}
+/*I18N-SCN*/
+const SCN={"en":{"start":{"t":"Grandmother Seolmundae","x":["A very long time ago, Jeju was not an island. It was an endless stretch of blue sea.","In the middle of that sea, a goddess as tall as the sky slowly opened her eyes. Her name was Seolmundae Halmang, which means Grandmother Seolmundae.","This story has been told for ages, but where it goes this time is up to you."]},"c1_dark":{"t":"When Sky and Earth Were Stuck Together","x":["The world was completely dark. Sky and earth were stuck together in one big lump, so not a ray of light or a breath of wind could squeeze in.","Grandmother woke in the darkness and blinked. Her eyes were huge and warm, unlike any eyes anyone had ever seen.","\"It's so stuffy in here. Why is this world so cramped?\" she murmured."],"ch":["Chapter 1","The Sea With No Name"]},"c1_listen":{"t":"A Sound in the Dark","x":["She listened closely, and from far away came a soft \"swoosh, swoosh.\" Beneath the darkness, an endless sea was rolling.","The sound seemed to call, \"Here! Over here!\" Grandmother's heart began to pound.","\"I wonder what's up there?\" Her curiosity turned into courage, and strength filled her arms."]},"c1_push":{"t":"The Sky Opens","x":["Grandmother put both hands against the sky and pushed with all her might. Rumble, crash! Sky and earth split apart, and a crack ran through the dark.","The very first light poured through the gap. Golden light danced on the waves, and the sea showed its true color for the first time.","Far away, a horizon was drawn, and above it the sky spread out, high and wide."]},"c1_feel":{"t":"The First Morning","x":["The light was warm. Its warmth settled softly on Grandmother's cheeks, shoulders, and toes.","\"Ah, so this is what morning feels like.\" She couldn't help smiling. Even though she was alone, it was a morning without any loneliness.","The sparkles on the sea seemed to be waving hello to her."]},"c1_walk":{"t":"Walking Through the Sea","x":["Splash, splash. With every step Grandmother took, waves broke around her ankles. Even the deepest sea only came up to her knees.","After walking for a long time, she suddenly stopped. There was only water in every direction, and not one patch of ground to stand on.","\"I wish I had a place to rest. No, a place where someone else could rest too would be even better.\""]},"c2_dive":{"t":"Soil from the Sea Floor","x":["Grandmother reached deep into the water and touched the world beneath the sea: shiny shells, swaying seaweed, and firm, warm soil.","\"This will do!\" she said. She scooped up handful after handful of soil. Little fish darted away in fright from between her fingers."],"ch":["Chapter 2","Making the Island"]},"c2_soil":{"t":"A Skirt Full of Soil","x":["Grandmother spread out her skirt and filled it with soil from the sea floor. The skirt bulged, and the soil sloshed with every step.","When she reached the middle of the sea, she carefully began to tip her skirt.","\"What shape shall I make?\""],"ch":["Chapter 2","Making the Island"]},"c2_tall":{"t":"The Mountain That Touched the Sky","x":["The soil piled up higher and higher. The mountain that rose through the clouds and nearly touched the sky is Hallasan.","At its peak was a hollow that would later fill with clear water and be called Baengnokdam.","Grandmother shaded her eyes with her hand, looked up at it, and smiled proudly."]},"c2_soft":{"t":"A Mountain Like a Mother's Arms","x":["Grandmother patted the soil gently with her palms. Hallasan came out broad and gentle, not steep.","Its embrace was so wide that people would later call Hallasan \"Mother's Mountain.\"","Grandmother stroked the finished mountain and hummed quietly."]},"c2_orum":{"t":"More Than Three Hundred Sixty Oreum","x":["Grandmother shook out her skirt, and the leftover soil scattered across the island. But her skirt was old and full of holes, and soil trickled out as she walked.","The soil that trickled out became small, round hills all over the island. There were more than three hundred sixty of them. These are Jeju's oreum, its little volcanic hills.","Grandmother looked at them one by one and smiled happily."]},"c2_name":{"t":"Oreum Get Their Names","x":["\"You are Dalangswi, you are Yongnuni, you are Saebyeol!\" Each time Grandmother called a name, that oreum seemed to puff up with pride.","The named oreum each had their own shape and look, and together they filled the island. Now that they had names, anyone could come and find them.","The island was no longer a land without a name."]},"c2_seed":{"t":"An Island in Bloom","x":["Grandmother scattered flower seeds from her fingertips. Yellow canola flowers rolled out like waves, and red camellias bloomed like flames.","A different flower bloomed on each oreum, and the island became as lovely as an embroidered cloth.","The wind carried the petals and drifted gently out over the sea."]},"c2_rest":{"t":"Resting Her Head on the Mountain","x":["When her work was done, Grandmother lay down with the peak of Hallasan as her pillow. She rested her feet on Gwantal Island across the sea.","A soft mountain, a warm breeze, and stars twinkling on one by one. For the first time in a long while, she let out a deep breath.","\"This really is a wonderful island.\""]},"c2_splash":{"t":"Splish, Splash","x":["Splash! Grandmother kicked her feet, the sea surged, and the flying drops scattered like stars across the island.","Wherever the drops landed, clear springs bubbled up. It was precious water for the people who would come later.","Grandmother giggled and kicked once more."]},"c2_sky":{"t":"A Night of Counting Stars","x":["One, two, three... Each time Grandmother counted a star, a ribbon of starlight settled on the island.","\"If someone ever comes to this island, I'll count these stars with them,\" she whispered like a wish.","Just then, a shooting star drew a long tail across the sky and fell into the sea."]},"c3_people":{"t":"People Come to the Island","x":["Time passed, and people began to arrive on the island one by one. Thatched houses rose at the feet of the oreum, and evening smoke curled from every chimney.","At first the people were afraid of Grandmother, who was as big as a mountain. But when she smiled warmly, they soon gathered around her.","They built stone walls and worked the fields, and the island slowly grew warm with the smell of people."],"ch":["Chapter 3","People Come to the Island"]},"c3_listen":{"t":"Stories in the Evening Yard","x":["Grandmother bent down low and listened to the people's stories. There were stories about fishing at sea, about building stone walls, and about putting children to sleep on windy nights.","The more she listened, the more she understood how precious the island was.","The sound of the people's laughter spread warmly among the oreum."]},"c3_palm":{"t":"On Grandmother's Palm","x":["When Grandmother held out her huge palm, the people climbed on carefully. She lifted her hand high into the sky.","\"Look, the sunlight is breaking into pieces on the waves!\" The people gasped at their first view of the island.","The children never forgot the day when the oreum and the sea spread out before them all at once."]},"c3_wish":{"t":"A Bridge to the Mainland","x":["When Grandmother asked what they wished for, the people gathered and said together, \"Grandmother, we miss the mainland. Could you build us a bridge across the sea?\"","Grandmother thought for a moment and said, \"Very well. If you make me new underclothes from one hundred bolts of silk, I will build you a strong bridge all the way to the mainland.\"","But Grandmother had another worry: her five hundred sons, who lived in the mountains."]},"c3_silk":{"t":"One Bolt at a Time","x":["Each village began to collect silk. One bolt, two bolts... Every household brought out the fine cloth they had saved.","But the closer they got, the harder it became. Ninety bolts, ninety-six bolts... At last they had ninety-nine.","Only one last bolt was missing."]},"c3_weave":{"t":"The Last Bolt, Woven All Night","x":["The people lit lamps and sat in a circle weaving through the night. The children held the thread, the grown-ups threw the shuttle, and the elders sang.","Just before dawn, the last bolt was finished at last. All one hundred bolts were complete!","The people joined hands and cheered. Now it was time to lay the promised cloth before Grandmother."]},"c3_ninety":{"t":"The Promise of Ninety-Nine Bolts","x":["Ninety-nine bolts of silk were piled up before Grandmother. She set to work sewing her underclothes with great care, but she was one bolt short and never finished them.","Grandmother smiled with a little regret. Still, the people's effort had reached her heart.","A promise is a promise, so she gazed quietly out at the distant sea."]},"c4_sons":{"t":"The Year of Famine","x":["Grandmother had five hundred sons. They were mischievous and big eaters, but to her they were the most precious treasures in the world.","Then one year a terrible famine struck. The crops in the fields withered, and her sons cried from hunger.","Grandmother decided to hang a huge cauldron at the foot of the mountain and cook porridge."],"ch":["Chapter 3","The Story of the Five Hundred Sons"]},"c4_pot":{"t":"The Steaming Cauldron","x":["Grandmother rolled up her sleeves and stirred the pot. Steam rose, and the rich smell drifted over the mountain.","She stirred so hard that her foot slipped, and she fell right into the giant cauldron.","Porridge was bubbling inside, and from the mountain came the sound of her sons returning."]},"c4_together":{"t":"Porridge Cooked Together","x":["Grandmother called out loudly to her sons. All five hundred came rushing down. One lit the fire, one fetched water, and one stirred the pot.","With so many hands, the porridge was ready in no time, and no one got hurt.","The rich smell drifted all the way to the village, and the neighbors came with bowls in their hands."]},"ai":{"t":"Grandmother's Last Wish","x":["Grandmother looked up at the sky and said,","\"I would like to place one last thing on this island. You tell me. What would you like to have here?\"","Say just one word, and a brand-new scene of the story will be drawn."],"ch":["The Last Chapter","A Scene You Wrote"],"v":{"e_stones":["From inside the cauldron, Grandmother's faint voice could be heard.","\"Children... I would like to leave one last thing on this island. You tell me. What would you like to have here?\"","Say just one word, and a brand-new scene of the story will be drawn."]}},"e_bridge":{"t":"The Road That Connected","x":["Grandmother put on her new underclothes and smiled brightly. Then, as promised, she placed stones on the sea, one step and then another, and began to connect a road.","On the day Jeju first touched the mainland, people hugged each other and danced. The island was no longer lonely.","In the old tale, the bridge is never built because one bolt is missing. But in the story you took part in, the people joined forces and filled in that last bolt."]},"e_ninety":{"t":"The Missing Bolt","x":["Because one bolt was missing, the underclothes were never finished, and Grandmother stopped building the bridge. That is why Jeju is said to remain an island surrounded by the sea.","Perhaps it was because of that one missing bolt that Jeju's own wind, stones, and stories have been kept safe for so long.","Some stories are more beautiful because something is missing."]},"e_stones":{"t":"The Five Hundred Generals","x":["The sons came home not knowing their mother had fallen into the pot, and they ate the porridge happily. Then the youngest, at the very end, found a trace of their mother at the bottom of the cauldron.","The sons fell into deep sorrow, and in the Yeongsil Valley of Hallasan they froze where they stood and turned to stone. They say the Five Hundred Generals Rocks still stand guard beside the oreum.","Grandmother's love became rock, and it protects the island to this day."]},"e_porridge":{"t":"Porridge Cooked Together","x":["Warm porridge filled five hundred bowls, and bright lights glowed all along the foot of the mountain. The sons and neighbors ate until they were full, then sat around Grandmother chatting happily.","That day, the island learned that even a night of famine grows warm when people are together.","This is an ending you wrote together with us."]},"e_star":{"t":"A Road Made of Stars","x":["The last bolt was woven from starlight. A curious child looked up and wondered, \"Where does this thread come from?\" and followed a strand of starlight and hung it on the loom.","When Grandmother put on her new underclothes and smiled, the bridge was laid not across the sea but across the sky, where the stars flow. It was a road that reached the mainland and also faraway islands no one had visited yet.","That day, Jeju learned that curiosity can build a road. This is a hidden ending you opened with your curiosity."]},"e_boat":{"t":"Crossing the Sea by Themselves","x":["Ninety-nine bolts of silk were not enough to finish the underclothes, and the bridge could not be built. The people hung their heads for a while.","Then one person stepped forward. \"If there's no bridge, we can build boats!\" The silk became sails, and the trees of the oreum became ships.","The brave people pushed through the waves and reached the mainland by themselves. Grandmother waved her hand and blew the wind to push their sails. This is a hidden ending you opened with your courage."]},"e_mountain":{"t":"The Grandmother Who Became a Mountain","x":["Grandmother, who had fallen into the porridge pot, never came back. The sons returned and cried in front of the cauldron for a very long time.","Their tears soaked the ground, and Grandmother's warm heart seeped into the soil. Hallasan took one deep breath, and green grass sprouted on every oreum.","The sons did not turn to stone. They became the wind that guards the mountain. They say that is why Hallasan still feels as warm as a mother's embrace today. This is a hidden ending you opened with your warm heart."]},"e_flavors":{"t":"Five Hundred Flavors of Porridge","x":["The five hundred sons and the neighbors were all very curious. \"I wonder what it will taste like if I add this?\" One added canola flowers, one added camellia leaves, one added seaweed pulled from the sea, and another added sweet and sour tangerines.","Every spoonful of porridge tasted different. Some were sweet, some savory, some salty, some fragrant. The night of famine suddenly became as lively as a festival.","Curiosity about new things made the warmest meal of all. This is a hidden ending you opened with your curiosity."]}},"ja":{"start":{"t":"ソルムンデハルマン","x":["ずっとずっと昔、済州（チェジュ）は島ではなく、果てしなく広がる青い海でした。","その海のまんなかで、空ほども背の高い女神、ソルムンデハルマンがゆっくりと目を開けました。","このお話はとっくの昔から語り継がれていますが、今回のお話がどこへ流れていくかは、あなたが選びます。"]},"c1_dark":{"t":"天と地がくっついていたころ","x":["世界はまっ暗でした。天と地がひとつのかたまりになってくっついていて、光ひとすじ、風ひとつ入るすき間もありません。","その暗やみの中で目をさましたハルマンは、まばたきをしました。誰も見たことのない、大きくてあたたかい目でした。","「息苦しいねえ。この世界はどうしてこんなにせまいのかしら？」ハルマンは小さくつぶやきました。"],"ch":["第1章","まだ名前のなかった海"]},"c1_listen":{"t":"暗やみの中の音","x":["耳をすますと、とても遠くから「ざあ」という音が聞こえました。暗やみの下では、果てしない水がゆれていたのです。","その音は「ここだよ、ここ！」と呼んでいるようでした。ハルマンの胸がどきどきしはじめました。","「あの上には何があるのかしら？」知りたい気持ちが勇気になって、ハルマンの腕に力がみなぎりました。"]},"c1_push":{"t":"空が開く","x":["ハルマンは両手で、力いっぱい空を押し上げました。ごごごっ、ずしん！ 天と地が割れて、暗やみにひびが入りました。","そのすき間から、最初の光がふり注ぎました。金色の光が波の上でゆらゆら輝き、海ははじめて自分の色を見せました。","ずっと遠くに水平線が引かれ、その上に、高くて広い空がぱあっと広がりました。"]},"c1_feel":{"t":"はじめての朝","x":["光はあたたかでした。ハルマンのほお、肩、足のつま先に、ぽかぽかしたぬくもりが降りてきました。","「ああ、これが朝というものなのね。」ハルマンは思わず笑顔になりました。ひとりぼっちでも、さびしくない朝でした。","海の上できらきら光る波は、ハルマンにあいさつしているようでした。"]},"c1_walk":{"t":"海を歩く","x":["ぴちゃ、ぴちゃ。ハルマンが歩くたびに、波が足首でくだけました。どんなに深い海も、ハルマンのひざまでしかありません。","しばらく歩いたハルマンは、ふと足を止めました。まわりは見わたすかぎり水ばかりで、足をおろせる地面はひとつもありません。","「休める場所があるといいわね。ううん、わたしだけじゃなくて、ほかの誰かも休める場所なら、もっといいわ。」"]},"c2_dive":{"t":"海の底の土","x":["ハルマンが腕を深く海に入れると、指先に海の底の世界がふれました。きらきら光る貝、ゆらゆらゆれる海藻、そしてかたくてあたたかい土。","「これならいいわ！」ハルマンはひとすくい、またひとすくいと、土をすくい上げました。手のひらのすき間から、小さな魚たちがびっくりして逃げていきました。"],"ch":["第2章","島をつくる"]},"c2_soil":{"t":"スカートいっぱいの土","x":["ハルマンはスカートを広げて、海の底の土をいっぱいに包みました。スカートはふくらんで、歩くたびに土がゆらゆらゆれました。","海のまんなかまで来ると、ハルマンはそうっとスカートをかたむけはじめました。","「どんな形にしようかしら？」"],"ch":["第2章","島をつくる"]},"c2_tall":{"t":"空に届きそうな山","x":["土の山はぐんぐん高くなりました。雲をつきぬけ、空に届きそうなほど高くそびえたその山が、ハルラ山（漢拏山）です。","山のてっぺんにはくぼみができて、のちに澄んだ水がたまり、ペンノクダム（白鹿潭）と呼ばれるようになります。","ハルマンはひたいに手をあてて見上げ、誇らしげに笑いました。"]},"c2_soft":{"t":"お母さんの胸のような山","x":["ハルマンは手のひらで土をぽんぽんとたたいてならしました。急ではなく、ゆったりと裾野を広げたハルラ山ができあがりました。","その胸はとても広く、のちに人々はハルラ山を「お母さんの山」と呼ぶようになります。","ハルマンは、できあがった山をなでながら、小さく鼻歌を歌いました。"]},"c2_orum":{"t":"三百六十あまりのオルム","x":["ハルマンがスカートをぱたぱたとはたくと、残った土が島のあちこちに散らばりました。ところで、長いあいだ着ていたハルマンのスカートは、ところどころに穴があいていました。歩きまわるうちに、その穴から土がさらさらとこぼれ落ちたのです。","こぼれた土は、島のすみずみで小さくて丸い峰になりました。その数、なんと三百六十あまり。これが済州のオルム（小さな火山の丘）です。","ハルマンはオルムをひとつひとつ見てまわり、にこにこと満足そうに笑いました。"]},"c2_name":{"t":"名前をもらったオルム","x":["「あなたはタランシ、あなたはヨンヌニ、あなたはセビョル！」ハルマンが名前を呼ぶたびに、オルムは誇らしげにぐんと背をのばしたようでした。","名前をもらったオルムたちは、それぞれちがう形と表情で、島をいっぱいに満たしました。名前があれば、これからは誰でも会いに来られます。","島はもう、名前のない土地ではありませんでした。"]},"c2_seed":{"t":"花が咲く島","x":["ハルマンが指先で花の種をまくと、黄色い菜の花が波のように広がり、赤い椿が炎のように咲きました。","オルムごとにちがう花が咲いて、島は一枚の刺しゅうの風呂敷のように美しくなりました。","風が花びらをのせて、海の上をふわりふわりと飛んでいきました。"]},"c2_rest":{"t":"山をまくらに横になる","x":["仕事を終えたハルマンは、ハルラ山の頂をまくらにして、長々と横になりました。両足は、海のむこうの冠脱島（クァンタルソム）にのせました。","やわらかな山、あたたかな風、ひとつふたつと灯りはじめる星。ハルマンは久しぶりに、ふうっと深く息をつきました。","「これなら本当にいい島ね。」"]},"c2_splash":{"t":"ばしゃばしゃ水遊び","x":["ばしゃん！ ハルマンが足をばたつかせると、海が大きくゆれて、はねあがった水しぶきが星のように島のあちこちに散りました。","水しぶきが落ちた場所には、そのたびに澄んだ泉がこんこんとわき出しました。のちに人々が飲む、大切な水でした。","ハルマンはけらけら笑って、もう一度足をばたつかせました。"]},"c2_sky":{"t":"星を数える夜","x":["ひとつ、ふたつ、みっつ…。ハルマンが星を数えるたびに、星の光がひとすじずつ、島の上に降りてきました。","「いつかこの島に誰かが来たら、いっしょにこの星を数えてあげなくちゃ。」ハルマンは願いごとのようにつぶやきました。","そのとき、流れ星がひとつ、長い尾を引いて海に落ちていきました。"]},"c3_people":{"t":"島に来た人たち","x":["時がたつにつれて、島にひとり、またひとりと人がやって来ました。オルムのふもとにわらぶき屋根の家が建ち、どの煙突からも夕方になると煙が立ちのぼりました。","人々は、山のように大きなハルマンを見上げて、はじめはこわがっていました。けれどハルマンがにっこり笑うと、いつのまにかそばに集まってきました。","石垣を積み、畑を耕しているうちに、島はだんだん人のぬくもりでいっぱいになりました。"],"ch":["第3章","島に来た人たち"]},"c3_listen":{"t":"夕方の庭で聞くお話","x":["ハルマンは身をかがめて、人々の話を聞きました。海で魚をとる話、石垣を積む話、風の強い夜に子どもを寝かしつける話。","話を聞けば聞くほど、ハルマンはこの島がどれほど大切かに気づきました。","人々の笑い声が、オルムのあいだにあたたかく広がっていきました。"]},"c3_palm":{"t":"ハルマンの手のひらの上で","x":["ハルマンが大きな手のひらをさし出すと、人々はおそるおそる乗りこみました。ハルマンは手を空高く持ち上げました。","「見て、波の上で光がきらきらくだけているよ！」人々は、はじめて見る島の姿に歓声を上げました。","オルムも海も一望できたその日のことを、子どもたちはいつまでも忘れませんでした。"]},"c3_wish":{"t":"陸へ渡る橋","x":["ハルマンが願いごとをたずねると、人々は集まって声をそろえて言いました。「ハルマン、わたしたちは陸が恋しいのです。海をわたる橋をかけていただけませんか？」","ハルマンはしばらく考えてから言いました。「いいでしょう。わたしの古い下着を、絹百反で新しく仕立ててくれたら、陸まで丈夫な橋をかけてあげましょう。」","でも、ハルマンにはもうひとつ心配ごとがありました。山の中で育つ五百人の息子たちです。"]},"c3_silk":{"t":"一反、また一反","x":["村ごとに絹を集めはじめました。一反、二反…どの家も、大事にしまっておいた上等の布を出しました。","けれど日がたつにつれて、集めるのがむずかしくなりました。九十反、九十六反…とうとう九十九反まで集まりました。","あとはたった一反、最後の一反だけが足りません。"]},"c3_weave":{"t":"夜通し織った最後の一反","x":["人々は灯りをともし、輪になって夜通し機を織りました。子どもは糸を持ち、大人は杼（ひ）を投げ、お年寄りは歌をうたいました。","夜が明けるころ、ついに最後の一反が織りあがりました。百反が、すべてそろったのです。","人々は手をとりあって歓声を上げました。さあ、約束の布をハルマンの前に広げるときです。"]},"c3_ninety":{"t":"九十九反の約束","x":["九十九反の絹が、ハルマンの前に積まれました。ハルマンは一生けんめい下着を縫いはじめましたが、一反足りなくて、とうとう仕上げることができませんでした。","ハルマンは残念そうにほほえみました。それでも、人々の真心は十分に伝わっていました。","約束は約束だったので、ハルマンは静かに遠い海を見つめました。"]},"c4_sons":{"t":"飢饉の年","x":["ハルマンには五百人の息子がいました。いたずらっ子で食いしんぼうでしたが、ハルマンにとっては世界でいちばん大切な宝物でした。","ところがある年、ひどい飢饉がおとずれました。畑の作物はかれ、息子たちはおなかがすいたと泣きそうな顔をしていました。","ハルマンは山のふもとに大きな釜をかけて、おかゆを炊くことにしました。"],"ch":["第3章","五百人の息子たちの話"]},"c4_pot":{"t":"湯気がのぼる大釜","x":["ハルマンは腕まくりをして釜をかきまぜました。湯気がほかほかとのぼり、おいしそうなにおいが山を越えていきました。","かきまぜるのに夢中になりすぎたハルマンは、うっかり足をすべらせて、大きな釜の中に落ちてしまいました。","釜の中ではおかゆがぐつぐつ煮えていて、山からは息子たちが帰ってくる音が聞こえてきました。"]},"c4_together":{"t":"みんなで炊いたおかゆ","x":["ハルマンが大きな声で息子たちを呼びました。五百人の息子がどやどやと駆けつけて、ひとりは火をおこし、ひとりは水をくみ、またひとりは釜をかきまぜました。","たくさんの手が集まると、おかゆはあっというまに煮えて、誰もけがをしませんでした。","おいしそうなにおいが村まで広がって、近所の人たちも器を持って集まってきました。"]},"ai":{"t":"ハルマンの最後のお願い","x":["ハルマンは空を見上げて言いました。","「この島に、最後にもうひとつだけ置きたいものがあるのよ。あなたが教えてちょうだい。何があったらいいと思う？」","あなたが言葉をひとつ言うと、お話の新しい一場面が描かれます。"],"ch":["最後の章","あなたがつくる一場面"],"v":{"e_stones":["釜の中から、ハルマンのかすかな声が聞こえてきました。","「みんな…この島に、最後にもうひとつだけ残したいのよ。あなたが教えてちょうだい。何があったらいいと思う？」","あなたが言葉をひとつ言うと、お話の新しい一場面が描かれます。"]}},"e_bridge":{"t":"つながった道","x":["ハルマンは新しい下着を着て、にっこり笑いました。そして約束どおり、海の上に一歩、また一歩と石を置いて、道をつなげていきました。","済州と陸がはじめてふれあったその日、人々は抱きあっておどりました。島はもう、さびしくありませんでした。","伝わっているお話では、たった一反足りなくて橋がかかりません。でも、あなたがいっしょに歩んだお話では、人々が力を合わせて、その一反を満たしたのです。"]},"e_ninety":{"t":"足りなかった一反","x":["一反足りなくて、下着はとうとう仕上がらず、ハルマンは橋をかけるのをやめました。だから済州は、海に囲まれた島のままなのだと伝えられています。","もしかすると、その足りなかった一反のおかげで、済州だけの風や石やお話が、いつまでも守られてきたのかもしれません。","足りないからこそ美しいお話も、あるのですから。"]},"e_stones":{"t":"五百将軍","x":["釜に落ちたお母さんを知らずに帰ってきた息子たちは、おかゆをおいしく食べました。ところが、いちばん最後に末の息子が、釜の底にお母さんの跡を見つけました。","息子たちは深い悲しみに沈み、ハルラ山の霊室（ヨンシル）渓谷で、そのまま固まって石になったといいます。今もオルムのそばには、五百将軍の岩が立っています。","ハルマンの愛はこうして岩になり、今日も島を守りつづけているのです。"]},"e_porridge":{"t":"いっしょに炊いたおかゆ","x":["五百の器にあつあつのおかゆがもられ、山のふもとのあちこちにあかるい灯りがともりました。息子たちと近所の人たちは、おなかいっぱい食べて、ハルマンのそばに輪になって、わいわいとおしゃべりをしました。","いっしょにいれば、飢饉の夜もあたたかくなることを、その日、島は知りました。","これは、あなたがいっしょに書き上げた結末です。"]},"e_star":{"t":"星でつながった道","x":["最後の一反は、夜空の星の光で織られました。好奇心いっぱいの子どもが「この糸はどこから来たんだろう？」と見上げて、星の光のひとすじをたどり、機にかけたのです。","ハルマンが新しい下着を着て笑うと、橋は海の上ではなく、星が流れる空にかかりました。陸にも、まだ行ったことのない遠い島にも届く道でした。","知りたいと思う心が道をつくることを、その日、済州は知りました。これは、あなたが好奇心で開いた、かくれた結末です。"]},"e_boat":{"t":"自分たちで渡った海","x":["九十九反の絹では下着はどうしても仕上がらず、橋はかかりませんでした。人々はしばらくのあいだ、うつむいていました。","そのとき、ひとりが前に進み出ました。「橋がないなら、船をつくればいいじゃないか！」絹は帆になり、オルムの木は船になりました。","勇気を出した人々は波をかきわけ、自分たちの力で陸にたどりつきました。ハルマンは手をふって、風を吹かせ、帆を押してあげました。これは、あなたが勇気で開いた、かくれた結末です。"]},"e_mountain":{"t":"山になったハルマン","x":["おかゆの釜に落ちたハルマンは、ついに戻ってきませんでした。帰ってきた息子たちは、釜の前で、いつまでも泣きつづけました。","その涙が大地をぬらすと、ハルマンのあたたかな心が土の中にしみこんでいきました。ハルラ山がひとつ大きく息をして、オルムというオルムに、青い草が芽ぶきました。","息子たちは石になるかわりに、山を守る風になりました。今でもハルラ山がお母さんの胸のようにぽかぽかと心地よいのは、そのためだといいます。これは、あなたがあたたかな心で開いた、かくれた結末です。"]},"e_flavors":{"t":"五百の味のおかゆ","x":["五百人の息子と近所の人たちは、みんな好奇心でいっぱいでした。「これを入れたら、どんな味になるかな？」ひとりは菜の花を、ひとりは椿の葉を、またひとりは海でとってきたわかめを、もうひとりは甘ずっぱいみかんを、釜に入れました。","おかゆはひと口ごとに味がちがいました。甘くて、香ばしくて、しょっぱくて、いい香りがしました。飢饉の夜が、とつぜんお祭りのようににぎやかになりました。","新しいものを知りたいと思う心が、いちばんあたたかい食卓をつくりました。これは、あなたが好奇心で開いた、かくれた結末です。"]}},"zh":{"start":{"t":"雪门台奶奶（설문대할망）","x":["很久很久以前，济州还不是岛，只是一片望不到头的蓝色大海。","在大海中央，一位个子和天一样高的女神——雪门台奶奶，慢慢睁开了眼睛。","这个故事早就流传了很久，可这一次故事会往哪里走，由你来选。"]},"c1_dark":{"t":"天和地粘在一起的时候","x":["那时候，世界一片漆黑。天和地紧紧粘成一整块，连一丝光、一点风都钻不进来。","奶奶在黑暗中醒来，眨了眨眼睛。那是一双谁也没见过的、又大又温暖的眼睛。","“好闷啊。这个世界怎么这么挤呢？”奶奶小声嘀咕。"],"ch":["第一章","还没有名字的大海"]},"c1_listen":{"t":"黑暗中的声音","x":["她侧耳细听，远远传来“哗——哗——”的声音。原来黑暗下面，有一片无边无际的水在翻涌。","那声音好像在喊：“在这儿！在这儿！”奶奶的心怦怦直跳。","“上面会有什么呢？”好奇变成了勇气，奶奶的手臂一下子充满了力气。"]},"c1_push":{"t":"天被推开了","x":["奶奶用双手使出全身力气，把天往上一推。轰隆隆！天和地裂开了，黑暗出现了一道缝。","第一缕光从缝里倾泻下来。金色的光在海浪上闪动，大海第一次露出了自己的颜色。","很远很远的地方画出了一条地平线，地平线上方，又高又广的天空豁然展开。"]},"c1_feel":{"t":"第一个早晨","x":["阳光暖暖的。暖意轻轻落在奶奶的脸颊、肩膀和脚尖上。","“啊，原来这就是早晨啊。”奶奶忍不住笑了出来。这是一个就算只有自己一个人，也不觉得孤单的早晨。","海面上闪闪发亮的波光，好像在跟奶奶打招呼。"]},"c1_walk":{"t":"在海里散步","x":["哗啦，哗啦。奶奶每走一步，海浪就在脚踝边碎开。再深的海，也只到奶奶的膝盖。","走了好久，奶奶忽然停下了脚步。四面八方全是水，连一块可以落脚的地方都没有。","“要是有个地方能歇歇脚就好了。不对，要是别人也能在那里休息，就更好了。”"]},"c2_dive":{"t":"海底的泥土","x":["奶奶把手臂深深伸进海里，指尖碰到了海底的世界：闪亮的贝壳、轻轻摇摆的海草，还有结实又温暖的泥土。","“这个就行！”奶奶一捧又一捧，把泥土捞了上来。小鱼们从她的手掌缝里吓得四处逃窜。"],"ch":["第二章","造出岛屿"]},"c2_soil":{"t":"裙子里装满泥土","x":["奶奶撑开裙摆，把海底的泥土装得满满的。裙子鼓了起来，每走一步，泥土都晃来晃去。","走到大海中央，奶奶小心翼翼地把裙子慢慢倾斜。","“该堆成什么样子呢？”"],"ch":["第二章","造出岛屿"]},"c2_tall":{"t":"高耸入云的山","x":["泥土堆呀堆，越堆越高。那座穿过云层、几乎碰到天的山，就是汉拿山。","山顶有一个凹下去的地方，后来积满了清澈的水，被人们叫做白鹿潭。","奶奶把手搭在额头上，抬头望着它，满意地笑了。"]},"c2_soft":{"t":"像妈妈怀抱一样的山","x":["奶奶用手掌把泥土轻轻拍实。汉拿山不陡峭，山势宽广又舒缓。","它的怀抱那么宽厚，后来人们就把汉拿山叫做“妈妈的山”。","奶奶一边抚摸着刚做好的山，一边轻轻哼起了歌。"]},"c2_orum":{"t":"三百六十多座岳（오름）","x":["奶奶把裙子抖了抖，剩下的泥土撒落在岛上各个角落。可是奶奶的裙子穿了很久，到处都是破洞。她走来走去的时候，泥土就从洞里一点一点漏了出来。","漏出来的泥土，在岛上的各个角落变成了圆圆的小山包。一共有三百六十多座，这就是济州的“岳”（오름，是济州特有的小山丘）。","奶奶一座一座地看过去，开心地笑了。"]},"c2_name":{"t":"有了名字的岳","x":["“你叫多郎时，你叫龙眼，你叫新星！”奶奶每叫一个名字，那座岳就好像得意地往上蹿一蹿。","有了名字的岳们，各有各的模样和表情，把整个岛装点得满满的。有了名字，以后谁都能找到它们。","这座岛，再也不是没有名字的荒地了。"]},"c2_seed":{"t":"开满花的岛","x":["奶奶用指尖撒下花种，黄色的油菜花像波浪一样一片片铺开，红色的山茶花像火焰一样绽放。","每座岳上开着不同的花，整个岛美得像一块绣满花的包袱布。","风带着花瓣，轻轻飘过了大海。"]},"c2_rest":{"t":"枕着山躺下","x":["忙完以后，奶奶把汉拿山的山顶当成枕头，舒舒服服地躺了下来。她的双脚，搭在海对面的冠脱岛上。","软软的山，暖暖的风，一颗一颗亮起来的星星。奶奶好久没有这样深深地舒了一口气。","“这真是一座好岛啊。”"]},"c2_splash":{"t":"扑通扑通玩水","x":["扑通！奶奶一踢脚，海水翻起大浪，溅起的水珠像星星一样洒落在岛上各处。","水珠落下的地方，一眼一眼清清的泉水咕嘟咕嘟冒了出来。这是留给后来的人们喝的宝贵的水。","奶奶咯咯地笑着，又踢了一脚。"]},"c2_sky":{"t":"数星星的夜晚","x":["一颗，两颗，三颗……奶奶每数一颗星星，就有一缕星光落在岛上。","“要是以后有人来到这座岛上，我要和他们一起数这些星星。”奶奶像许愿一样轻声说。","这时，一颗流星拖着长长的尾巴，划过天空，落进了大海。"]},"c3_people":{"t":"来到岛上的人们","x":["时间一天天过去，岛上陆陆续续来了人。岳的脚下盖起了茅草屋，每家的烟囱在傍晚都冒出了炊烟。","人们抬头看着像山一样高大的奶奶，一开始有点害怕。可是奶奶笑得那么亲切，不知不觉，大家就围到了她身边。","大家垒石墙、开田地，岛上渐渐有了人间的烟火味，变得暖烘烘的。"],"ch":["第三章","来到岛上的人们"]},"c3_listen":{"t":"傍晚院子里的故事","x":["奶奶弯下身子，听大家讲故事。有出海捕鱼的故事，有垒石墙的故事，还有大风夜里哄孩子睡觉的故事。","越听，奶奶越明白这座岛有多么珍贵。","人们的笑声在岳与岳之间，暖暖地传开了。"]},"c3_palm":{"t":"在奶奶的手掌上","x":["奶奶伸出大大的手掌，人们小心翼翼地爬了上去。奶奶把手高高地举向天空。","“快看，阳光在海浪上碎成一片片呢！”人们第一次看到岛的全貌，忍不住连连惊叹。","岳和大海一眼望尽的那一天，孩子们好久好久都忘不了。"]},"c3_wish":{"t":"通往大陆的桥","x":["奶奶问大家有什么心愿，人们聚在一起，异口同声地说：“奶奶，我们想念大陆。您能为我们在海上架一座桥吗？”","奶奶想了想说：“好啊。你们要是给我用一百匹丝绸，缝一件新内衣，我就给你们修一座通到大陆的结实大桥。”","不过，奶奶还有一桩心事：住在山里的五百个儿子。"]},"c3_silk":{"t":"一匹一匹地凑","x":["各个村子开始收集丝绸。一匹，两匹……家家户户把舍不得用的好布都拿了出来。","可是越到后面，越难凑。九十匹，九十六匹……终于凑到了九十九匹。","现在只差最后一匹了。"]},"c3_weave":{"t":"连夜织出的最后一匹","x":["人们点起灯，围坐在一起，通宵织布。孩子拉线，大人投梭，老人唱歌。","天快亮的时候，最后一匹终于织好了。一百匹，全齐了！","人们手拉着手，欢呼起来。现在，该把承诺的布摆到奶奶面前了。"]},"c3_ninety":{"t":"九十九匹的约定","x":["九十九匹丝绸堆在了奶奶面前。奶奶认真地开始缝内衣，可是少了一匹，到最后也没能缝完。","奶奶有点遗憾地笑了笑。不过，人们的心意已经足够传达到了。","约定就是约定，奶奶静静地望向了远方的大海。"]},"c4_sons":{"t":"闹饥荒的那一年","x":["奶奶有五百个儿子。他们调皮捣蛋，还特别能吃，可在奶奶心里，他们是世界上最珍贵的宝贝。","可是有一年，发生了严重的饥荒。田里的庄稼都枯死了，儿子们饿得直哭。","奶奶决定在山脚下架起一口大锅，给他们煮粥。"],"ch":["第三章","五百个儿子的故事"]},"c4_pot":{"t":"热气腾腾的大锅","x":["奶奶挽起袖子搅着锅。热气腾腾，香喷喷的味道飘过了山头。","奶奶搅得太用力，脚一滑，一下子掉进了那口巨大的锅里。","锅里的粥正咕嘟咕嘟地煮着，山上传来了儿子们回来的脚步声。"]},"c4_together":{"t":"大家一起煮的粥","x":["奶奶大声呼唤儿子们。五百个儿子呼啦啦地跑了过来，有的生火，有的打水，有的搅锅。","人多力量大，粥很快就煮好了，也没有人受伤。","香香的味道一直飘到了村子里，邻居们也端着碗聚了过来。"]},"ai":{"t":"奶奶最后的请求","x":["奶奶抬头望着天空说：","“我想在这座岛上，最后再放一样东西。你来告诉我吧，你希望有什么呢？”","只要你说出一个词，故事里就会多出一个全新的场景。"],"ch":["最后一章","你写下的一个场景"],"v":{"e_stones":["锅里传来了奶奶微弱的声音。","“孩子们……我想在这座岛上，最后再留下一样东西。你来告诉我吧，你希望有什么呢？”","只要你说出一个词，故事里就会多出一个全新的场景。"]}},"e_bridge":{"t":"连起来的路","x":["奶奶穿上了新内衣，开心地笑了。然后她遵守约定，在海上一步、两步，开始一块一块地放石头，把路连了起来。","济州和大陆第一次连在一起的那天，人们抱在一起跳起了舞。这座岛，再也不孤单了。","在流传下来的故事里，因为少了一匹布，桥没能架成。但在你参与的这个故事里，大家齐心协力，把那一匹补齐了。"]},"e_ninety":{"t":"缺的那一匹","x":["因为少了一匹布，内衣最终没能缝完，奶奶修到一半就停下了。所以据说济州就成了被大海环绕的岛。","也许正因为缺了那一匹，济州独有的风、石头和故事，才得以长长久久地保存下来。","有些故事，正因为有缺憾，才更美。"]},"e_stones":{"t":"五百将军","x":["儿子们不知道妈妈掉进了锅里，回来后吃得津津有味。直到最小的儿子，在锅底发现了妈妈留下的痕迹。","儿子们悲痛欲绝，在汉拿山的灵室溪谷里，就那样僵住，变成了石头。据说现在，五百将军岩依然守在岳的旁边。","奶奶的爱就这样变成了岩石，直到今天还在守护着这座岛。"]},"e_porridge":{"t":"一起煮的粥","x":["五百只碗里盛满了热腾腾的粥，山脚下处处亮起温暖的灯火。儿子们和邻居们吃得饱饱的，围坐在奶奶身边，说说笑笑，聊个不停。","那天，岛明白了一个道理：只要在一起，就算是饥荒的夜晚也会变暖。","这是你亲手一起写下的结局。"]},"e_star":{"t":"用星光连起来的路","x":["最后一匹布，是用夜空的星光织成的。一个好奇的孩子抬头望着天空问：“这根线是从哪儿来的呢？”他顺着一缕星光，把它挂到了织布机上。","奶奶穿上新内衣，笑了起来。桥没有架在海上，而是架向了星河流淌的天空。这条路，既通向大陆，也通向还没去过的遥远岛屿。","那天，济州明白了：好奇心，能铺出一条路。这是你用好奇心打开的隐藏结局。"]},"e_boat":{"t":"自己渡过的海","x":["九十九匹丝绸，始终没能缝成内衣，桥也没能架起来。人们低着头沉默了好一阵子。","这时，有一个人站了出来。“没有桥，我们造船就是了！”丝绸变成了船帆，岳上的树变成了船身。","鼓起勇气的人们乘风破浪，自己抵达了大陆。奶奶挥着手，吹起风，推着船帆前进。这是你用勇气打开的隐藏结局。"]},"e_mountain":{"t":"变成山的奶奶","x":["掉进粥锅的奶奶，再也没能回来。回来的儿子们在锅前哭了很久很久。","他们的眼泪浸湿了大地，奶奶温暖的心就渗进了泥土里。汉拿山深深地呼吸了一次，每座岳上都长出了青青的草。","儿子们没有变成石头，而是变成了守护山的风。据说汉拿山直到今天仍像妈妈的怀抱一样温暖，就是这个缘故。这是你用温暖的心打开的隐藏结局。"]},"e_flavors":{"t":"五百种味道的粥","x":["五百个儿子和邻居们个个都很好奇。“放这个进去会是什么味道呢？”有人放了油菜花，有人放了山茶叶，有人放了从海里捞来的海带，还有人放了酸酸甜甜的橘子。","每一勺粥，味道都不一样。有甜的、香的、咸的，还有清香的。饥荒的夜晚，一下子热闹得像过节。","对新鲜事物的好奇心，做出了最温暖的一桌饭。这是你用好奇心打开的隐藏结局。"]}}};
+/*I18N-END*/
+
+/* ═══════════════════════════ AI 장면 (서버 → 안 되면 오프라인 장면) ═══════════════════════════ */
+const josa=(w,a,b)=>{const c=w.trim().slice(-1).charCodeAt(0);return (c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28!==0)?a:b};
+function localScene(word){
+  if(LANG!=="ko")return localSceneL(word);                    // 영어·일본어·중국어 오프라인 장면
+  const w=word, h=[...w].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7), pick=(arr,k)=>arr[(h>>>k)%arr.length];
+  const el=[[/꽃|동백|유채|수국|벚/,"flower"],[/불|화|해|태양|노을/,"fire"],[/물|바다|비|고래|파도|샘|눈|해녀/,"water"],[/바람|구름|새|연/,"wind"],[/별|달|밤|은하/,"star"],[/돌|바위|산|오름/,"stone"],[/빛|무지개|등/,"light"]]
+    .find(([re])=>re.test(w));
+  return {source:"local",title:pick([`${w}${josa(w,"이","가")} 깃든 섬`,`할망의 선물, ${w}`,`${w}${josa(w,"이","가")} 찾아온 날`],2),
+    paragraphs:[
+      pick([`할망이 손끝으로 허공을 가만히 쓸자, 어디선가 ${w}${josa(w,"이","가")} 반짝이며 나타났습니다.`,`할망이 후우 숨을 불자, 바다 위로 ${w}${josa(w,"이","가")} 둥실 떠올랐습니다.`,`할망이 치마폭을 흔들자, 주머니 속에서 ${w}${josa(w,"이","가")} 도르르 굴러 나왔습니다.`],1),
+      pick([`${w}${josa(w,"은","는")} 바람을 타고 오름과 오름 사이를 지나 마을 지붕 위에 살포시 내려앉았습니다.`,`${w}${josa(w,"은","는")} 파도 소리에 맞춰 춤을 추며 섬을 한 바퀴 돌았습니다.`,`${w}${josa(w,"은","는")} 한라산 꼭대기까지 올라가 섬 전체를 환하게 비추었습니다.`],3),
+      pick([`사람들은 ${w}${josa(w,"을","를")} 올려다보며 “이 섬에는 이런 멋진 일도 있구나” 하고 웃었습니다.`,`아이들은 ${w}${josa(w,"과","와")} 함께 뛰어놀며 오래오래 이 섬을 기억하기로 했습니다.`,`그날 이후 제주 사람들은 ${w}${josa(w,"을","를")} 볼 때마다 설문대할망의 선물을 떠올렸습니다.`],5)],
+    mood:pick(["dawn","day","golden","dusk","night","mist"],4),element:el?el[1]:pick(["flower","light","star","wind"],6)};
+}
+async function makeScene(word){
+  const q=new URLSearchParams({word,warm:st.warm,curious:st.curious,brave:st.brave,end:st.end||""});
+  const ctl=new AbortController(), timer=setTimeout(()=>ctl.abort(),12000);
+  try{
+    const r=await fetch(`${STORY_API}/story/scene?${q}`,{signal:ctl.signal}); if(!r.ok) throw new Error(r.status);
+    const d=await r.json(); if(!d.title||!Array.isArray(d.paragraphs)||d.paragraphs.length<2) throw new Error("bad");
+    return {source:"ai",title:String(d.title),paragraphs:d.paragraphs.map(String).slice(0,3),mood:d.mood,element:d.element};
+  }catch(e){return localScene(word)} finally{clearTimeout(timer)}
+}
+const ELP={flower:["petal",26],fire:["spark",24],water:["bubble",18],wind:["dust",18],star:["star",3],stone:["dust",22],light:["dust",30],animal:["dust",18]};
+/* 단어에 맞춰 미리 만들어 둔 그림: images/w_<이름>.(jpg|png|webp). 그림이 있는 단어만 그 그림이, 없으면 고정 그림 + 단어 말풍선이 나온다 */
+const WORD_ART={"무지개":"rainbow","고래":"whale","동백꽃":"camellia","동백":"camellia","귤":"tangerine","감귤":"tangerine","별똥별":"shootingstar","별똥":"shootingstar","돌하르방":"hareubang","하르방":"hareubang","해녀":"haenyeo","바람":"wind","한라산":"hallasan","백록담":"baengnokdam"};
+const aiArt=sc=>({mood:MOODS[sc.mood]?sc.mood:"golden",alt:sc.title,mount:1,orum:10,village:true,fig:"stand",x:130,s:.8,arms:"reach",p:ELP[sc.element]||["dust",24],stars:sc.mood==="night"||sc.element==="star",
+  fg:sc.element==="flower"?"flowers":"grass",sea:true});
+
+/* ═══════════════════════════ 진행 ═══════════════════════════ */
+const $=id=>document.getElementById(id);
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+let st={warm:0,curious:0,brave:0,end:"",path:[],aiScene:null}, typer=null;
+const loadFound=()=>{try{return JSON.parse(localStorage.getItem("seolmun_endings_v2")||"[]")}catch(e){return[]}};
+const saveFound=l=>{try{localStorage.setItem("seolmun_endings_v2",JSON.stringify(l))}catch(e){}};
+const showFound=()=>{$("found").innerHTML=`<svg viewBox="0 0 24 24"><path d="M3 5.5h6.5A2.5 2.5 0 0112 8v11a2 2 0 00-2-2H3zM21 5.5h-6.5A2.5 2.5 0 0012 8v11a2 2 0 012-2h7z"/></svg>${esc(U("found"))} <b>${loadFound().length}</b>/<b class="acc">${ENDINGS.length}</b>`};
+const showTraits=()=>{for(const k in TR){$("t-"+k).textContent=st[k]||"";$("c-"+k).classList.toggle("on",st[k]>0)}};
+const stage=$("stage");
+let cur="start", skipTyping=null;
+const esc=t=>String(t).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const IC={
+ tap:'<path d="M9 11V5.5a1.5 1.5 0 013 0V10m0-1a1.5 1.5 0 013 0v2m0-1a1.5 1.5 0 013 0v5a6 6 0 01-6 6h-1a6 6 0 01-5-3l-2.2-4.2a1.5 1.5 0 012.4-1.7L9 15"/>',
+ up:'<path d="M12 20V5M6 11l6-6 6 6"/>',
+ ear:'<path d="M8 10a4 4 0 118 0c0 2-2 3-2 5a2.5 2.5 0 01-5 0"/><path d="M10.5 9.5a2 2 0 013 0"/>',
+ heart:'<path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.7 5 6 5c2 0 3.4 1.1 4 2.2C10.6 6.1 12 5 14 5c3.3 0 5.1 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/>',
+ star:'<path d="M12 2l2.3 6.4L21 10.8l-6.7 2.4L12 20l-2.3-6.8L3 10.8l6.7-2.4z"/>',
+ mtn:'<path d="M2 20l7-12 4 6 3-4 6 10z"/>',
+ wave:'<path d="M2 9q3-3 5 0t5 0 5 0 5 0M2 15q3-3 5 0t5 0 5 0 5 0"/>',
+ soil:'<path d="M3 19h18M5 19c0-5 3-8 7-8s7 3 7 8M12 11V6"/>',
+ flower:'<circle cx="12" cy="12" r="2.5"/><path d="M12 9.5V4m0 16v-5.5M9.5 12H4m16 0h-5.5M10 10L6.5 6.5m7.5 3.5l3.5-3.5M10 14l-3.5 3.5m7.5-3.5l3.5 3.5"/>',
+ moon:'<path d="M20 14.5A8 8 0 019.5 4a8 8 0 1010.5 10.5z"/>',
+ drop:'<path d="M12 3c4 5 6 8 6 11a6 6 0 01-12 0c0-3 2-6 6-11z"/>',
+ pot:'<path d="M5 10h14l-1.5 8a3 3 0 01-3 2.5h-5a3 3 0 01-3-2.5zM8 6q1-2 0-3M12 6q1-2 0-3M16 6q1-2 0-3"/>',
+ people:'<circle cx="8" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M2 20c0-4 3-6 6-6s6 2 6 6M15 14c3 0 6 1.5 6 5"/>',
+ thread:'<path d="M4 8h16M4 12h16M4 16h16M8 4v16M12 4v16M16 4v16"/>',
+ voice:'<path d="M4 5h16v10H9l-5 4z"/>',
+ silk:'<path d="M6 3c4 4-4 7 0 11s-4 5 0 7M13 3c4 4-4 7 0 11s-4 5 0 7"/>',
+ bundle:'<path d="M5 8l7-4 7 4v8l-7 4-7-4zM5 8l7 4 7-4M12 12v8"/>',
+ refresh:'<path d="M20 12a8 8 0 11-2.5-5.8M20 4v5h-5"/>'};
+const IC_BY={c1_push:"up",c1_listen:"ear",c1_feel:"heart",c1_walk:"tap",c2_dive:"wave",c2_soil:"soil",c2_tall:"mtn",c2_soft:"heart",c2_orum:"soil",c2_name:"voice",c2_seed:"flower",c2_rest:"moon",c2_splash:"drop",c2_sky:"star",c3_people:"people",c3_listen:"ear",c3_palm:"tap",c3_wish:"star",c3_silk:"silk",c3_weave:"thread",c3_ninety:"bundle",c4_sons:"people",c4_pot:"pot",c4_together:"people",ai:"star"};
+const IC_TR={warm:"heart",curious:"star",brave:"mtn"};
+const HPOS={1:[[50,58]],2:[[24,60],[76,60]],3:[[17,60],[50,60],[83,60]]}; // 하단: 1개=가운데, 2개=왼쪽·오른쪽, 3개=왼쪽·가운데·오른쪽
+/* ── 버튼 위치(장면마다 다르게) ──────────────────────────────────────────────
+   그림을 바꾸면 버튼이 얼굴·핵심을 가릴 수 있어요. 주소 끝에 ?edit=1 을 붙여 열면 '편집 모드'가 되어
+   버튼을 끌어서 옮길 수 있고, 아래 칸에 나온 코드를 복사해 이 HOT_POS 줄과 바꿔 붙이면 확정됩니다.
+   d = 컴퓨터(16:9) 화면, m = 휴대폰(4:3) 화면. 값은 그림 영역 안의 위치(% : 가로, 세로). 없으면 기본 위치(HPOS)를 씁니다. */
+
+/* ── 그림 속 할망 몸에 얹는 선택 버튼 ───────────────────────────────────────
+   BODY[장면] = [ [x%,y%], ... ]  선택지 순서대로. x,y 는 '그림 전체(3:2)' 기준 위치(%)예요.
+   화면에서는 그림이 16:9 / 4:3 으로 잘려 보이니, 그림이 잘리는 정도(IMG_FOCUS)를 계산해서 화면 좌표로 바꿔 줍니다.
+   그림을 바꾸면 이 값만 고치세요. (?edit=1 편집 모드로 끌어서 정한 값은 HOT_POS 가 우선합니다)
+   BODY_TIP = 버튼이 가리키는 몸 부위 이름(말풍선 대신 버튼 옆에 작게 보여 줌) */
+const BODY={
+ c1_dark:[[28,40],[72,40]],                 // 두 눈: 왼쪽 눈 / 오른쪽 눈
+ c1_push:[[58,25],[48,66]],                 // 얼굴(감고 느낌) / 치마(성큼 걸음)
+ c1_walk:[[28,30],[50,62]],                 // 물속 손 → 발 / 치마폭
+ c2_soil:[[63,50],[28,60]],                 // 치마폭 위의 흙(높이) / 치마폭 가장자리(포근)
+ c2_orum:[[24,30],[22,70]],                 // 흩뿌리는 치마(이름) / 꽃밭(꽃씨)
+ c2_rest:[[78,62],[12,28]],                 // 물에 닿은 발 / 얼굴(별 세기)
+ c3_people:[[34,24],[70,52]],               // 귀 가까이(듣기) / 할망 팔 위(손바닥에 올리기)
+ c3_wish:[[28,25],[72,60]],                 // 할망 얼굴(명주) / 아들 이야기
+ c3_silk:[[30,70],[70,75]],                 // 마을 사람들 옆 베틀 / 명주 더미
+ c4_sons:[[28,28],[72,28]]                  // 솥 가까이 / 솥 옆 아들들
+};
+/* 빛나는 점을 그림 속 특정 부분(손 등)에 맞추고, 글자는 그 점 위/아래에 두는 장면.
+   GLOW[장면] = [ [x%, y%, "down"|"up"], ... ]  선택지 순서대로. x,y 는 '그림 전체(3:2)' 기준 % (BODY 와 같은 좌표) */
+const GLOW={
+ start:[[66.7,52.3,"down"]],
+ c1_feel:[[80.1,35.2,"down"]],                           // 빛을 따라 걸어 나간다 → 떠오르는 해 한가운데
+ c1_walk:[[69,48.5,"down"],[34,48.5,"down"]],              // 물속에 손을 넣어 → 오른손 / 치마폭을 활짝 펼쳐 → 왼손 (두 손 높이를 같게)
+ c2_dive:[[39,66,"down","left"]],                           // 흙을 치마폭에 가득 담는다 → 손끝이 흙에 닿는 곳 (넓은 화면은 글자를 빛의 왼쪽에)
+ c2_soil:[[80.7,47.9,"down"],[31.9,50.8,"down"]],   // 하늘에 닿을 만큼 높이 → 오른손 / 넓고 포근하게 → 왼손 (치마폭 양쪽을 잡은 손)
+ c2_tall:[[39,68.5,"down","right"]],                             // 치마를 탈탈 털어 남은 흙을 뿌린다 → 앞쪽 오름 위 (넓은 화면은 글자를 빛의 오른쪽 한 줄로)
+ c2_soft:[[68.2,39.8,"down"]],                         // 치마를 탈탈 털어 남은 흙을 뿌린다 → 산꼭대기 호수(백록담) 한가운데
+ c2_orum:[[68,52,"down"],[50,50,"down"]],                  // 오름마다 이름을 불러 준다 → 먼 오름 / 오름 위에 꽃씨를 뿌려 준다 → 흙이 쏟아지는 곳
+ c2_name:[[65,13,"down"]],                           // 한라산 품에 안겨 쉬어 본다 → 한라산 정상
+ c2_seed:[[24.9,38.4,"down","right"]],                         // 한라산 품에 안겨 쉬어 본다 → 할망의 꽃바구니 위
+ c4_together:[[23.2,54.6,"down","right"]],                 // 따뜻한 죽 한 그릇을 받아 든다 → 왼쪽 아주머니가 든 죽 그릇 (넓은 화면은 글자를 빛 오른쪽 한 줄로)
+ c4_pot:[[61,19,"down","right"]],                         // 이야기를 조용히 지켜본다 → 솥 위로 피어오르는 김 (넓은 화면은 글자를 빛 오른쪽)
+ c3_ninety:[[37,39,"down"]],                            // 할망 곁에 가만히 앉는다 → 할망과 명주 더미 사이 빈자리
+ c3_weave:[[50.7,62,"up","left"]],                        // 할망 앞에 명주 백 통을 펼친다 → 베틀 위 환하게 빛나는 비단 (넓은 화면은 글자를 빛 왼쪽 한 줄로)
+ c3_silk:[[14,41.5,"up"],[92,46,"up"]],                    // 함께 베를 짠다 → 왼쪽 분홍 천 / 아흔아홉 통을 건넨다 → 오른쪽 보라·푸른 천
+ c3_wish:[[60,32,"down"],[39,44,"down"]],              // 명주를 모으러 나선다 → 수평선의 해 / 할망 곁에 남아 → 할망의 맞잡은 손
+ c3_palm:[[72,53,"up"]],                                  // 사람들을 내려 주며 소원을 물어본다 → 손바닥 앞쪽 끝(사람들이 내려갈 자리)
+ c3_listen:[[66.8,64.5,"down","left"]],                   // 사람들에게 소원을 물어본다 → 오른쪽 아래 등불 (넓은 화면은 글자를 등불 왼쪽 한 줄로)
+ c2_rest:[[92,42,"down"],[50,15,"down"]],                  // 발을 담그고 물장구 → 해가 비친 바다 / 누운 채 별을 세어 본다 → 하늘의 별
+ c2_splash:[[46.6,13.2,"down","right"]],                       // 일어나 섬을 둘러본다 → 하늘로 튀어 오른 큰 물방울 하나
+ c2_sky:[[12.8,12.4,"right"]]                          // 아침이 되어 섬을 둘러본다 → 달 한가운데 (글자는 할망 얼굴을 피해 달 오른쪽 하늘에 한 줄로)
+};
+/* 단어 장면이 만들어진 뒤 나오는 두 선택("이야기를 이어 간다" / "다른 단어로 다시 지어 본다")의 자리.
+   모든 그림에서 할망·아이들 얼굴은 왼쪽 위와 아래쪽에 있으므로 오른쪽 위 하늘 쪽에 위아래로 둔다.  [빛 x%, 빛 y%] (글자는 빛 아래) */
+const RES_POS={default:[[80,8],[80,32]], w_haenyeo:[[68,17],[86,17]], w_whale:[[91,63],[75,63]], w_rainbow:[[10,57],[88,57]], w_camellia:[[70,34],[87,34]], w_tangerine:[[74,19],[90,19]], w_shootingstar:[[68,37],[87,37]], w_hareubang:[[69,12],[85,12]], w_wind:[[70,24],[88,24]], w_hallasan:[[70,19],[87,19]], w_baengnokdam:[[70,13],[87,13]], ai_result:[[13,40],[87,40]]};   // 고래: 고래 몸이 아니라 앞쪽 바다 위
+/* 넓은 화면 배경 그림(images/bg_wide)을 깔 장면. 먼저 한 장면에서만 시험 중 — 마음에 들면 목록에 장면을 더하거나 모든 장면으로 넓힌다 */
+
+/* ───────── 넓은 화면 배경 효과: 하늘에 가끔 별똥별, 아래쪽 풀밭에 은은한 반딧불 ─────────
+   배경 그림이 깔린 장면(BG_SCENES)의 넓은 화면에서만 돈다. '동작 줄이기' 설정이면 켜지 않는다. */
+const FX={sparks:[],cv:null,cx:null,on:false,raf:0,last:0,t:0,w:0,h:0,flies:[],stars:[],next:0};
+const fxWanted=()=>document.body.classList.contains("hasbg")&&innerWidth>=900&&!reduce;
+function fxResize(){if(!FX.cv)return;const d=Math.min(devicePixelRatio||1,2);FX.w=innerWidth;FX.h=innerHeight;FX.cv.width=FX.w*d;FX.cv.height=FX.h*d;FX.cx.setTransform(d,0,0,d,0,0);fxSeed();fxSparkSeed()}
+function fxSeed(){const n=Math.round(Math.min(72,Math.max(38,FX.w*FX.h/24000)));FX.flies=Array.from({length:n},()=>({x:Math.random()*FX.w,y:FX.h*(.40+Math.random()*.60),r:1.4+Math.random()*2.1,ph:Math.random()*6.28,sp:.00035+Math.random()*.0006,tw:.0014+Math.random()*.002,ax:14+Math.random()*26,ay:10+Math.random()*20,rise:.004+Math.random()*.008}))}
+function fxSparkSeed(){FX.sparks=Array.from({length:Math.round(Math.min(46,Math.max(24,FX.w*FX.h/38000)))},()=>({x:Math.random()*FX.w,y:Math.random()*FX.h*.42,r:.8+Math.random()*1.5,ph:Math.random()*6.28,tw:.0009+Math.random()*.0022}))}
+function fxStar(){const a=.45+Math.random()*.25;return{x:FX.w*(.30+Math.random()*.70),y:FX.h*(.03+Math.random()*.30),vx:-Math.cos(a)*(.75+Math.random()*.35),vy:Math.sin(a)*(.75+Math.random()*.35),age:0,life:850+Math.random()*450,len:150+Math.random()*130}}
+function fxTick(now){
+  if(!FX.on)return;FX.raf=requestAnimationFrame(fxTick);
+  const dt=Math.min(64,now-(FX.last||now));FX.last=now;FX.t+=dt;const c=FX.cx;c.clearRect(0,0,FX.w,FX.h);
+  for(const k of FX.sparks){const a=.10+.9*Math.pow(.5+.5*Math.sin(FX.t*k.tw+k.ph),3);c.save();c.globalAlpha=a;c.fillStyle="#fff6dc";c.shadowColor="rgba(255,246,220,.9)";c.shadowBlur=6;c.beginPath();c.arc(k.x,k.y,k.r,0,6.283);c.fill();c.restore()}   // 반짝이는 별
+  for(const f of FX.flies){                                           // 반딧불
+    f.y-=f.rise*dt;if(f.y<FX.h*.36){f.y=FX.h*1.02;f.x=Math.random()*FX.w}
+    const x=f.x+Math.sin(FX.t*f.sp+f.ph)*f.ax,y=f.y+Math.cos(FX.t*f.sp*1.3+f.ph)*f.ay,a=.12+.88*Math.pow(.5+.5*Math.sin(FX.t*f.tw+f.ph),2);
+    c.save();c.globalAlpha=a;c.shadowColor="rgba(255,214,90,.95)";c.shadowBlur=14;c.fillStyle="#ffe58a";c.beginPath();c.arc(x,y,f.r,0,6.283);c.fill();c.restore()}
+  if(FX.t>=FX.next){FX.stars.push(fxStar());if(Math.random()<.35)FX.stars.push(Object.assign(fxStar(),{age:-260}));FX.next=FX.t+3200+Math.random()*3800}      // 별똥별은 3~7초에 한 번(가끔 두 개)
+  FX.stars=FX.stars.filter(s=>{s.age+=dt;if(s.age>s.life)return false;if(s.age<0)return true;
+    const p=s.age/s.life,hx=s.x+s.vx*s.age*.55,hy=s.y+s.vy*s.age*.55,al=Math.sin(Math.PI*Math.min(1,p*1.1)),L=s.len*(.4+.6*al),m=Math.hypot(s.vx,s.vy),tx=hx-s.vx/m*L,ty=hy-s.vy/m*L;
+    const g=c.createLinearGradient(hx,hy,tx,ty);g.addColorStop(0,"rgba(255,255,255,"+(.95*al)+")");g.addColorStop(.35,"rgba(190,175,255,"+(.5*al)+")");g.addColorStop(1,"rgba(150,130,255,0)");
+    c.save();c.strokeStyle=g;c.lineWidth=2.2;c.lineCap="round";c.beginPath();c.moveTo(hx,hy);c.lineTo(tx,ty);c.stroke();
+    c.shadowColor="rgba(255,255,255,.9)";c.shadowBlur=10;c.fillStyle="rgba(255,255,255,"+al+")";c.beginPath();c.arc(hx,hy,2.1,0,6.283);c.fill();c.restore();return true})}
+function fxUpdate(){
+  const want=fxWanted();
+  if(want&&!FX.on){if(!FX.cv){FX.cv=document.createElement("canvas");FX.cv.id="bgfx";FX.cv.setAttribute("aria-hidden","true");document.body.prepend(FX.cv);FX.cx=FX.cv.getContext("2d")}
+    FX.cv.style.display="block";FX.on=true;FX.last=0;FX.next=FX.t+1500;fxResize();FX.raf=requestAnimationFrame(fxTick)}
+  else if(!want&&FX.on){FX.on=false;cancelAnimationFrame(FX.raf);FX.cv.style.display="none"}}
+addEventListener("resize",()=>{fxUpdate();if(FX.on)fxResize()});
+const BG_SCENES=Object.keys(S);   // 배경을 깔 장면: 지금은 모든 장면 (일부만 쓰려면 ["start","c2_soft"] 처럼 장면 이름을 적는다)
+const HOT_POS={"d":{"start":[[67,68]],"c1_dark":[[17,67],[83,67]],"c1_listen":[[71,56]],"c1_push":[[83,50],[18,50]],"c1_feel":[[80,51]],"c1_walk":[[69,59],[38,70]],"c2_dive":[[53,66]],"c2_soil":[[81,58],[31,62]],"c2_tall":[[18,58]],"c2_soft":[[69,57]],"c2_orum":[[84,55],[64,60]],"c2_name":[[67,24]],"c2_seed":[[60,24]],"c2_rest":[[82,63],[42,41]],"c2_splash":[[21,59]],"c2_sky":[[13,21]],"c3_people":[[32,38],[72,58]],"c3_listen":[[49,55]],"c3_palm":[[52,65]],"c3_wish":[[75,34],[23,46]],"c3_silk":[[19,21],[82,21]],"c3_weave":[[47,62]],"c3_ninety":[[38,58]],"c4_sons":[[67,69],[18,66]],"c4_pot":[[49,61]],"c4_together":[[50,61]],"ai#result":[[18,71],[88,67]]}};
+const EDIT=new URLSearchParams(location.search).get("edit")==="1";
+const vmode=()=>innerWidth<=640?"m":"d";
+let HOT_LOCAL={};try{HOT_LOCAL=JSON.parse(localStorage.getItem("seolmun_hot_v1")||"{}")}catch(e){}
+function hotSrc(){return EDIT?{d:Object.assign({},HOT_POS.d,HOT_LOCAL.d),m:Object.assign({},HOT_POS.m,HOT_LOCAL.m)}:HOT_POS}
+function hp(key,n,def){const s=hotSrc(),v=(s[vmode()]&&s[vmode()][key])||(s.d&&s.d[key]);return(v&&v.length>=n)?v:def}
+function saveHot(key){
+  const list=[...document.querySelectorAll("#hot .hs")].map(h=>[Math.round(parseFloat(h.style.left)),Math.round(parseFloat(h.style.top))]);
+  const m=vmode();HOT_LOCAL[m]=HOT_LOCAL[m]||{};HOT_LOCAL[m][key]=list;
+  try{localStorage.setItem("seolmun_hot_v1",JSON.stringify(HOT_LOCAL))}catch(e){}
+  editOut();
+}
+function attachDrag(b,key){
+  b.style.touchAction="none";b.style.userSelect="none";b.style.webkitUserSelect="none";b.draggable=false;
+  b.addEventListener("dragstart",e=>e.preventDefault());   // 글자·그림 끌기로 바뀌지 않게
+  let sx=0,sy=0,moved=false,down=false;
+  b.addEventListener("pointerdown",e=>{e.preventDefault();sx=e.clientX;sy=e.clientY;moved=false;down=true;try{b.setPointerCapture(e.pointerId)}catch(_){}});
+  b.addEventListener("pointermove",e=>{if(!down)return;if(!moved&&Math.hypot(e.clientX-sx,e.clientY-sy)<6)return;moved=true;b._drag=true;
+    const r=$("stage").getBoundingClientRect();
+    b.style.left=Math.max(5,Math.min(95,(e.clientX-r.left)/r.width*100)).toFixed(1)+"%";
+    b.style.top=Math.max(8,Math.min(92,(e.clientY-r.top)/r.height*100)).toFixed(1)+"%"});
+  const end=e=>{if(!down)return;down=false;try{b.releasePointerCapture(e.pointerId)}catch(_){}if(moved)saveHot(key)};
+  b.addEventListener("pointerup",end);b.addEventListener("pointercancel",end);   // 브라우저가 끌기를 가로채도 놓은 위치를 저장한다
+}
+function editOut(){
+  if(!EDIT)return;const out={};
+  for(const m of["d","m"]){const o=Object.assign({},HOT_POS[m],HOT_LOCAL[m]);if(Object.keys(o).length)out[m]=o}
+  $("hotOut").value="const HOT_POS="+JSON.stringify(out)+";";
+  $("hotMode").textContent=vmode()==="m"?"휴대폰(4:3) 화면 기준":"컴퓨터(16:9) 화면 기준";
+}
+if(EDIT){
+  document.body.insertAdjacentHTML("beforeend",`<div id="editPanel" style="position:fixed;right:8px;bottom:8px;z-index:99;width:min(340px,92vw);background:rgba(10,8,40,.94);border:1px solid #a98bff;border-radius:14px;padding:10px 12px;font:12px/1.5 sans-serif;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.5)">
+    <b>🛠 버튼 위치 편집</b> <span id="hotMode" style="color:#d9ccff"></span>
+    <p style="margin:4px 0 6px;color:#d9d4ff">그림 위 동그란 버튼을 끌어서 옮기세요. 놓으면 자동 저장돼요. 아래에서 장면을 골라 바로 이동할 수 있어요. 단어 결과 화면은 <b>ai</b> 장면에서 단어를 입력하면 나와요(그림마다 따로 저장돼요).</p>
+    <select id="hotScene" style="width:100%;margin-bottom:6px;font:inherit;padding:4px;border-radius:8px"></select>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px">
+      <button id="hotCopy" style="font:inherit;padding:4px 10px;border-radius:999px;border:0;background:#a98bff;color:#1a1340;font-weight:700;cursor:pointer">좌표 복사</button>
+      <button id="hotOne" style="font:inherit;padding:4px 10px;border-radius:999px;border:1px solid #a98bff;background:none;color:#fff;cursor:pointer">이 장면 되돌리기</button>
+      <button id="hotAll" style="font:inherit;padding:4px 10px;border-radius:999px;border:1px solid #a98bff;background:none;color:#fff;cursor:pointer">전부 되돌리기</button>
+    </div>
+    <textarea id="hotOut" readonly rows="3" style="width:100%;font:11px monospace;border-radius:8px;padding:4px;background:#0b0a26;color:#d9ccff;border:1px solid #444"></textarea>
+    <div id="hotMsg" style="color:#8fe3c8;min-height:1.2em"></div></div>`);
+  const sel=$("hotScene");sel.innerHTML=Object.keys(S).map(id=>`<option value="${id}">${id} · ${esc(S[id].title||"")}</option>`).join("");
+  const jump=id=>{go(id);sel.value=id;setTimeout(()=>{skipTyping&&skipTyping()},60)};
+  sel.onchange=()=>jump(sel.value);
+  $("hotCopy").onclick=async()=>{const t=$("hotOut").value;try{await navigator.clipboard.writeText(t);$("hotMsg").textContent="복사됐어요. 파일에서 HOT_POS 로 시작하는 줄을 이 코드로 통째로 바꾸세요."}catch(e){$("hotOut").select();document.execCommand("copy");$("hotMsg").textContent="복사됐어요(또는 위 칸을 직접 복사하세요)."}};
+  $("hotOne").onclick=()=>{const m=vmode();if(HOT_LOCAL[m])delete HOT_LOCAL[m][cur];try{localStorage.setItem("seolmun_hot_v1",JSON.stringify(HOT_LOCAL))}catch(e){}editOut();jump(cur)};
+  $("hotAll").onclick=()=>{if(!confirm("저장된 위치를 모두 지울까요?"))return;HOT_LOCAL={};try{localStorage.removeItem("seolmun_hot_v1")}catch(e){}editOut();jump(cur)};
+  addEventListener("resize",editOut);
+}
+/* 선택지 글: 길면 두 줄로 나누되, 윗줄·아랫줄 글자 수가 최대한 비슷하도록 가운데에 가장 가까운 띄어쓰기에서 줄바꿈 */
+function bal(t){
+  if(t.includes("\n"))return t.split("\n").map(esc).join(" <br>");   // 글에 \n 이 있으면 그 자리에서 줄을 바꾼다
+  const w=t.split(" ");if(w.length<2||t.length<11)return esc(t);
+  let best=1,diff=1e9,a=0;
+  for(let i=1;i<w.length;i++){a+=w[i-1].length+(i>1?1:0);const b=t.length-a-1,d=Math.abs(a-b);if(d<=diff){diff=d;best=i}}
+  return esc(w.slice(0,best).join(" "))+" <br>"+esc(w.slice(best).join(" "))}
+/* 글자가 그림 밖으로 나가거나 서로 겹치면, 글자 상자만 살짝 옮겨 그림 안에 들어오게 한다 (빛나는 점의 위치는 그대로) */
+function fitLabels(){
+  const sr0=$("stage").getBoundingClientRect(),m=6,hs=[...document.querySelectorAll("#hot .hs")];
+  const bk=$("book").getBoundingClientRect(),sr={left:sr0.left,right:sr0.right,top:sr0.top,width:sr0.width,bottom:Math.min((bk.top>sr0.top&&bk.top<sr0.bottom)?bk.top:sr0.bottom,sr0.top+sr0.height*0.80)};   // 글 카드가 덮는 곳, 그리고 그림 아래쪽이 흐려지는 구간(아래 20%)에는 글자를 두지 않는다
+  if(!hs.length||!sr.width)return;
+  const lbs=hs.map(h=>h.querySelector(".lbl"));lbs.forEach(l=>{l.style.transform="";l._dx=0;l._dy=0});
+  const rect=l=>{const r=l.getBoundingClientRect();return{l:r.left,r:r.right,t:r.top,b:r.bottom}};   // 이미 옮긴 값이 반영된 현재 위치
+  const put=l=>{l.style.transform=`translate(${l._dx}px,${l._dy}px)`};
+  lbs.forEach(l=>{const r=rect(l);
+    if(r.l<sr.left+m)l._dx+=sr.left+m-r.l;else if(r.r>sr.right-m)l._dx-=r.r-(sr.right-m);
+    if(r.t<sr.top+m)l._dy+=sr.top+m-r.t;else if(r.b>sr.bottom-m)l._dy-=r.b-(sr.bottom-m);put(l)});
+  for(let pass=0;pass<4;pass++)for(let i=0;i<lbs.length;i++)for(let j=i+1;j<lbs.length;j++){
+    const a=rect(lbs[i]),b=rect(lbs[j]);
+    if(a.r<b.l||b.r<a.l||a.b<b.t||b.b<a.t)continue;
+    const ov=Math.min(a.b,b.b)-Math.max(a.t,b.t)+6, up=b.t-ov>=sr.top+m, down=b.b+ov<=sr.bottom-m;
+    lbs[j]._dy+=(((b.t+b.b)/2>=(a.t+a.b)/2)&&down)||!up?ov:-ov;put(lbs[j])}
+}
+addEventListener("resize",()=>{if(document.querySelector("#hot .hs"))fitLabels()});
+function hot(items,key){
+  const h=$("hot");h.innerHTML="";$("tapnote").hidden=!items.length;
+  items.forEach(it=>{const b=document.createElement("button");b.type="button";if(it.off)b.style.setProperty("--lx",(it.off/100*$("stage").clientWidth)+"px");b.className="hs"+(it.pin?" pin "+it.pin:"")+(it.body?" body "+(items.length>1?(it.x<=Math.min(...items.map(q=>q.x))?"l":"r"):(it.x>55?"l":"r")):"");
+    b.style.left=it.x+"%";b.style.top=it.y+"%";b.setAttribute("aria-label",it.label);
+    b.innerHTML=`<span class="ring"></span><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${IC[it.ic]||IC.tap}</svg></span><span class="lbl">${bal(it.label)}</span>`;
+    b.onclick=ev=>{ev.stopPropagation();if(b._drag){b._drag=false;return}
+      if(it.tr){const p=document.createElement("span");p.className="pop";p.textContent=trName(it.tr)+" +1";p.style.left=it.x+"%";p.style.top=it.y+"%";stage.appendChild(p);setTimeout(()=>p.remove(),950)}
+      hot([]);setTimeout(it.fn,280)};
+    h.appendChild(b);
+    if(it.body){const lb=b.querySelector(".lbl"),sw=$("stage").clientWidth,cx=sw*it.x/100,lw=lb.offsetWidth,m=6;
+      let sh=0;if(cx-lw/2<m)sh=m-(cx-lw/2);else if(cx+lw/2>sw-m)sh=(sw-m)-(cx+lw/2);b.style.setProperty("--shift",sh+"px");const sr=$("stage").getBoundingClientRect();if(lb.getBoundingClientRect().bottom>sr.bottom-4)b.classList.add("up")}
+    if(EDIT&&key)attachDrag(b,key)});
+  fitLabels();
+}
+
+/* 그림(3:2) 위의 점을, 화면에 잘려 보이는 무대(stage) 좌표(%)로 바꾸기 */
+function bodyToStage(id,px,py){
+  const st=$("stage").getBoundingClientRect(); if(!st.width||!st.height) return null;
+  const IW=3,IH=2, sw=st.width, sh=st.height;
+  const k=Math.max(sw/IW, sh/IH);               // object-fit:cover 배율
+  const w=IW*k, h=IH*k;                         // 그림이 그려진 실제 크기
+  const f=IMG_FOCUS[id]||[50,0];                // object-position(%)
+  const ox=(sw-w)*f[0]/100, oy=(sh-h)*f[1]/100; // 그림이 밀린 정도
+  const zx=(window.__kb||1.045);                // 천천히 확대(Ken Burns) 평균 배율
+  let x=ox+w*px/100, y=oy+h*py/100;
+  const fx=sw*f[0]/100;x=fx+(x-fx)*zx; y=sh*f[1]/100+(y-sh*f[1]/100)*zx; // 확대 기준점(transform-origin)을 반영
+  return [x/sw*100, y/sh*100];
+}
+/* AI 단어 화면 그림(ai.*) 속 단어 버튼 위치 — 그림 전체(3:2) 기준 % [왼쪽,위,오른쪽,아래] */
+/* 지금 그림(ai.webp)에는 글자가 쓰인 버튼이 없어서 비워 둡니다. 예전 단어 버튼 그림으로 되돌릴 때는 아래 4줄을 다시 넣으면 됩니다:
+   [["한라산",[24,54.7,50.8,68.4]],["백록담",[52.4,54.7,79.1,68.4]],["무지개",[23.2,70.3,50.8,84.4]],["별똥별",[52.4,70.3,79.8,84.4]]] */
+const WORDS=[];
+async function wordZones(){
+  if(!WORDS.length){                                         // 글자 버튼이 그려진 그림이 아니면 눌리는 영역은 만들지 않는다
+    if(cur==="ai"||wordZones.force)$("stage").classList.add("words");   // 대신 단어 화면은 그림 전체가 보이게 글 카드가 그림을 덮지 않게 한다 (아이들 얼굴이 가려지지 않도록)
+    return}
+  const hotEl=$("hot");
+  for(let i=0;i<40;i++){const im=$("stage").querySelector(":scope > .bgwrap img");if(im&&/\/ai\.[a-z]+/i.test(im.src))break;await new Promise(r=>setTimeout(r,100))}
+  const im=$("stage").querySelector(":scope > .bgwrap img");
+  if(!(im&&/\/ai\.[a-z]+/i.test(im.src))||cur!=="ai"&&!wordZones.force)return;     // 단어 그림이 아닐 때는 만들지 않는다
+  hotEl.innerHTML="";$("stage").classList.add("words");window.__kb=1;
+  if(!WORDS.length)return;                                   // 단어 버튼이 그려지지 않은 그림이면 눌리는 영역을 만들지 않는다 (아래 입력칸·추천 단어로만 고른다)
+  WORDS.forEach(([w,[x1,y1,x2,y2]])=>{
+    const a=bodyToStage("ai",x1,y1),b=bodyToStage("ai",x2,y2);if(!a||!b)return;
+    const z=document.createElement("button");z.type="button";z.className="wz";z.setAttribute("aria-label",w);z.title=w;
+    z.style.left=a[0]+"%";z.style.top=a[1]+"%";z.style.width=(b[0]-a[0])+"%";z.style.height=(b[1]-a[1])+"%";
+    z.onclick=ev=>{ev.stopPropagation();$("word").value=w;hotEl.innerHTML="";$("stage").classList.remove("words");runAI()};
+    hotEl.appendChild(z)});
+}
+addEventListener("resize",()=>{if($("stage").classList.contains("words"))wordZones.force=true,wordZones()});
+
+const IMG_FOCUS={ai:[20,0],w_rainbow:[30,0],w_whale:[0,0],w_camellia:[0,0],w_tangerine:[0,0],w_shootingstar:[0,0],w_hareubang:[0,0],w_haenyeo:[0,0],w_wind:[0,0],w_hallasan:[0,0],w_baengnokdam:[0,0],c2_orum:[22,0],c2_name:[22,0],c2_seed:[28,0],c2_soil:[50,0],c2_soft:[30,0],c2_tall:[22,50],c2_rest:[0,12],c2_sky:[0,12],c2_splash:[30,0],c3_wish:[8,0],c3_palm:[10,0],c3_people:[30,0],c3_silk:[50,45]};  // 그림별 초점 [가로%, 세로%] — 잘리는 화면에서도 얼굴이 보이도록 조정
+const IMG_EXT=["jpg","png","webp","gif","mp4"], imgCache={};
+function findImage(id){ // images/<id>.jpg|png|webp 를 차례로 찾는다. 없으면 false (→ 코드 그림 사용)
+  if(!id) return Promise.resolve(false);
+  if(id in imgCache) return Promise.resolve(imgCache[id]);
+  return new Promise(res=>{let i=0;const next=()=>{
+    if(i>=IMG_EXT.length){imgCache[id]=false;return res(false)}
+    const ext=IMG_EXT[i++], u=`images/${id}.${ext}`;
+    if(ext==="mp4"){const v=document.createElement("video");v.preload="metadata";v.muted=true;   // 움직이는 그림(mp4): 영상 정보가 읽히면 있는 것으로 본다
+      v.onloadedmetadata=()=>{imgCache[id]=u;res(u)}; v.onerror=next; v.src=u; return}
+    const im=new Image();
+    im.onload=()=>{imgCache[id]=u;res(u)}; im.onerror=next; im.src=u};
+    next()})}
+/* 영상(mp4) 안에 좌우 검은 띠가 같이 들어 있는 장면: 장면 이름 → 한쪽 띠의 폭(영상 가로의 %). 예) 4:3 그림을 16:9 영상에 넣은 경우 12.5. 띠가 없어지도록 위쪽 기준으로 확대한다 */
+const VIDEO_PAD={c2_soil:12.5,c3_people:7.8,w_rainbow:7.8,w_whale:7.8,w_camellia:7.8,w_hareubang:7.8,w_haenyeo:7.8,w_baengnokdam:7.8,w_hallasan:7.8,w_wind:10.9,ai_result:7.8,ai:7.8,w_shootingstar:7.8};   // 연·바람 영상은 영상 속 그림이 8초 동안 서서히 작아져서 띠 폭이 7.7% → 10.6% 로 커진다. 가장 큰 폭(10.9%)에 맞춰 배율을 고정한다 (배율을 계속 바꾸면 화면이 흔들려 보임). 배열 [처음, 끝] 로 쓰면 재생에 맞춰 배율이 변한다
+let paintToken=0;
+async function paint(a,chapter,id){
+  $("stage").classList.remove("words");window.__kb=undefined;
+  const tok=++paintToken, url=await findImage(id);
+  if(tok!==paintToken) return;                       // 그새 다른 장면으로 넘어갔으면 그리지 않는다
+  stage.querySelectorAll(":scope > svg,:scope > .chapter,:scope > .bgwrap,:scope > .wbub").forEach(e=>e.remove());
+  if(url){ const isVid=/\.mp4(#|\?|$)/i.test(url), fo=IMG_FOCUS[id]||[50,0];
+           stage.insertAdjacentHTML("afterbegin",isVid
+             ?`<div class="bgwrap"><video src="${url}" autoplay muted loop playsinline preload="auto" aria-label="${(a.alt||"").replace(/"/g,"")}" style="object-position:${fo[0]}% ${fo[1]}%"></video></div>`
+             :`<div class="bgwrap"><img src="${url}" alt="${(a.alt||"").replace(/"/g,"")}" style="object-position:${fo[0]}% ${fo[1]}%;transform-origin:${fo[0]}% ${fo[1]}%"></div>`);
+           if(isVid){const vd=stage.querySelector(".bgwrap video");vd.muted=true;const pp=vd.play();if(pp&&pp.catch)pp.catch(()=>{});
+             const pad=VIDEO_PAD[id]||0;
+             if(pad){   // 영상 안에 좌우 검은 띠가 같이 들어 있는 경우: 위쪽(머리)은 그대로 두고 그림이 화면 가로를 꽉 채우도록 확대한다 (아래쪽이 조금 잘린다)
+               const grow=Array.isArray(pad);   // [처음 띠 폭, 끝 띠 폭] : 영상 속 그림이 점점 작아지며 띠가 커지는 영상은 그 변화를 따라 확대 배율도 함께 바꾼다
+               const fit=()=>{const r=$("stage").getBoundingClientRect(),vw=vd.videoWidth||1280,vh=vd.videoHeight||720;if(!r.width)return;
+                 const k=Math.max(r.width/vw,r.height/vh),w=vw*k,ox=(r.width-w)*fo[0]/100;
+                 let p=grow?pad[0]:pad;
+                 if(grow){const f=Math.min(1,Math.max(0,(vd.currentTime||0)/(vd.duration||8)));p=pad[0]+(pad[1]-pad[0])*f}
+                 const s=Math.max(1,r.width/(w*(1-2*p/100)));
+                 vd.style.transformOrigin=`${ox+w/2}px 0px`;vd.style.transform=`scale(${s.toFixed(4)})`};
+               vd.addEventListener("loadedmetadata",fit);fit();addEventListener("resize",fit);
+               if(grow){const tick=()=>{if(!vd.isConnected)return;fit();requestAnimationFrame(tick)};requestAnimationFrame(tick)}}}
+           stage.querySelector(".bgwrap").insertAdjacentHTML("afterend",fxOnly(a)); }
+  else stage.insertAdjacentHTML("afterbegin",art(a));
+  if(chapter&&!reduce) stage.insertAdjacentHTML("beforeend",`<div class="chapter" onanimationend="this.remove()"><small>${chapter[0]}</small><b>${chapter[1]}</b></div>`);
+}
+stage.addEventListener("pointermove",e=>{const r=stage.getBoundingClientRect();
+  stage.style.setProperty("--mx",((e.clientX-r.left)/r.width*2-1).toFixed(3));stage.style.setProperty("--my",((e.clientY-r.top)/r.height*2-1).toFixed(3))});
+stage.addEventListener("pointerleave",()=>{stage.style.setProperty("--mx",0);stage.style.setProperty("--my",0)});
+
+function splitSentences(t){
+  const out=[];let cur="",q=false;
+  for(let i=0;i<t.length;i++){const c=t[i];cur+=c;
+    if(c==="“"||c==="「")q=true;else if(c==="”"||c==="」")q=false;else if(c==='"')q=!q;
+    const T=LANG==="ko"?".":LANG==="en"?".!?":".!?。！？";   // 문장 끝 기호 (일본어·중국어는 공백 없이 이어지는 。！？ 도)
+    const gap=LANG==="ja"||LANG==="zh"?true:(i===t.length-1||/\s/.test(t[i+1]));
+    const qEnd=LANG!=="ko"&&/[”」"』]/.test(c)&&!q&&T.includes(t[i-1]||"")&&(i===t.length-1||/\s/.test(t[i+1])||LANG==="ja"||LANG==="zh")&&!/^\s*[a-z]/.test(t.slice(i+1));   // 대사가 .”로 끝나는 문장 (바로 뒤에 she said 같은 말이 이어지면 붙인다)
+    if(qEnd){out.push(cur.trim());cur="";while(i+1<t.length&&/\s/.test(t[i+1]))i++;continue}
+    if(T.includes(c)&&!q&&!(LANG==="en"&&t[i+1]===".")&&gap&&!(/[”」"』]/.test(t[i+1]||"")&&LANG!=="ko")){
+      let j=i+1;while(j<t.length&&/[”」"']/.test(t[j])){cur+=t[j];j++;i=j-1}   // 마침표 바로 뒤의 닫는 따옴표는 같은 줄에 붙인다
+      out.push(cur.trim());cur="";
+      while(i+1<t.length&&/\s/.test(t[i+1]))i++}}
+  if(cur.trim())out.push(cur.trim());
+  if(LANG!=="ko"){const m=[];out.forEach(x=>{if(m.length&&m[m.length-1].length<(LANG==="en"?14:9))m[m.length-1]+=(LANG==="en"?" ":"")+x;else m.push(x)});return m}   // 의성어 같은 아주 짧은 토막은 다음 문장에 붙인다
+  return out}
+/* 문장 줄바꿈: 실제 글자 너비를 재서 정한다.
+   ① 한 줄에 다 들어가면 그대로.  ② 아니면 따옴표 밖 쉼표 뒤에서 줄을 나누고(한 줄에 들어가는 만큼 이어 붙임),
+   ③ 그래도 한 줄에 안 들어가는 부분은 끝 3어절(안 되면 2어절)을 한 덩어리로 묶어 아래 줄로 내린다.
+   한 글자 낱말(그, 한, 또 …)은 다음 말에 붙여서 줄 끝에 혼자 남지 않게 한다. */
+function bindTail(t){
+  const box=$("text"),W=box.clientWidth,NB=" ",nb=x=>x.replace(/ /g,NB);
+  const meas=s=>{const m=document.createElement("p");m.style.cssText="position:absolute;visibility:hidden;white-space:nowrap;margin:0;left:0;top:0";m.textContent=s;box.appendChild(m);const w=m.getBoundingClientRect().width;box.removeChild(m);return w};
+  t=t.replace(/(^|\s)([가-힣]) /g,"$1$2"+NB);
+  t=t.replace(/‘([^’]{1,10})’(?=[가-힣])/g,(m,a)=>"‘"+nb(a)+"’"+String.fromCharCode(8288));   // 짧은 ‘…’ 말은 한 덩어리 (뒤에 붙는 글자와도)
+  t=t.split(" ").reduce((o,wd,i,a)=>{const prev=a[i-1];return o+(i?(prev&&/고$/.test(prev)&&/[한운]$/.test(wd)?NB:" "):"")+wd},"");   // 형용사 나열(작고 동글한)은 한 덩어리
+  t=t.replace(/(\S) (삼[아고으은])/g,"$1"+NB+"$2");   // '베개 삼아' 같은 말은 한 덩어리
+  if(!W||meas(t)<=W)return t;
+  const qr=[];t.replace(/“[^”]*”/g,(m,k)=>{qr.push([k,k+m.length,m.length>18]);return m});   // 따옴표 대사 [시작,끝,긴 대사?]
+  const inQ=k=>qr.some(r=>k>r[0]&&k<r[1]),inLong=k=>qr.some(r=>r[2]&&k>r[0]&&k<r[1]),endLong=k=>qr.some(r=>r[2]&&r[1]-1===k);
+  const segs=[];let st=0;
+  for(let k=0;k<t.length;k++){const c=t[k],sp=t[k+1]===" ";
+    if(sp&&k+1-st>=7&&((c===","&&(!inQ(k)||inLong(k)))||(c==="…"&&!inQ(k))||(c==="”"&&endLong(k))||(/[.?!]/.test(c)&&inLong(k)))){segs.push(t.slice(st,k+1));st=k+2}}   // 너무 짧은 토막("할망,")은 따로 떼지 않는다
+  segs.push(t.slice(st));
+  const lines=[];let cur="";
+  for(const sg of segs){const trial=cur?cur+" "+sg:sg;if(cur&&meas(trial)>W){lines.push(cur);cur=sg}else cur=trial}
+  lines.push(cur);
+  const CONN=/(으며|면서|며|고|지만|는데|은데|다가|도록|자|때마다|되어)$/;
+  const fit=ln=>{if(meas(ln)<=W)return ln;const w=ln.split(" ");
+    let best=-1,bs=1e12;                                 // ① 연결 어미(-으며, -고, 때마다 …) 뒤에서 나누기: 앞부분이 한 줄에 들어가고 너무 짧지 않을 때
+    for(let i=1;i<w.length;i++){const wd=w[i-1].replace(/[,.’”\u2060]/g,"");if(!CONN.test(wd)||/라고$/.test(wd))continue;const a=w.slice(0,i).join(" "),b=w.slice(i).join(" ");const wa=meas(a),wb=meas(b);if(wa<W*0.4||wa>W||wb<W*0.3)continue;const sc=(wb<=W?0:1e6)+Math.abs(wa-wb);if(sc<bs){bs=sc;best=i}}
+    if(best>0)return w.slice(0,best).join(" ")+"\n"+fit(w.slice(best).join(" "));
+    let pk=-1,bd=1e9;                                    // ② 끝 2~3어절을 묶어 내리되, 앞·뒤 길이가 더 비슷한 쪽
+    for(const k of [2,3,4]){if(w.length<=k)continue;const a=w.slice(0,-k).join(" "),b=w.slice(-k).join(" ");const wa=meas(a),wb=meas(b),cost=Math.abs(wa-wb)+(k===4?10:0);if(wa<=W&&wb<=W&&cost<bd){bd=cost;pk=k}}
+    if(pk<0)for(const k of [3,2]){if(w.length>k&&meas(w.slice(-k).join(" "))<=W){pk=k;break}}
+    return pk>0?w.slice(0,-pk).join(" ")+" "+nb(w.slice(-pk).join(" ")):ln};
+  return lines.map(fit).join("\n")}
+const FADE_MODE=new URLSearchParams(location.search).get("fade")||"2", FADE_PREVIEW=["1","2","3"].includes(FADE_MODE);   // 기본: 글자마다 번지듯 타자(2). 주소 뒤 &fade=1 낱말이 떠오름 / &fade=3 문장 단위 페이드 / &fade=0 예전 타자 방식
+function typeText(rawParas,done,totalMs){
+  const parts=[];
+  if(LANG==="ko")rawParas.forEach((t,pi)=>splitSentences(t).forEach((x,k)=>parts.push([bindTail(x),k===0&&pi>0])));
+  else rawParas.forEach((t,pi)=>splitSentences(t).forEach((x,k)=>parts.push([x,k===0&&pi>0])));      // 영어·일본어·중국어: 한국어처럼 문장마다 한 줄 (긴 문장은 자연스럽게 줄바꿈)
+  const paras=parts.map(x=>x[0]);
+  const box=$("text"); box.innerHTML=""; if(typer) clearInterval(typer);
+  const els=parts.map(x=>{const p=document.createElement("p");if(x[1])p.className="gap";box.appendChild(p);return p});
+  const finish=()=>{paras.forEach((t,i)=>els[i].textContent=t);if(typer){clearInterval(typer);typer=null}$("hint").hidden=true;$("book").onclick=null;done&&done()};
+  skipTyping=finish;
+  if(reduce){finish();return}
+  if(FADE_PREVIEW){   // 미리보기(?fade=1): 낱말이 서서히 떠오른다 — 목소리가 있으면 그 길이에 맞춰 이어진다
+    $("hint").hidden=false;
+    const M2=FADE_MODE==="2",M3=FADE_MODE==="3";
+    const seg=M3?s=>[s]:M2?s=>Array.from(s):LANG==="ja"||LANG==="zh"?(window.Intl&&Intl.Segmenter?s=>[...new Intl.Segmenter(LANG,{granularity:"word"}).segment(s)].map(x=>x.segment):s=>Array.from(s)):s=>s.split(/(\s+)/);
+    const words=[];els.forEach((el,i)=>{el.textContent="";seg(paras[i]).forEach(w=>{if(!w)return;const sp=document.createElement("span");sp.textContent=w;sp.style.cssText=M2?"opacity:0":"opacity:0;display:inline-block;white-space:pre-wrap";if(!M2&&/^\s+$/.test(w))sp.style.display="inline";el.appendChild(sp);words.push({sp,n:w.length,gap:i})})});
+    const total=totalMs||Math.max(2200,paras.join("").length*55), N=words.reduce((s,w)=>s+w.n,0)+els.length*3;
+    let t=0,last=-1,end=0;
+    words.forEach(w=>{if(last>=0&&w.gap!==last)t+=3/N*total;last=w.gap;const d=t;t+=w.n/N*total;if(/^\s+$/.test(w.sp.textContent)){w.sp.style.opacity=1;return}
+      if(M3){w.sp.style.display="block";w.sp.animate([{opacity:0,transform:"translateY(9px)"},{opacity:1,transform:"translateY(0)"}],{duration:1000,delay:d,easing:"cubic-bezier(.25,.6,.3,1)",fill:"both"});end=Math.max(end,d+1000);return}   // 3번: 문장이 한 줄씩 부드럽게 떠오른다
+      if(M2){w.sp.animate([{opacity:0,filter:"blur(2px)"},{opacity:1,filter:"blur(0)"}],{duration:320,delay:d,easing:"ease-out",fill:"both"});end=Math.max(end,d+320);return}   // 2번: 글자 하나하나가 번지듯 또렷해진다
+      w.sp.animate([{opacity:0,transform:"translateY(7px)",filter:"blur(3px)"},{opacity:1,transform:"translateY(0)",filter:"blur(0)"}],{duration:700,delay:d,easing:"cubic-bezier(.2,.7,.2,1)",fill:"both"});end=Math.max(end,d+700)});
+    typer=setTimeout(()=>{typer=null;finish()},end+80);
+    $("book").onclick=e=>{if(typer&&!e.target.closest("button,input")){clearTimeout(typer);finish()}};
+    return}
+  $("hint").hidden=false; let pi=0,ci=0,wait=0;
+  /* 글자가 나오는 속도: TYPE_MS(밀리초)마다 2글자. 숫자가 클수록 느려진다 (예전 18). 한 줄이 끝나면 TYPE_PAUSE 번 쉬었다가 다음 줄이 나온다 */
+  let TYPE_MS=30; const TYPE_PAUSE=6;
+  if(totalMs){const ticks=paras.reduce((s,t)=>s+Math.ceil(t.length/2),0)+paras.length*TYPE_PAUSE; TYPE_MS=Math.max(30,Math.min(220,totalMs/ticks))}   // 목소리가 있는 장면: 글이 목소리 길이에 맞춰 천천히 나온다
+  typer=setInterval(()=>{if(wait>0){wait--;return}
+    ci+=2;els[pi].textContent=paras[pi].slice(0,ci);
+    if(ci>=paras[pi].length){pi++;ci=0;wait=TYPE_PAUSE;if(pi>=paras.length)finish()}},TYPE_MS);
+  $("book").onclick=e=>{if(typer&&!e.target.closest("button,input"))finish()};
+}
+function setTag(kind){const tag=$("tag");tag.hidden=!kind;if(kind){tag.className="tag"+(kind.cls?" "+kind.cls:"");tag.textContent=kind.t}}
+
+/* ═══ 배경 음악(BGM): 파일 없이 브라우저가 직접 만들어 연주하는 잔잔한 음악 ═══
+   장(챕터)마다 분위기(mood)가 바뀌고, 바뀔 때는 이전 음악이 서서히 사라지며 새 음악이 들어온다.
+   브라우저는 소리 자동 재생을 막으므로, 처음 화면을 누르는 순간 시작한다. 오른쪽 아래 버튼으로 켜고 끈다(선택은 기억한다).
+   분위기를 바꾸려면 아래 BGM_MOODS 의 숫자를 고친다:
+   root=으뜸음(Hz) scale=쓰는 음(반음 수) pad=바닥에 깔리는 화음 prog=화음이 흐르는 순서 chordSec=화음 바뀌는 초
+   step=음이 나오는 간격(초, 클수록 느림) prob=음이 나올 확률 bright=소리 밝기 decay=음이 사라지는 시간 noteVol=음 크기 bell=종소리 */
+const BGM_MOODS={
+  dawn:   {root:146.83,scale:[0,2,5,7,9],pad:[0,7,12],      prog:[0,0,-2,-5], chordSec:14,step:3.4,prob:.6, bright:650, decay:3.4,echo:.55,noteVol:.22,padVol:.5, oct:1,bell:false},  // 제1장·첫 화면: 어둡고 고요한 새벽
+  island: {root:196.00,scale:[0,2,4,7,9],pad:[0,4,7,12],    prog:[0,5,7,5],   chordSec:11,step:2.1,prob:.7, bright:1100,decay:2.6,echo:.45,noteVol:.2, padVol:.45,oct:1,bell:false},  // 제2장: 섬이 빚어지는 밝고 맑은 소리
+  village:{root:164.81,scale:[0,2,4,7,9],pad:[0,7,12,16],   prog:[0,-4,-2,-5],chordSec:12,step:1.9,prob:.65,bright:1000,decay:2.4,echo:.4, noteVol:.2, padVol:.45,oct:1,bell:false},  // 제3장: 사람들이 사는 따뜻한 마을
+  hearth: {root:130.81,scale:[0,3,5,7,10],pad:[0,7,12],     prog:[0,-4,-7,-2],chordSec:12,step:2.6,prob:.55,bright:800, decay:3.0,echo:.5, noteVol:.2, padVol:.5, oct:1,bell:false},  // 제4장: 죽솥 앞, 낮고 포근한 소리
+  wish:   {root:261.63,scale:[0,2,4,7,9],pad:[0,7,12],      prog:[0,5,4,7],   chordSec:10,step:1.5,prob:.75,bright:1500,decay:3.5,echo:.42,noteVol:.14,padVol:.35,oct:1,bell:true },  // 마지막 장: 반짝이는 종소리
+  glow:   {root:174.61,scale:[0,2,4,7,9],pad:[0,4,7,12,16], prog:[0,5,7,0],   chordSec:13,step:2.8,prob:.6, bright:1300,decay:4.0,echo:.5, noteVol:.16,padVol:.5, oct:1,bell:true }   // 결말: 마음이 놓이는 긴 여운
+};
+const BGM={ctx:null,master:null,live:null,want:null,on:(()=>{try{return localStorage.getItem("seolmun_bgm")!=="off"}catch(e){return true}})()};
+const bgmFreq=(root,semi)=>root*Math.pow(2,semi/12);
+function bgmMoodOf(id){
+  if(!id||id==="start"||id.startsWith("c1_"))return "dawn";
+  if(id.startsWith("c2_"))return "island";
+  if(id.startsWith("c3_"))return "village";
+  if(id.startsWith("c4_"))return "hearth";
+  if(id==="ai")return "wish";
+  if(id.startsWith("e_"))return "glow";
+  return "dawn";
+}
+function bgmInit(){
+  if(BGM.ctx)return true;
+  const AC=window.AudioContext||window.webkitAudioContext; if(!AC)return false;
+  BGM.ctx=new AC(); BGM.master=BGM.ctx.createGain(); BGM.master.gain.value=.34; BGM.master.connect(BGM.ctx.destination); return true;
+}
+function bgmStart(name){
+  const c=BGM.ctx,M=BGM_MOODS[name];
+  const g=c.createGain(); g.gain.value=0; g.connect(BGM.master);
+  const lp=c.createBiquadFilter(); lp.type="lowpass"; lp.frequency.value=M.bright; lp.Q.value=.4; lp.connect(g);
+  const dl=c.createDelay(2); dl.delayTime.value=M.echo; const fb=c.createGain(); fb.gain.value=.38;
+  const ef=c.createBiquadFilter(); ef.type="lowpass"; ef.frequency.value=1800; dl.connect(ef); ef.connect(fb); fb.connect(dl); ef.connect(g);
+  const oscs=[]; M.pad.forEach((semi,i)=>{const o=c.createOscillator(); o.type=i?"sine":"triangle"; o.frequency.value=bgmFreq(M.root,semi); o.detune.value=(i-1)*5;
+    const og=c.createGain(); og.gain.value=M.padVol/M.pad.length; o.connect(og); og.connect(lp); o.start(); oscs.push(o)});
+  const lfo=c.createOscillator(); lfo.frequency.value=.07; const lg=c.createGain(); lg.gain.value=M.bright*.25; lfo.connect(lg); lg.connect(lp.frequency); lfo.start();
+  const L={name,M,g,lp,dl,oscs,lfo,t:c.currentTime+.4,prog:0,pc:c.currentTime+M.chordSec,deg:2};
+  L.timer=setInterval(()=>bgmTick(L),150);
+  g.gain.setTargetAtTime(1,c.currentTime,1.6);
+  return L;
+}
+function bgmTick(L){
+  const c=BGM.ctx; if(!c||c.state!=="running")return; const M=L.M;
+  if(c.currentTime>=L.pc){L.prog=(L.prog+1)%M.prog.length; const off=M.prog[L.prog];
+    L.oscs.forEach((o,i)=>o.frequency.setTargetAtTime(bgmFreq(M.root,M.pad[i]+off),c.currentTime,1.8)); L.pc=c.currentTime+M.chordSec}
+  if(L.t<c.currentTime)L.t=c.currentTime+.05;
+  while(L.t<c.currentTime+.5){
+    if(Math.random()<M.prob){
+      const n=M.scale.length; L.deg=Math.max(0,Math.min(n*2-1,L.deg+Math.round((Math.random()*2-1)*2)));
+      const semi=M.scale[L.deg%n]+12*Math.floor(L.deg/n)+M.prog[L.prog]+M.oct*12;
+      bgmPluck(L,bgmFreq(M.root,semi),L.t,M.noteVol*(.6+Math.random()*.6));
+    }
+    L.t+=M.step*(.75+Math.random()*.6);
+  }
+}
+function bgmPluck(L,f,t,v){
+  const c=BGM.ctx,M=L.M,o=c.createOscillator(),o2=c.createOscillator(),e=c.createGain(),e2=c.createGain();
+  o.type=M.bell?"sine":"triangle"; o.frequency.value=f; o2.type="sine"; o2.frequency.value=f*(M.bell?2.76:2); e2.gain.value=.25;
+  o.connect(e); o2.connect(e2); e2.connect(e);
+  e.gain.setValueAtTime(0,t); e.gain.linearRampToValueAtTime(v,t+.012); e.gain.exponentialRampToValueAtTime(.0008,t+M.decay);
+  e.connect(L.g); e.connect(L.dl); o.start(t); o2.start(t); o.stop(t+M.decay+.1); o2.stop(t+M.decay+.1);
+}
+function bgmStop(L){
+  if(!L)return; clearInterval(L.timer); const c=BGM.ctx;
+  L.g.gain.cancelScheduledValues(c.currentTime); L.g.gain.setTargetAtTime(0,c.currentTime,1.2);
+  setTimeout(()=>{L.oscs.forEach(o=>{try{o.stop()}catch(e){}});try{L.lfo.stop()}catch(e){}try{L.g.disconnect()}catch(e){}},5500);
+}
+/* 지금은 음악 파일 한 곡(images/bgm.mp3)을 모든 장면에서 계속 반복해 튼다. 위의 코드 음악(BGM_MOODS)은 파일을 쓰지 않을 때를 위해 남겨 둔다.
+   곡을 바꾸려면 images/bgm.mp3 파일만 바꾸면 된다. 소리 크기는 BGM_VOL (0~1) */
+const BGM_VOL=.5, BGM_TRACK="images/bgm.mp3";
+const bgmA=new Audio(); bgmA.loop=true; bgmA.preload="auto"; bgmA.volume=0;
+bgmA.src=(typeof EMB!=="undefined"&&EMB["bgm.mp3"])||BGM_TRACK;       // 단일 HTML 파일에서는 안에 들어 있는 곡을 쓴다
+const bgmTarget=()=>(typeof VOICE!=="undefined"&&VOICE.id&&!VOICE.a.paused)?BGM_VOL*.3:BGM_VOL;   // 목소리가 읽는 중이면 배경 음악은 작게
+function bgmFade(to,ms=1800,done){
+  clearInterval(bgmA._f); const from=bgmA.volume,t0=performance.now();
+  bgmA._f=setInterval(()=>{const k=Math.min(1,(performance.now()-t0)/ms); bgmA.volume=Math.max(0,Math.min(1,from+(to-from)*k)); if(k>=1){clearInterval(bgmA._f);done&&done()}},40);
+}
+function bgmSet(name){
+  if(BGM_TRACK)return;                                                   // 한 곡이 계속 이어지므로 장이 바뀌어도 그대로 둔다
+  BGM.want=name; if(!BGM.on||!BGM.ctx||BGM.ctx.state!=="running")return;
+  if(BGM.live&&BGM.live.name===name)return;
+  const old=BGM.live; BGM.live=bgmStart(name); bgmStop(old);
+}
+function bgmUnlock(){                       // 처음 화면을 누르는 순간(또는 켜기 버튼) 소리를 시작한다
+  if(BGM_TRACK){ if(!BGM.on)return; if(bgmA.paused){const p=bgmA.play(); if(p&&p.then)p.then(()=>bgmFade(bgmTarget())).catch(()=>{}); else bgmFade(bgmTarget())} return }
+  if(!BGM.on||!bgmInit())return;
+  if(BGM.ctx.state==="running"&&BGM.live)return;
+  const go=()=>bgmSet(BGM.want||bgmMoodOf(cur));
+  if(BGM.ctx.state==="suspended")BGM.ctx.resume().then(go).catch(()=>{}); else go();
+}
+function bgmBtn(){
+  const b=$("bgm"); b.classList.toggle("off",!BGM.on); b.setAttribute("aria-pressed",String(BGM.on)); b.title=BGM.on?U("bgmOff"):U("bgmOn");
+  b.innerHTML=BGM.on?`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg>`
+                    :`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/><path d="M3 3l18 18"/></svg>`;
+}
+function bgmToggle(){
+  BGM.on=!BGM.on; try{localStorage.setItem("seolmun_bgm",BGM.on?"on":"off")}catch(e){}
+  if(BGM_TRACK){ if(BGM.on)bgmUnlock(); else bgmFade(0,700,()=>bgmA.pause()); bgmBtn(); return }
+  if(BGM.on){bgmUnlock()}
+  else{const L=BGM.live; BGM.live=null; if(L&&BGM.ctx)bgmStop(L); if(BGM.ctx)setTimeout(()=>{if(!BGM.on&&BGM.ctx)BGM.ctx.suspend()},1800)}
+  bgmBtn();
+}
+$("bgm").onclick=e=>{e.stopPropagation();bgmToggle()};
+/* 휴대폰은 '누르기 시작(pointerdown)'이 아니라 '손을 뗄 때(touchend/click)'를 소리를 켜도 되는 동작으로 인정하므로 모두 듣는다 */
+["pointerdown","pointerup","touchend","click","keydown"].forEach(ev=>addEventListener(ev,bgmUnlock,true)); bgmBtn();
+
+/* ═══ 본문 읽어주기(목소리) ═══
+   장면마다 미리 만들어 둔 목소리 파일(images/voice_<장면이름>.mp3)을 재생한다. 목소리가 있는 장면에서만 오른쪽 아래에 읽기 버튼이 나온다.
+   읽는 동안 배경 음악은 작아지고, 다음 장면으로 넘어가면 읽기는 멈춘다. 글은 목소리 길이에 맞춰 천천히 나온다.
+   장면을 더 읽히려면 mp3를 images/voice_<장면이름>.mp3 로 넣고 아래 VOICE_IDS 에 장면 이름을 더하면 된다. */
+const VOICE_IDS=["start","c1_dark","c1_listen","c1_push","c1_feel","c1_walk","c2_dive","c2_soil","c2_tall","c2_soft","c2_orum","c2_name","c2_seed","c2_rest","c2_splash","c2_sky","c3_people","c3_listen","c3_palm","c3_wish","c3_silk","c3_weave","c3_ninety","c4_sons","c4_pot","c4_together","ai","ai_stones","e_bridge","e_ninety","e_stones","e_porridge","e_star","e_boat","e_mountain","e_flavors"];
+const VOICE={on:(()=>{try{return localStorage.getItem("seolmun_voice")!=="off"}catch(e){return true}})(),a:new Audio(),dur:{},timer:null,id:null,wait:null};
+const voiceFile=k=>LANG==="ko"?`voice_${k}.mp3`:`voice_${LANG}_${k}.mp3`;   // 한국어는 voice_<장면>.mp3, 그 밖의 언어는 voice_<언어>_<장면>.mp3
+const voiceSrc=k=>(typeof EMB!=="undefined"&&EMB[voiceFile(k)])||`images/${voiceFile(k)}`;
+function voiceKey(id,sc){                       // 오백장군 길에서 나오는 단어 선택 글처럼 글이 달라지는 장면은 따로 만든 목소리(ai_stones)를 쓴다
+  const k=(sc&&sc.textBy&&sc.textBy[st.end])?id+"_"+String(st.end).replace(/^e_/,""):id;
+  return VOICE_IDS.includes(k)?k:null }
+function voicePreload(){ const L=LANG; VOICE_IDS.forEach(k=>{ if(VOICE.dur[L+":"+k])return; const a=new Audio();a.preload="metadata";a.onloadedmetadata=()=>{VOICE.dur[L+":"+k]=a.duration};a.src=voiceSrc(k)}) }   // 지금 언어의 목소리 길이를 미리 알아 둔다
+voicePreload();
+VOICE.a.preload="auto"; VOICE.a.volume=1;
+VOICE.a.addEventListener("ended",()=>voiceDone()); VOICE.a.addEventListener("pause",()=>{if(VOICE.a.ended)return});
+function voiceDone(){ VOICE.id=null; if(BGM.on&&!bgmA.paused)bgmFade(BGM_VOL,1400) }
+function voiceStop(){ clearTimeout(VOICE.wait); const a=VOICE.a; if(!a.paused){a.pause()} VOICE.id=null; if(BGM.on&&!bgmA.paused)bgmFade(BGM_VOL,900) }
+function voicePlay(k,now){
+  voiceStop(); $("voice").hidden=!k; voiceBtn();
+  if(!now)VOICE.played=null;
+  if(!k||!VOICE.on)return;
+  VOICE.wait=setTimeout(()=>{                // 장면이 바뀌자마자 눌린 경우를 걸러내려고 잠깐 기다린 뒤 읽기 시작 (손으로 누른 순간이면 바로)
+    const a=VOICE.a; a.src=voiceSrc(k); a.currentTime=0; VOICE.id=k;
+    const p=a.play(); if(p&&p.then)p.then(()=>{ VOICE.played=k; if(BGM.on&&!bgmA.paused)bgmFade(BGM_VOL*.3,700) }).catch(()=>{VOICE.id=null}); else VOICE.played=k;
+  },now?0:450);
+}
+function voiceBtn(){
+  const b=$("voice"); b.classList.toggle("off",!VOICE.on); b.setAttribute("aria-pressed",String(VOICE.on)); b.title=VOICE.on?U("vcOff"):U("vcOn");
+  b.innerHTML=VOICE.on?`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/></svg>`
+                       :`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>`;
+}
+$("voice").onclick=e=>{ e.stopPropagation(); VOICE.on=!VOICE.on; try{localStorage.setItem("seolmun_voice",VOICE.on?"on":"off")}catch(_){}
+  if(VOICE.on){ const sc=S[cur]; const k=voiceKey(cur,sc); voicePlay(k,true) } else { voiceStop(); voiceBtn() } };
+voiceBtn();
+/* 브라우저는 소리 자동 재생을 막으므로, 첫 화면에서 처음 눌렀을 때 아직 읽기가 시작되지 않았으면 그 장면의 읽기를 시작한다 */
+/* 자동 재생이 막혀 읽기가 시작되지 못했다면, 화면을 누르는 순간(휴대폰은 손을 뗄 때) 다시 시도한다. 이미 읽은 장면은 다시 읽지 않는다 */
+const voiceGesture=()=>{ if(!VOICE.on||VOICE._lock||(cur==="ai"&&st.aiScene))return;   // 단어로 지어진 장면(결과 화면)에서는 인사말 읽기를 다시 시작하지 않는다
+ const k=voiceKey(cur,S[cur]); if(!k||VOICE.played===k||(VOICE.id===k&&!VOICE.a.paused))return; VOICE._lock=1; setTimeout(()=>VOICE._lock=0,300); voicePlay(k,true) };
+["pointerup","touchend","click"].forEach(ev=>addEventListener(ev,voiceGesture,true));
+
+/* 뒤로 가기: 장면을 떠날 때마다 그때의 장면·성향 점수·걸어온 길을 저장해 두었다가, 뒤로 가면 그대로 되돌린다 */
+const HIST=[];
+const copySt=()=>JSON.parse(JSON.stringify(st));
+const WORD_LINE=/라는 단어로 장면을 지었다$/;
+function goBack(){
+  if(typer){clearInterval(typer);typer=null}
+  if(cur==="ai"&&st.aiScene){            // 단어 결과 화면이면 먼저 단어 입력 화면으로
+    st.aiScene=null; if(WORD_LINE.test(st.path[st.path.length-1]||""))st.path.pop();
+    go("ai",null,null,true); return}
+  const h=HIST.pop(); if(!h)return;
+  st=h.st;
+  if(h.id==="ai"){st.aiScene=null; if(WORD_LINE.test(st.path[st.path.length-1]||""))st.path.pop()}
+  go(h.id,null,null,true);
+}
+function restart(){st={warm:0,curious:0,brave:0,end:"",path:[],aiScene:null};HIST.length=0;cur=null;go("start")}
+function go(id,choiceText,trait,isBack){
+  const sc=S[id]; if(!sc)return;
+  if(!isBack&&cur&&cur!==id){HIST.push({id:cur,st:copySt()});if(HIST.length>80)HIST.shift()}
+  bgmSet(bgmMoodOf(id));                       // 장(챕터)에 맞는 배경 음악으로 이어 간다
+  if(choiceText) st.path.push(choiceText);
+  if(trait) st[trait]=(st[trait]||0)+1;
+  if(sc.set) st.end=sc.set;
+  cur=id; hot([]); document.body.classList.toggle("hasbg",BG_SCENES.includes(id)); fxUpdate();
+  const V=sceneView(id,sc);                      // 지금 언어의 제목·장·본문
+  showTraits(); $("back").hidden=(id==="start"||!HIST.length); $("home").hidden=(id==="start"); paint(sc.art,V.ch,id);
+  $("title").textContent=V.title; $("choices").className=""; $("choices").innerHTML=""; $("recap").innerHTML=""; $("ai").className="ai";
+  setTag(sc.end?{t:(sc.hidden?U("tagHidden"):"")+(sc.mine?U("tagMine"):U("tagOld")),cls:sc.mine?"mine":""}:null);
+  const vk=voiceKey(id,sc);                      // 이 장면에 읽어 주는 목소리가 있으면 그 길이에 맞춰 글이 나온다
+  typeText(V.text,()=>{ if(sc.ai) openAI(); else renderChoices(id,sc)},VOICE.on&&vk&&VOICE.dur[LANG+":"+vk]?VOICE.dur[LANG+":"+vk]*1000*.78:0);
+  voicePlay(vk);
+}
+function renderChoices(id,sc){
+  const box=$("choices");
+  if(sc.end){
+    const found=loadFound(); if(!found.includes(id)){found.push(id);saveFound(found)} showFound();
+    const top=Object.entries(TR).map(([k,v])=>[st[k],trName(k)]).sort((a,b)=>b[0]-a[0]);
+    const epi=top[0][0]===0?"":top[0][0]===top[1][0]?U("epiEven"):U("epiTop",top[0][1]);
+    $("recap").innerHTML=`<div class="recap">${epi?`<p>${esc(epi)}</p>`:""}<b>${esc(U("path"))}</b><ul>${st.path.map(p=>`<li>${esc(pathText(p))}</li>`).join("")}</ul>
+      ${st.aiScene?`<b>${esc(U("made",st.aiScene.title))}</b><blockquote>${esc(st.aiScene.paragraphs.join(" "))}</blockquote>`:""}
+      <div class="found2">${esc(U("foundCount",loadFound().length,ENDINGS.length,loadFound().length>=ENDINGS.length))}</div>${loadFound().filter(x=>HIDDEN.includes(x)).length<HIDDEN.length?`<div class="found2">${esc(U("hiddenHint",HIDDEN.length))}</div>`:""}</div>`;
+    box.dataset.n=1; box.innerHTML=`<button data-to="start" data-reset="1"><span class="lb">${esc(U("restart"))}</span></button>`;
+  }else{
+    const pos=hp(id,sc.choices.length,HPOS[Math.min(3,sc.choices.length)]);
+    const gl=GLOW[id]&&GLOW[id].length>=sc.choices.length?GLOW[id].map(g=>{const q=bodyToStage(id,g[0],g[1]);const wide=innerWidth>=900&&g[3];return q?[q[0],q[1],wide||g[2]||"down",wide?(g[4]||0):0]:null}):null;
+    const useGlow=gl&&gl.every(Boolean);
+    hot(sc.choices.map(([t,to,tr],i)=>({x:useGlow?gl[i][0]:pos[i][0],y:useGlow?gl[i][1]:pos[i][1],pin:useGlow?gl[i][2]:"",off:useGlow?gl[i][3]:0,ic:IC_BY[to]||IC_TR[tr]||"tap",label:tr_(t),tr:tr||"",
+      fn:()=>go(to,id==="start"?"":t,tr||undefined)})),id);
+  }
+  if(sc.end) box.className="show";
+}
+$("choices").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+  if(b.dataset.reset){restart();return}
+  go(b.dataset.to,b.dataset.t==="이야기를 시작한다"?"":b.dataset.t,b.dataset.tr)});
+
+/* AI 장면 화면 */
+$("chips").addEventListener("click",e=>{if(e.target.tagName==="BUTTON"){$("word").value=e.target.textContent;$("word").focus()}});
+function openAI(){hot([]);$("ai").className="ai show";$("word").value="";$("choices").className="";wordZones();$("word").focus({preventScroll:true})}
+async function runAI(){
+  const word=$("word").value.replace(/[<>{}`]/g," ").trim().slice(0,12); if(!word){$("word").focus();return}
+  $("make").disabled=true;$("spin").classList.add("show");
+  voicePlay(null);                                   // 단어를 넣고 장면이 지어지면 '할망의 마지막 부탁' 읽기는 멈춘다
+  hot([]); $("stage").classList.remove("words");
+  const sc=await makeScene(word);
+  $("make").disabled=false;$("spin").classList.remove("show");
+  st.aiScene=sc; st.path.push(`“${word}”라는 단어로 장면을 지었다`);
+  const wk=word.replace(/\s/g,""), wid=WORD_ART[wk]||WORD_ART_X[wk.toLowerCase()], wimg=wid&&await findImage("w_"+wid);
+  await paint(aiArt(sc),null,wimg?"w_"+wid:"ai_result");
+  /* 단어 그림이 없는 단어: 예전에는 그림 가운데에 단어 말풍선(.wbub)을 얹었지만, 그림을 가리므로 뺐다 (단어는 아래 제목에 나온다) */
+  $("title").textContent=sc.title;
+  setTag({t:sc.source==="ai"?U("tagAI"):U("tagLocal"),cls:"ai"});
+  $("ai").className="ai show"; $("hint").hidden=false;
+  typeText(sc.paragraphs,()=>{
+    const pk=wimg?"w_"+wid:"ai_result", rk="res:"+pk;
+    const q=hp(rk,2,null)||RES_POS[pk]||RES_POS.default;   // 편집 모드로 끌어 저장한 자리 > RES_POS(그림마다 얼굴을 피한 자리)
+    hot([{x:q[0][0],y:q[0][1],pin:"down",ic:"tap",label:U("cont"),fn:()=>go(resolveEnd())},
+         {x:q[1][0],y:q[1][1],pin:"down",ic:"refresh",label:U("again"),fn:()=>{hot([]);cur="ai";paint(S.ai.art,null,"ai");$("title").textContent=sceneView("ai",S.ai).title;setTag(null);$("ai").className="ai show";wordZones.force=true;wordZones()}}],rk)});
+}
+$("make").onclick=runAI; $("word").addEventListener("keydown",e=>{if(e.key==="Enter")runAI()});
+
+$("back").onclick=goBack;
+$("home").onclick=()=>{ if(confirm(U("confirm")))restart() };
+/* 언어 선택 메뉴 */
+(()=>{const btn=$("langbtn"),menu=$("langmenu");
+  const close=()=>{menu.hidden=true;btn.setAttribute("aria-expanded","false")};
+  btn.onclick=e=>{e.stopPropagation();const open=menu.hidden;menu.hidden=!open;btn.setAttribute("aria-expanded",String(open))};
+  menu.addEventListener("click",e=>{const b=e.target.closest("button[data-l]");if(!b)return;e.stopPropagation();close();setLang(b.dataset.l)});
+  document.addEventListener("click",close); document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});
+})();
+applyLang(); showTraits();
+{const q=new URLSearchParams(location.search).get("scene");   // 주소 끝 ?scene=장면이름 → 그 장면부터 시작 (예: ?scene=ai)
+ if(q&&S[q]){st.curious=st.curious||2;go(q)}else go("start")}
+editOut();
+/* ═══ 젤리 글자 (임시) — 장면 제목 · 상단 제목 · 장면 만들기 버튼. 말랑하게 출렁인다 ═══
+   hover: 올라간 글자와 양옆 1글자 / 제목은 장면이 바뀔 때 한 번 물결 / 클릭: 그 글자가 튀어오름 */
+(()=>{
+  if(matchMedia("(prefers-reduced-motion: reduce)").matches||new URLSearchParams(location.search).get("jelly")!=="1")return;   // 임시 미리보기: 주소 뒤 &jelly=1 일 때만 켜진다
+  const SQ=[{transform:"scale(1,1)"},{transform:"scale(1.25,.75)"},{transform:"scale(.85,1.15)"},{transform:"scale(1.05,.95)"},{transform:"scale(1,1)"}];
+  const BOUNCE=[{transform:"translateY(0) scale(1,1)"},{transform:"translateY(-12px) scale(.92,1.12)"},{transform:"translateY(0) scale(1.3,.7)"},{transform:"translateY(0) scale(.92,1.08)"},{transform:"translateY(0) scale(1,1)"}];
+  const wiggle=(sp,delay,big)=>sp&&sp.animate(big?BOUNCE:SQ,{duration:big?720:620,delay,easing:"ease-out"});
+  const wrap=(el,loadWave)=>{
+    if(el.dataset.jelly===el.textContent)return;
+    const text=el.textContent; if(!text.trim())return;
+    el.dataset.jelly=text; el.setAttribute("aria-label",text);
+    el.textContent=""; const chars=[];
+    text.split(/(\s+)/).forEach(tok=>{
+      if(!tok)return;
+      if(/^\s+$/.test(tok)){el.appendChild(document.createTextNode(" "));return}   // 공백: 줄바꿈 자리는 그대로
+      const w=document.createElement("span");w.className="jw";w.setAttribute("aria-hidden","true");   // 낱말 묶음: 낱말 중간에서 줄이 바뀌지 않게
+      Array.from(tok).forEach(c=>{const s=document.createElement("span");s.className="jc";s.textContent=c;w.appendChild(s);chars.push(s)});   // Array.from: 한글·이모지가 깨지지 않게
+      el.appendChild(w)});
+    el._jc=chars;
+    if(loadWave)chars.forEach((s,i)=>wiggle(s,i*40));
+  };
+  const hook=(el,loadWave)=>{
+    if(!el||el._jh)return; el._jh=1;
+    const idx=t=>{const s=t.closest&&t.closest(".jc");return s?(el._jc||[]).indexOf(s):-1};
+    el.addEventListener("mouseover",e=>{const i=idx(e.target);if(i<0)return;[i-1,i,i+1].forEach((k,n)=>wiggle(el._jc[k],n*40))});
+    el.addEventListener("click",e=>{const i=idx(e.target);if(i>=0)wiggle(el._jc[i],0,true)});
+    let busy=false;
+    new MutationObserver(()=>{if(busy)return;busy=true;try{wrap(el,loadWave)}finally{setTimeout(()=>busy=false,0)}}).observe(el,{childList:true,characterData:true,subtree:false});
+    wrap(el,false);
+  };
+  const css=document.createElement("style");
+  css.textContent=".jw{display:inline-block;white-space:nowrap}.jc{display:inline-block;transform-origin:50% 100%;will-change:transform}";
+  document.head.appendChild(css);
+  hook($("title"),true); hook($("hdr"),false); hook($("make"),false);
+})();
+</script>
+</body>
+</html>
