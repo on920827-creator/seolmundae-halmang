@@ -247,7 +247,7 @@
     <div id="text"></div>
     <p class="hint" id="hint" data-i="hint">글을 누르면 바로 다 나타나요</p>
     <div class="ai" id="ai">
-      <div class="row"><input id="word" maxlength="12" placeholder="예: 무지개, 고래, 동백꽃, 귤, 별똥별" aria-label="장면에 넣을 단어"><button class="go" id="make" data-i="make">✨ 장면 만들기</button></div>
+      <div class="row"><input id="word" maxlength="16" placeholder="예: 무지개, 고래, 동백꽃, 귤, 별똥별" aria-label="장면에 넣을 단어"><button class="go" id="make" data-i="make">✨ 장면 만들기</button></div>
       <div class="chips" id="chips"></div>
       <div class="spin" id="spin" data-i="spin">할망이 장면을 그려 내는 중…</div>
     </div>
@@ -656,9 +656,12 @@ const WORD_ART_X={rainbow:"rainbow",whale:"whale",camellia:"camellia",tangerine:
  "彩虹":"rainbow","鲸鱼":"whale","鲸":"whale","山茶花":"camellia","茶花":"camellia","橘子":"tangerine","柑橘":"tangerine","蜜柑":"tangerine","流星":"shootingstar","石爷爷":"hareubang","石头爷爷":"hareubang","风":"wind","汉拿山":"hallasan","白鹿潭":"baengnokdam"};
 const CHIPS_L={ko:["무지개","고래","동백꽃","귤","별똥별","돌하르방","해녀","바람"],en:["Rainbow","Whale","Camellia","Tangerine","Shooting star","Dolhareubang","Haenyeo","Wind"],ja:["虹","クジラ","椿","みかん","流れ星","ドルハルバン","海女","風"],zh:["彩虹","鲸鱼","山茶花","橘子","流星","石头爷爷","海女","风"]};
 const WORD_ART_CHIP={"shootingstar":"shootingstar","dolhareubang":"hareubang","石头爷爷":"hareubang"};
+const WORD_TEXT_L={"en": {"rainbow": ["Grandmother's Gift: A Rainbow", "Grandmother shook her skirt, and a rainbow came rolling out of her pocket.", "The rainbow laid a bridge of seven colors from the top of Hallasan all the way to the edge of the sea.", "The children ran beneath the rainbow and decided to remember this island for a very long time."], "whale": ["The Island Where a Whale Came", "Grandmother let out a soft breath, and a whale floated up over the sea.", "The whale spouted water in time with the sound of the waves and circled the island.", "The children waved at the whale and decided to remember this island for a very long time."], "camellia": ["Grandmother's Gift: Camellias", "Grandmother gently swept her fingertip through the air, and from somewhere red camellias bloomed, sparkling.", "The camellias bloomed like flames on every oreum and warmed the winter island with color.", "The children tucked camellias in their hair, played together, and decided to remember this island for a very long time."], "tangerine": ["The Day the Tangerines Came", "Grandmother let out a soft breath, and golden tangerines floated up over the sea.", "The tangerines rode the waves in and filled the fields all over the island with fruit, bunch after bunch.", "From that day on, whenever the people of Jeju saw a tangerine, they remembered Grandmother Seolmundae's gift."], "shootingstar": ["Grandmother's Gift: A Shooting Star", "Grandmother shook her skirt, and a shooting star came rolling out of her pocket.", "The shooting star drew a long tail across the night sky and settled down between the oreum.", "The people looked up at the shooting star, made a wish, and smiled, saying, \"This island has such wonderful things.\""], "hareubang": ["The Island of the Dolhareubang", "Grandmother gently swept her fingertip through the air, and from somewhere a dolhareubang, a stone grandfather statue, rose up and stood tall.", "The dolhareubang stood at the edge of the village and guarded the island from the wind and the waves.", "From that day on, whenever the people of Jeju saw a dolhareubang, they remembered Grandmother Seolmundae's gift."], "haenyeo": ["Grandmother's Gift: A Haenyeo", "Grandmother let out a soft breath, and with a whistle of held breath, a haenyeo, one of Jeju's women divers, rose from the sea.", "The haenyeo brought up abalone and conch from the deep sea, basket after basket.", "Hearing her breath whistle, the people smiled and said, \"This island has such strong people.\""], "wind": ["Grandmother's Gift: The Wind", "Grandmother gently swept her fingertip through the air, and from somewhere a cool wind began to blow.", "The wind swayed the silver grass on the oreum and pushed the sailboats along on the sea.", "The children ran along with the wind and decided to remember this island for a very long time."], "hallasan": ["Sunlight on Hallasan", "Grandmother gently gathered the soil from her skirt and piled it up, and in the middle of the island Hallasan rose tall.", "Hallasan poked its head above the clouds and was the first to welcome the morning sun.", "The children looked up at Hallasan and decided to remember this island for a very long time."], "baengnokdam": ["The Mountain with Baengnokdam", "Grandmother gently stroked the peak of Hallasan, and Baengnokdam, a crater lake of clear water, appeared.", "The sky and clouds were reflected in Baengnokdam, and a white deer came to drink.", "The children sat beside Baengnokdam, watched the deer, and decided to remember this island for a very long time."]}, "ja": {"rainbow": ["ハルマンの贈りもの、虹", "ハルマンがスカートをゆらすと、ポケットから虹がころころと転がり出ました。", "虹は、ハルラ山のてっぺんから海のはてまで、七色の橋をかけました。", "子どもたちは虹の下を走りまわり、この島をいつまでも覚えていようと決めました。"], "whale": ["クジラが宿った島", "ハルマンがふうっと息を吹くと、海の上にクジラがふわりと浮かびました。", "クジラは波の音に合わせて水をふきあげながら、島をひとまわりしました。", "子どもたちはクジラに手をふり、この島をいつまでも覚えていようと決めました。"], "camellia": ["ハルマンの贈りもの、椿", "ハルマンが指先で宙をそっとなでると、どこからか赤い椿がきらきらと咲きました。", "椿はオルムごとに炎のように咲いて、冬の島をあたたかく染めました。", "子どもたちは椿を髪にさして遊びまわり、この島をいつまでも覚えていようと決めました。"], "tangerine": ["みかんがやって来た日", "ハルマンがふうっと息を吹くと、海の上に黄色いみかんがふわりと浮かびました。", "みかんは波にのってやって来て、島じゅうの畑にたわわに実りました。", "その日から、済州の人々はみかんを見るたびに、ソルムンデハルマンの贈りものを思い出しました。"], "shootingstar": ["ハルマンの贈りもの、流れ星", "ハルマンがスカートをゆらすと、ポケットから流れ星がころころと転がり出ました。", "流れ星は夜空に長い尾を引いて、オルムとオルムのあいだに降りてきました。", "人々は流れ星を見上げて願いごとをし、「この島には、こんなすてきなこともあるんだね」と笑いました。"], "hareubang": ["ドルハルバンが宿った島", "ハルマンが指先で宙をそっとなでると、どこからか石のおじいさん、ドルハルバンがすっくと姿をあらわしました。", "ドルハルバンは村の入り口に立って、風や波から島を守ってくれました。", "その日から、済州の人々はドルハルバンを見るたびに、ソルムンデハルマンの贈りものを思い出しました。"], "haenyeo": ["ハルマンの贈りもの、海女", "ハルマンがふうっと息を吹くと、海の上に、息つぎの口笛といっしょに海女が浮かび上がりました。", "海女は深い海から、アワビやサザエをたっぷりととり上げました。", "人々は海女の息つぎの音を聞きながら、「この島には、こんなたくましい人もいるんだね」と笑いました。"], "wind": ["ハルマンの贈りもの、風", "ハルマンが指先で宙をそっとなでると、どこからか涼しい風がふいてきました。", "風はオルムのススキをゆらし、海の上の帆かけ船を押してくれました。", "子どもたちは風といっしょに走りまわり、この島をいつまでも覚えていようと決めました。"], "hallasan": ["ハルラ山にさす朝日", "ハルマンがスカートの土をそっと集めて積み上げると、島のまんなかにハルラ山がそびえ立ちました。", "ハルラ山は雲の上に頭を出して、朝日をいちばんに迎えました。", "子どもたちはハルラ山を見上げて、この島をいつまでも覚えていようと決めました。"], "baengnokdam": ["ペンノクダムのある山", "ハルマンが指先でハルラ山のてっぺんをそっとなでると、澄んだ水をたたえたペンノクダムが姿をあらわしました。", "ペンノクダムには空と雲がうつり、白い鹿がやって来て水を飲みました。", "子どもたちはペンノクダムのそばにすわって鹿をながめ、この島をいつまでも覚えていようと決めました。"]}, "zh": {"rainbow": ["奶奶的礼物：彩虹", "奶奶抖了抖裙子，彩虹从口袋里骨碌碌地滚了出来。", "彩虹从汉拿山的山顶，一直架起一座七彩的桥，通到大海的尽头。", "孩子们在彩虹下奔跑，决定要永远记住这座岛。"], "whale": ["鲸鱼来到的岛", "奶奶轻轻吹了一口气，一头鲸鱼悠悠地浮出了海面。", "鲸鱼随着海浪的声音喷着水，绕着岛转了一圈。", "孩子们朝鲸鱼挥着手，决定要永远记住这座岛。"], "camellia": ["奶奶的礼物：山茶花", "奶奶用指尖轻轻在空中一划，不知从哪里，红色的山茶花闪闪发光地绽放了。", "山茶花在每座岳上像火焰一样盛开，把冬天的岛染得暖烘烘的。", "孩子们把山茶花插在头发上玩耍，决定要永远记住这座岛。"], "tangerine": ["橘子到来的那一天", "奶奶轻轻吹了一口气，金黄的橘子悠悠地漂浮在海面上。", "橘子乘着海浪漂来，在岛上各处的田里结得沉甸甸的。", "从那天起，济州的人们每次看到橘子，就会想起雪门台奶奶的礼物。"], "shootingstar": ["奶奶的礼物：流星", "奶奶抖了抖裙子，流星从口袋里骨碌碌地滚了出来。", "流星在夜空中拖出长长的尾巴，落在了岳与岳之间。", "人们抬头望着流星许了愿，笑着说：“这座岛上还有这么美好的事呢。”"], "hareubang": ["石头爷爷守护的岛", "奶奶用指尖轻轻在空中一划，不知从哪里，石头爷爷（돌하르방）巍然现身。", "石头爷爷站在村口，替岛挡住了风和海浪。", "从那天起，济州的人们每次看到石头爷爷，就会想起雪门台奶奶的礼物。"], "haenyeo": ["奶奶的礼物：海女", "奶奶轻轻吹了一口气，伴着一声换气的口哨声，一位海女从海面上浮了出来。", "海女从深海里捞起了满满的鲍鱼和海螺。", "人们听着海女换气的口哨声，笑着说：“这座岛上还有这么能干的人呢。”"], "wind": ["奶奶的礼物：风", "奶奶用指尖轻轻在空中一划，不知从哪里，吹来了一阵清凉的风。", "风摇动了岳上的芒草，也推着海上的帆船前进。", "孩子们和风一起奔跑，决定要永远记住这座岛。"], "hallasan": ["洒在汉拿山上的阳光", "奶奶轻轻把裙子里的泥土堆起来，岛的正中间耸起了汉拿山。", "汉拿山把头探出云层，第一个迎接了清晨的阳光。", "孩子们抬头望着汉拿山，决定要永远记住这座岛。"], "baengnokdam": ["有白鹿潭的山", "奶奶用指尖轻轻抚摸汉拿山的山顶，一汪清水的白鹿潭出现了。", "白鹿潭映出了天空和云朵，一头白鹿来到潭边喝水。", "孩子们坐在白鹿潭旁，望着白鹿，决定要永远记住这座岛。"]}};   // 추천 단어 10개: 영어·일본어·중국어로 손으로 다듬은 장면 글 (제목 + 3문단)
 /* 단어로 지어지는 오프라인 장면 (AI 서버가 꺼져 있을 때) — 영어·일본어·중국어 */
 function localSceneL(word){
   const w=word,h=[...w].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7),pick=(arr,k)=>arr[(h>>>k)%arr.length];
+  const wid0=WORD_ART_X[String(w).replace(/\s/g,"").toLowerCase()]||WORD_ART[String(w).replace(/\s/g,"")], wt=wid0&&WORD_TEXT_L[LANG]&&WORD_TEXT_L[LANG][wid0];
+  if(wt)return {source:"local",title:wt[0],paragraphs:wt.slice(1),mood:["dawn","day","golden","dusk","night","mist"][(h>>>4)%6],element:{rainbow:"light",whale:"water",camellia:"flower",tangerine:"light",shootingstar:"star",hareubang:"stone",haenyeo:"water",wind:"wind",hallasan:"stone",baengnokdam:"water"}[wid0]};
   const T={
    en:{t:[`${w} Comes to the Island`,`Grandmother's Gift: ${w}`,`The Day ${w} Arrived`],
        a:[`Grandmother gently swept her fingertip through the air, and from somewhere ${w} appeared, sparkling.`,`Grandmother let out a soft breath, and ${w} floated up over the sea.`,`Grandmother shook her skirt, and ${w} came rolling out of her pocket.`],
@@ -709,8 +712,23 @@ const SCN={"en":{"start":{"t":"Grandmother Seolmundae","x":["A very long time ag
 
 /* ═══════════════════════════ AI 장면 (서버 → 안 되면 오프라인 장면) ═══════════════════════════ */
 const josa=(w,a,b)=>{const c=w.trim().slice(-1).charCodeAt(0);return (c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28!==0)?a:b};
+/* 추천 단어 8개는 단어에 맞게 손으로 다듬은 글(제목 + 3문단)을 쓴다. 이 글을 그대로 읽는 목소리가 voice_w_<이름>.mp3 */
+const WORD_TEXT={
+ rainbow:["할망의 선물, 무지개","할망이 치마폭을 흔들자, 주머니 속에서 무지개가 도르르 굴러 나왔습니다.","무지개는 한라산 꼭대기에서 바다 끝까지 일곱 빛깔 다리를 놓았습니다.","아이들은 무지개 아래를 달리며 오래오래 이 섬을 기억하기로 했습니다."],
+ whale:["고래가 깃든 섬","할망이 후우 숨을 불자, 바다 위로 고래가 둥실 떠올랐습니다.","고래는 파도 소리에 맞춰 물을 뿜으며 섬을 한 바퀴 돌았습니다.","아이들은 고래를 향해 손을 흔들며 오래오래 이 섬을 기억하기로 했습니다."],
+ camellia:["할망의 선물, 동백꽃","할망이 손끝으로 허공을 가만히 쓸자, 어디선가 붉은 동백꽃이 반짝이며 피어났습니다.","동백꽃은 오름마다 불꽃처럼 피어나 겨울 섬을 따뜻하게 물들였습니다.","아이들은 동백꽃을 머리에 꽂고 뛰어놀며 오래오래 이 섬을 기억하기로 했습니다."],
+ tangerine:["귤이 찾아온 날","할망이 후우 숨을 불자, 바다 위로 노란 귤이 둥실 떠올랐습니다.","귤은 파도를 타고 와 섬 곳곳의 밭에 열매를 주렁주렁 맺었습니다.","그날 이후 제주 사람들은 귤을 볼 때마다 설문대할망의 선물을 떠올렸습니다."],
+ shootingstar:["할망의 선물, 별똥별","할망이 치마폭을 흔들자, 주머니 속에서 별똥별이 도르르 굴러 나왔습니다.","별똥별은 밤하늘에 긴 꼬리를 그리며 오름과 오름 사이로 내려앉았습니다.","사람들은 별똥별을 올려다보며 소원을 빌고, “이 섬에는 이런 멋진 일도 있구나” 하고 웃었습니다."],
+ hareubang:["돌하르방이 깃든 섬","할망이 손끝으로 허공을 가만히 쓸자, 어디선가 돌하르방이 우뚝 모습을 드러냈습니다.","돌하르방은 마을 어귀에 서서 바람과 파도로부터 섬을 지켜 주었습니다.","그날 이후 제주 사람들은 돌하르방을 볼 때마다 설문대할망의 선물을 떠올렸습니다."],
+ haenyeo:["할망의 선물, 해녀","할망이 후우 숨을 불자, 바다 위로 숨비소리와 함께 해녀가 솟아올랐습니다.","해녀는 깊은 바다에서 전복과 소라를 한가득 건져 올렸습니다.","사람들은 해녀의 숨비소리를 들으며 “이 섬에는 이런 씩씩한 사람도 있구나” 하고 웃었습니다."],
+ hallasan:["한라산에 비친 햇살","할망이 치마폭의 흙을 가만히 모아 올리자, 섬 한가운데로 한라산이 우뚝 솟아올랐습니다.","한라산은 구름 위로 머리를 내밀고, 아침 햇살을 가장 먼저 맞이했습니다.","아이들은 한라산을 올려다보며 오래오래 이 섬을 기억하기로 했습니다."],
+ baengnokdam:["백록담이 깃든 산","할망이 손끝으로 한라산 꼭대기를 살며시 어루만지자, 맑은 물이 고인 백록담이 나타났습니다.","백록담에는 하늘과 구름이 비치고, 흰 사슴이 찾아와 물을 마셨습니다.","아이들은 백록담 곁에 앉아 사슴을 바라보며 오래오래 이 섬을 기억하기로 했습니다."],
+ wind:["할망의 선물, 바람","할망이 손끝으로 허공을 가만히 쓸자, 어디선가 시원한 바람이 불어왔습니다.","바람은 오름의 억새를 흔들고 바다 위의 돛단배를 밀어 주었습니다.","아이들은 바람과 함께 달리며 오래오래 이 섬을 기억하기로 했습니다."]};
 function localScene(word){
   if(LANG!=="ko")return localSceneL(word);                    // 영어·일본어·중국어 오프라인 장면
+  const wt=WORD_TEXT[WORD_ART[String(word).replace(/\s/g,"")]];
+  if(wt){const h=[...word].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7);
+    return {source:"local",title:wt[0],paragraphs:wt.slice(1),mood:["dawn","day","golden","dusk","night","mist"][(h>>>4)%6],element:{rainbow:"light",whale:"water",camellia:"flower",tangerine:"light",shootingstar:"star",hareubang:"stone",haenyeo:"water",wind:"wind",hallasan:"stone",baengnokdam:"water"}[WORD_ART[String(word).replace(/\s/g,"")]]}}
   const w=word, h=[...w].reduce((a,c)=>(a*31+c.charCodeAt(0))>>>0,7), pick=(arr,k)=>arr[(h>>>k)%arr.length];
   const el=[[/꽃|동백|유채|수국|벚/,"flower"],[/불|화|해|태양|노을/,"fire"],[/물|바다|비|고래|파도|샘|눈|해녀/,"water"],[/바람|구름|새|연/,"wind"],[/별|달|밤|은하/,"star"],[/돌|바위|산|오름/,"stone"],[/빛|무지개|등/,"light"]]
     .find(([re])=>re.test(w));
@@ -1217,6 +1235,8 @@ $("bgm").onclick=e=>{e.stopPropagation();bgmToggle()};
    읽는 동안 배경 음악은 작아지고, 다음 장면으로 넘어가면 읽기는 멈춘다. 글은 목소리 길이에 맞춰 천천히 나온다.
    장면을 더 읽히려면 mp3를 images/voice_<장면이름>.mp3 로 넣고 아래 VOICE_IDS 에 장면 이름을 더하면 된다. */
 const VOICE_IDS=["start","c1_dark","c1_listen","c1_push","c1_feel","c1_walk","c2_dive","c2_soil","c2_tall","c2_soft","c2_orum","c2_name","c2_seed","c2_rest","c2_splash","c2_sky","c3_people","c3_listen","c3_palm","c3_wish","c3_silk","c3_weave","c3_ninety","c4_sons","c4_pot","c4_together","ai","ai_stones","e_bridge","e_ninety","e_stones","e_porridge","e_star","e_boat","e_mountain","e_flavors"];
+const VOICE_W=["rainbow","whale","camellia","tangerine","shootingstar","hareubang","haenyeo","wind","hallasan","baengnokdam"];   // 단어 결과 화면 목소리(한국어): 다듬은 글(WORD_TEXT)을 읽는다 (voice_w_<그림이름>.mp3)
+VOICE_W.forEach(w=>VOICE_IDS.push("w_"+w));
 const VOICE={on:(()=>{try{return localStorage.getItem("seolmun_voice")!=="off"}catch(e){return true}})(),a:new Audio(),dur:{},timer:null,id:null,wait:null};
 const voiceFile=k=>LANG==="ko"?`voice_${k}.mp3`:`voice_${LANG}_${k}.mp3`;   // 한국어는 voice_<장면>.mp3, 그 밖의 언어는 voice_<언어>_<장면>.mp3
 const voiceSrc=k=>(typeof EMB!=="undefined"&&EMB[voiceFile(k)])||`images/${voiceFile(k)}`;
@@ -1244,7 +1264,7 @@ function voiceBtn(){
                        :`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>`;
 }
 $("voice").onclick=e=>{ e.stopPropagation(); VOICE.on=!VOICE.on; try{localStorage.setItem("seolmun_voice",VOICE.on?"on":"off")}catch(_){}
-  if(VOICE.on){ const sc=S[cur]; const k=voiceKey(cur,sc); voicePlay(k,true) } else { voiceStop(); voiceBtn() } };
+  if(VOICE.on){ const k=(cur==="ai"&&st.aiScene)?(st.aiScene._vk||null):voiceKey(cur,S[cur]); voicePlay(k,true) } else { voiceStop(); voiceBtn() } };
 voiceBtn();
 /* 브라우저는 소리 자동 재생을 막으므로, 첫 화면에서 처음 눌렀을 때 아직 읽기가 시작되지 않았으면 그 장면의 읽기를 시작한다 */
 /* 자동 재생이 막혀 읽기가 시작되지 못했다면, 화면을 누르는 순간(휴대폰은 손을 뗄 때) 다시 시도한다. 이미 읽은 장면은 다시 읽지 않는다 */
@@ -1310,7 +1330,7 @@ $("choices").addEventListener("click",e=>{const b=e.target.closest("button");if(
 $("chips").addEventListener("click",e=>{if(e.target.tagName==="BUTTON"){$("word").value=e.target.textContent;$("word").focus()}});
 function openAI(){hot([]);$("ai").className="ai show";$("word").value="";$("choices").className="";wordZones();$("word").focus({preventScroll:true})}
 async function runAI(){
-  const word=$("word").value.replace(/[<>{}`]/g," ").trim().slice(0,12); if(!word){$("word").focus();return}
+  const word=$("word").value.replace(/[<>{}`]/g," ").trim().slice(0,16); if(!word){$("word").focus();return}
   $("make").disabled=true;$("spin").classList.add("show");
   voicePlay(null);                                   // 단어를 넣고 장면이 지어지면 '할망의 마지막 부탁' 읽기는 멈춘다
   hot([]); $("stage").classList.remove("words");
@@ -1323,11 +1343,13 @@ async function runAI(){
   $("title").textContent=sc.title;
   setTag({t:sc.source==="ai"?U("tagAI"):U("tagLocal"),cls:"ai"});
   $("ai").className="ai show"; $("hint").hidden=false;
+  const wvk=(LANG==="ko"&&sc.source!=="ai"&&wid&&VOICE_W.includes(wid))?"w_"+wid:null;   // 한국어 + 오프라인 장면(녹음한 글과 같은 글)일 때만 읽어 준다
+  sc._vk=wvk; if(wvk){voicePlay(wvk,true)}
   typeText(sc.paragraphs,()=>{
     const pk=wimg?"w_"+wid:"ai_result", rk="res:"+pk;
     const q=hp(rk,2,null)||RES_POS[pk]||RES_POS.default;   // 편집 모드로 끌어 저장한 자리 > RES_POS(그림마다 얼굴을 피한 자리)
     hot([{x:q[0][0],y:q[0][1],pin:"down",ic:"tap",label:U("cont"),fn:()=>go(resolveEnd())},
-         {x:q[1][0],y:q[1][1],pin:"down",ic:"refresh",label:U("again"),fn:()=>{hot([]);cur="ai";paint(S.ai.art,null,"ai");$("title").textContent=sceneView("ai",S.ai).title;setTag(null);$("ai").className="ai show";wordZones.force=true;wordZones()}}],rk)});
+         {x:q[1][0],y:q[1][1],pin:"down",ic:"refresh",label:U("again"),fn:()=>{voicePlay(null);hot([]);cur="ai";paint(S.ai.art,null,"ai");$("title").textContent=sceneView("ai",S.ai).title;setTag(null);$("ai").className="ai show";wordZones.force=true;wordZones()}}],rk)},wvk&&VOICE.on&&VOICE.dur["ko:"+wvk]?VOICE.dur["ko:"+wvk]*1000*.78:0);   // 목소리가 있으면 글이 목소리 길이에 맞춰 나온다
 }
 $("make").onclick=runAI; $("word").addEventListener("keydown",e=>{if(e.key==="Enter")runAI()});
 
