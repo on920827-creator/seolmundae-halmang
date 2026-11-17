@@ -331,6 +331,31 @@
   #trailpanel button:hover,#trailpanel button:focus-visible{background:rgba(143,124,255,.22);outline:none}
   #trailpanel li.now button{color:#ffe9b0;font-weight:700;cursor:default}
   #trailpanel small{display:block;color:#ffe9b0;font-size:.82rem;margin-top:2px;line-height:1.35}
+  /* 눌렀을 때 반응(#12) */
+  .burst{position:absolute;width:0;height:0;z-index:12;pointer-events:none}
+  .burst::before{content:"";position:absolute;left:-40px;top:-40px;width:80px;height:80px;border-radius:50%;border:3px solid #fff2b8;box-shadow:0 0 18px rgba(255,226,140,.9);animation:bRing .7s ease-out forwards}
+  .burst i{position:absolute;left:-4px;top:-4px;width:8px;height:8px;border-radius:50%;background:#ffeaa6;box-shadow:0 0 9px 2px rgba(255,213,106,.9);animation:bSpark .8s ease-out forwards}
+  @keyframes bRing{from{transform:scale(.25);opacity:1}to{transform:scale(1.7);opacity:0}}
+  @keyframes bSpark{from{transform:rotate(var(--a)) translateX(6px) scale(1);opacity:1}to{transform:rotate(var(--a)) translateX(var(--d)) scale(.2);opacity:0}}
+  #stage.tapflash{animation:tapFlash .35s ease-out}
+  @keyframes tapFlash{0%{filter:brightness(1.25)}100%{filter:brightness(1)}}
+  /* 선택 힌트(#1): 빛나는 곳에서 고리가 번져 나가 '눌러 보세요' 하고 알려 줌 */
+  .hs .ic::before{content:"";position:absolute;inset:20px;border-radius:50%;border:2px solid rgba(255,244,190,.85);animation:zoneRing 2.4s ease-out infinite}
+  @keyframes zoneRing{from{transform:scale(.55);opacity:.95}to{transform:scale(1.55);opacity:0}}
+  .hs .lbl{animation:lblGlow 2.8s ease-in-out infinite}
+  @keyframes lblGlow{50%{box-shadow:0 0 14px rgba(255,236,170,.45)}}
+  @media (prefers-reduced-motion:reduce){.hs .ic::before,.hs .lbl,#stage.tapflash{animation:none}}
+  /* 놀이 배경 단순화(#9): 배경 영상·그림을 어둡고 차분하게 눌러 별과 선만 또렷이 보이게 */
+  .mg-stage>video.mg-vid:not(.over){filter:brightness(.58) saturate(.8) blur(1.2px)}
+  .mg-stage::after{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,rgba(8,6,30,0) 35%,rgba(8,6,30,.45) 100%);z-index:2}
+  /* 선택 힌트(#1): 고를 수 있는 선택이 올려 줄 점수 칸이 은은히 반짝이고, 선택지에 손을 대면 그 칸이 더 크게 빛난다 */
+  .meta .chip{transition:transform .2s,box-shadow .25s,background .25s}
+  .meta .chip.hintable{animation:chipHint 2.2s ease-in-out infinite}
+  .meta .chip.hintnow{animation:none;transform:scale(1.16);box-shadow:0 0 0 2px rgba(255,236,170,.95),0 0 20px rgba(255,226,140,.85);background:rgba(255,236,170,.22)}
+  .meta .chip.bump{animation:chipBump .7s ease-out}
+  @keyframes chipHint{50%{box-shadow:0 0 0 1px rgba(255,236,170,.6),0 0 12px rgba(255,226,140,.5)}}
+  @keyframes chipBump{0%{transform:scale(1)}30%{transform:scale(1.28);box-shadow:0 0 0 2px #fff4c4,0 0 26px rgba(255,226,140,.95)}100%{transform:scale(1)}}
+  @media (prefers-reduced-motion:reduce){.meta .chip.hintable,.meta .chip.bump{animation:none}}
 </style>
 </head>
 <body>
@@ -660,7 +685,8 @@ const S={
   text:["할망이 큰 소리로 아들들을 불렀습니다. 오백 명의 아들이 우르르 몰려와 한 명은 불을 지피고, 한 명은 물을 길어 오고, 또 한 명은 솥을 저었지요.","많은 손이 모이니 죽은 금세 끓어올랐고, 아무도 다치지 않았습니다.","구수한 냄새가 마을까지 퍼져, 이웃들도 그릇을 들고 모여들었습니다."],
   art:{mood:"ember",alt:"함께 죽을 끓이는 사람들",mount:1,orum:6,pot:true,potSafe:true,lights:16,p:["firefly",16],fg:"grass"},
   choices:[["따뜻한 죽 한 그릇을 받아 든다","ai"]]},
- ai:{ch:["마지막 장","당신이 지은 한 장면"],ai:true,title:"할망의 마지막 부탁",
+ ai:{ch:["마지막 장","당신이 지은 한 장면"],ai:true,title:"할망의 마지막 부탁",picBy:{e_stones:"ai_pot"},   /* 솥에 빠진 길로 왔을 때는 솥과 김 속 할망 그림(images/ai_pot.jpg) */
+  
   textBy:{e_stones:["솥 안에서 할망의 목소리가 희미하게 들려왔습니다.","“얘들아… 이 섬에 마지막으로 하나만 더 남기고 싶구나. 네가 말해 주렴. 무엇이 있었으면 좋겠니?”","당신이 단어 하나를 말하면, 이야기의 한 장면이 새로 그려집니다."]},
   text:["할망이 하늘을 올려다보며 말했습니다.","“이 섬에 마지막으로 하나만 더 놓고 싶구나. 네가 말해 주렴. 무엇이 있었으면 좋겠니?”","당신이 단어 하나를 말하면, 이야기의 한 장면이 새로 그려집니다."],
   art:{mood:"night",alt:"별빛 아래 선 할망",mount:1,orum:10,village:true,fig:"stand",x:140,s:.85,p:["star",3],fg:"grass"}},
@@ -1066,14 +1092,34 @@ function fitLabels(){
     lbs[j]._dy+=(((b.t+b.b)/2>=(a.t+a.b)/2)&&down)||!up?ov:-ov;put(lbs[j])}
 }
 addEventListener("resize",()=>{if(document.querySelector("#hot .hs"))fitLabels()});
+/* ── 누를 때의 반응: 퍼지는 빛 고리 + 별가루 + 아주 작은 소리·진동 + 화면이 살짝 환해짐 ── */
+let _tapAc=null;
+function tapChime(){try{if(!(typeof BGM!=="undefined"&&BGM.on))return;const A=window.AudioContext||window.webkitAudioContext;_tapAc=_tapAc||(BGM.ctx||new A());_tapAc.resume&&_tapAc.resume();
+  const t=_tapAc.currentTime;[[880,0],[1318,.07],[1760,.14]].forEach(([f,d])=>{const o=_tapAc.createOscillator(),g=_tapAc.createGain();o.type="sine";o.frequency.value=f;o.connect(g);g.connect(_tapAc.destination);
+    g.gain.setValueAtTime(0,t+d);g.gain.linearRampToValueAtTime(.05,t+d+.012);g.gain.exponentialRampToValueAtTime(.0005,t+d+.32);o.start(t+d);o.stop(t+d+.35)})}catch(e){}}
+function tapFx(it){
+  const st_=$("stage");if(!st_)return;
+  const b=document.createElement("span");b.className="burst";b.style.left=it.x+"%";b.style.top=it.y+"%";
+  let h="";for(let i=0;i<10;i++){h+=`<i style="--a:${i*36+((i*53)%17)}deg;--d:${44+((i*29)%26)}px"></i>`}b.innerHTML=h;st_.appendChild(b);setTimeout(()=>b.remove(),900);
+  st_.classList.remove("tapflash");void st_.offsetWidth;st_.classList.add("tapflash");
+  tapChime();try{if(navigator.vibrate&&(!navigator.userActivation||navigator.userActivation.hasBeenActive))navigator.vibrate(14)}catch(e){}
+  try{localStorage.setItem("seolmun_taps",String((+localStorage.getItem("seolmun_taps")||0)+1))}catch(e){}
+}
+const tapsDone=()=>{try{return (+localStorage.getItem("seolmun_taps")||0)>=5}catch(e){return false}};
+const TRC=k=>document.getElementById("c-"+k);
+function chipHint(items){["warm","curious","brave"].forEach(k=>{const c=TRC(k);c&&c.classList.remove("hintable","hintnow")});
+  (items||[]).forEach(it=>{if(it.tr){const c=TRC(it.tr);c&&c.classList.add("hintable")}})}
+function chipBump(k){const c=TRC(k);if(!c)return;c.classList.remove("bump");void c.offsetWidth;c.classList.add("bump");setTimeout(()=>c.classList.remove("bump"),800)}
 function hot(items,key){
-  const h=$("hot");h.innerHTML="";$("tapnote").hidden=!items.length;
+  const h=$("hot");h.innerHTML="";$("tapnote").hidden=!items.length||tapsDone();chipHint(items);
   items.forEach(it=>{const b=document.createElement("button");b.type="button";if(it.off)b.style.setProperty("--lx",(it.off/100*$("stage").clientWidth)+"px");b.className="hs"+(it.pin?" pin "+it.pin:"")+(it.mg?" mgsel":"")+(it.body?" body "+(items.length>1?(it.x<=Math.min(...items.map(q=>q.x))?"l":"r"):(it.x>55?"l":"r")):"");
     b.style.left=it.x+"%";b.style.top=it.y+"%";b.setAttribute("aria-label",it.label);
     b.innerHTML=`<span class="ring"></span><span class="ic"><svg viewBox="0 0 24 24" aria-hidden="true">${IC[it.ic]||IC.tap}</svg></span><span class="lbl">${bal(it.label)}</span>`;
-    b.onclick=ev=>{ev.stopPropagation();if(b._drag){b._drag=false;return}
+    if(it.tr){const on=()=>{const c=TRC(it.tr);c&&c.classList.add("hintnow")},off=()=>{const c=TRC(it.tr);c&&c.classList.remove("hintnow")};
+      ["pointerenter","focus","pointerdown"].forEach(v=>b.addEventListener(v,on));["pointerleave","blur"].forEach(v=>b.addEventListener(v,off))}
+    b.onclick=ev=>{ev.stopPropagation();if(b._drag){b._drag=false;return}if(it.tr)chipBump(it.tr);
       if(it.tr){const p=document.createElement("span");p.className="pop";p.textContent=trName(it.tr)+" +1";p.style.left=it.x+"%";p.style.top=it.y+"%";stage.appendChild(p);setTimeout(()=>p.remove(),950)}
-      hot([]);setTimeout(it.fn,280)};
+      tapFx(it);hot([]);setTimeout(it.fn,280)};
     h.appendChild(b);
     if(it.body){const lb=b.querySelector(".lbl"),sw=$("stage").clientWidth,cx=sw*it.x/100,lw=lb.offsetWidth,m=6;
       let sh=0;if(cx-lw/2<m)sh=m-(cx-lw/2);else if(cx+lw/2>sw-m)sh=(sw-m)-(cx+lw/2);b.style.setProperty("--shift",sh+"px");const sr=$("stage").getBoundingClientRect();if(lb.getBoundingClientRect().bottom>sr.bottom-4)b.classList.add("up")}
@@ -1460,7 +1506,7 @@ function go(id,choiceText,trait,isBack){
   if(sc.set) st.end=sc.set;
   cur=id; hot([]); document.body.classList.toggle("hasbg",BG_SCENES.includes(id)); fxUpdate();
   const V=sceneView(id,sc);                      // 지금 언어의 제목·장·본문
-  showTraits(); $("back").hidden=(id==="start"||!HIST.length); $("home").hidden=(id==="start"); $("trail").hidden=(id==="start"||!HIST.length); trailClose(); paint(sc.art,V.ch,sc.pic||id); if(id==="c3_wish"||id==="c4_sons"||id==="ai")warmVideos(WARM_WORD);
+  showTraits(); $("back").hidden=(id==="start"||!HIST.length); $("home").hidden=(id==="start"); $("trail").hidden=(id==="start"||!HIST.length); trailClose(); paint(sc.art,V.ch,(sc.picBy&&sc.picBy[st.end])||sc.pic||id); if(id==="c3_wish"||id==="c4_sons"||id==="ai")warmVideos(WARM_WORD);
   $("title").textContent=V.title; $("choices").className=""; $("choices").innerHTML=""; $("recap").innerHTML=""; $("ai").className="ai";
   setTag(sc.end?{t:(sc.hidden?U("tagHidden"):"")+(sc.mine?U("tagMine"):U("tagOld")),cls:sc.mine?"mine":""}:null);
   const vk=voiceKey(id,sc);                      // 이 장면에 읽어 주는 목소리가 있으면 그 길이에 맞춰 글이 나온다
@@ -1550,9 +1596,9 @@ Object.assign(CHO.ja,{"별똥별 받기":"流れ星キャッチ","별자리 잇�
 Object.assign(CHO.zh,{"별똥별 받기":"接流星","별자리 잇기":"连星座","그림 맞추기":"夜空拼图"});
 const MGT={
  ko:{t:{stars:"✨ 별똥별 받기",const:"🌟 별자리 잇기",puzzle:"🧩 밤하늘 그림 맞추기"},
-  intro:{stars:"할망이 뿌린 별이 떨어져요. 떨어지는 별을 <b>눌러서</b> 받으면 아래 마을 집에 불이 켜져요.<br>45초 안에 <b>집 8채</b>를 모두 밝혀 보세요. 분홍빛 큰 별은 두 채를 밝혀요.",
-   const:"하늘에 <b>번호가 붙은 별</b>이 있어요. <b>1번부터 차례로</b> 누르거나 끌어서 이어 보세요.<br>별자리 세 개를 완성하면 할망의 밤하늘이 완성돼요.",
-   puzzle:"그림이 조각조각 흩어졌어요. 조각을 <b>끌어서</b> 다른 조각 위에 놓으면 자리가 바뀌어요. (두 조각을 차례로 <b>눌러도</b> 돼요)<br>막히면 <b>완성 그림 보기</b>를 누르고 있는 동안 완성된 그림이 보여요."},
+  intro:{stars:"🏡 <b>집 8채</b>에 모두 불을 켜면 마을이 환하게 밝아져요!<br>떨어지는 별을 <b>눌러서</b> 받으면 집에 불이 켜져요. 60초 안에 도전! 분홍빛 큰 별은 두 채를 밝혀요.",
+   const:"✨ 별자리 세 개를 이으면 할망의 밤하늘이 완성돼요!<br>하늘의 <b>번호가 붙은 별</b>을 <b>1번부터 차례로</b> 누르거나 끌어서 이어 보세요.",
+   puzzle:"🖼 조각을 모두 맞추면 그림이 완성돼요!<br>조각을 <b>끌어서</b> 다른 조각 위에 놓으면 자리가 바뀌어요. (두 조각을 차례로 <b>눌러도</b> 돼요) 막히면 <b>완성 그림 보기</b>를 누르고 있는 동안 완성된 그림이 보여요."},
   start:"시작하기",again:"다시 하기",other:"다른 놀이 고르기",close:"놀이 닫기",easy:"쉬움 3×3",normal:"보통 4×4",hard:"어려움 5×5",peek:"👁 완성 그림 보기",
   houses:(n,g)=>`🏠 ${n} / ${g}`,constProg:(s,s2,n,N)=>`별자리 ${s} / ${s2} · ${n} / ${N}`,puzProg:(k,N)=>`맞춘 조각 ${k} / ${N}`,moves:n=>`이동 ${n}`,
   lit:["따스한 불빛이 켜졌어요","집이 환해졌어요","별빛이 내려앉았어요"],
@@ -1564,8 +1610,8 @@ const MGT={
   pok:["딱 맞았어요!","제자리를 찾았어요","좋아요!"],phint:"조각을 끌어서 자리를 바꿔요",
   winP:"✨ 그림이 완성됐어요!",winPp:"흩어졌던 밤하늘이 다시 하나가 되었어요.<br>할망이 뿌린 별이 오름과 마을을 비춥니다.",noteP:(n,mv,s)=>`${n}×${n} · 이동 ${mv}번 · ${Math.floor(s/60)}분 ${s%60}초`},
  en:{t:{stars:"✨ Catch the Shooting Stars",const:"🌟 Connect the Constellations",puzzle:"🧩 Night Sky Puzzle"},
-  intro:{stars:"Grandmother's stars are falling. <b>Tap</b> a falling star to catch it, and a house in the village below lights up.<br>Light all <b>8 houses</b> within 45 seconds. A big pink star lights two.",
-   const:"Some stars in the sky have <b>numbers</b>. Tap them <b>in order from 1</b>, or drag through them.<br>Finish three constellations to complete Grandmother's night sky.",
+  intro:{stars:"🏡 Light all <b>8 houses</b> and the whole village glows!<br><b>Tap</b> a falling star to catch it and light a house. You have 60 seconds. A big pink star lights two.",
+   const:"✨ Connect three constellations to complete Grandmother's night sky!<br>Tap the <b>numbered stars</b> <b>in order from 1</b>, or drag through them.",
    puzzle:"The picture has been scattered. <b>Drag</b> a piece onto another to swap them (or <b>tap</b> two pieces one after the other).<br>Stuck? Hold <b>Show picture</b> to see the finished image."},
   start:"Start",again:"Play again",other:"Choose another game",close:"Close game",easy:"Easy 3×3",normal:"Normal 4×4",hard:"Hard 5×5",peek:"👁 Show picture",
   houses:(n,g)=>`🏠 ${n} / ${g}`,constProg:(s,s2,n,N)=>`Constellation ${s} / ${s2} · ${n} / ${N}`,puzProg:(k,N)=>`In place ${k} / ${N}`,moves:n=>`Moves ${n}`,
@@ -1578,8 +1624,8 @@ const MGT={
   pok:["Perfect fit!","Found its place","Nice!"],phint:"Drag the pieces to swap them",
   winP:"✨ The picture is complete!",winPp:"The scattered night sky is whole again.<br>Grandmother's stars shine over the oreum and the village.",noteP:(n,mv,s)=>`${n}×${n} · ${mv} moves · ${Math.floor(s/60)}m ${s%60}s`},
  ja:{t:{stars:"✨ 流れ星キャッチ",const:"🌟 星座つなぎ",puzzle:"🧩 夜空のパズル"},
-  intro:{stars:"ハルマンがまいた星が落ちてきます。落ちてくる星を<b>押して</b>受けとめると、下の村の家に明かりがともります。<br>45秒以内に<b>家8軒</b>をすべて明るくしましょう。ピンクの大きな星は2軒を明るくします。",
-   const:"空には<b>番号のついた星</b>があります。<b>1番から順に</b>押すか、なぞってつないでください。<br>星座を3つ完成させると、ハルマンの夜空が完成します。",
+  intro:{stars:"🏡 <b>家8軒</b>すべてに明かりをともすと、村がぱっと明るくなります！<br>落ちてくる星を<b>押して</b>受けとめると家に明かりがともります。60秒でチャレンジ！ピンクの大きな星は2軒を明るくします。",
+   const:"✨ 星座を3つつなぐと、ハルマンの夜空が完成します！<br>空の<b>番号のついた星</b>を<b>1番から順に</b>押すか、なぞってつないでください。",
    puzzle:"絵がばらばらになりました。ピースを<b>ドラッグ</b>してほかのピースの上に置くと入れかわります（2つのピースを順に<b>押して</b>もOK）。<br>困ったら<b>完成図を見る</b>を押している間、完成した絵が見えます。"},
   start:"はじめる",again:"もう一度",other:"ほかのあそびを選ぶ",close:"あそびを閉じる",easy:"かんたん 3×3",normal:"ふつう 4×4",hard:"むずかしい 5×5",peek:"👁 完成図を見る",
   houses:(n,g)=>`🏠 ${n} / ${g}`,constProg:(s,s2,n,N)=>`星座 ${s} / ${s2} · ${n} / ${N}`,puzProg:(k,N)=>`そろったピース ${k} / ${N}`,moves:n=>`移動 ${n}`,
@@ -1592,8 +1638,8 @@ const MGT={
   pok:["ぴったり！","元の場所にもどりました","いいね！"],phint:"ピースをドラッグして入れかえましょう",
   winP:"✨ 絵が完成しました！",winPp:"ばらばらだった夜空が、またひとつになりました。<br>ハルマンのまいた星がオルムと村を照らします。",noteP:(n,mv,s)=>`${n}×${n} · 移動 ${mv}回 · ${Math.floor(s/60)}分${s%60}秒`},
  zh:{t:{stars:"✨ 接流星",const:"🌟 连星座",puzzle:"🧩 夜空拼图"},
-  intro:{stars:"奶奶撒下的星星正在落下。<b>点击</b>落下的星星接住它，下面村子里的房子就会亮起灯。<br>在45秒内点亮全部<b>8座房子</b>吧。粉色的大星星可以点亮两座。",
-   const:"天空中有<b>带编号的星星</b>。<b>从1号开始依次</b>点击，或用手指划过把它们连起来。<br>完成三个星座，奶奶的夜空就完成了。",
+  intro:{stars:"🏡 点亮全部<b>8座房子</b>，整个村子就会亮起来！<br><b>点击</b>落下的星星接住它，房子就会亮灯。限时60秒！粉色的大星星可以点亮两座。",
+   const:"✨ 连成三个星座，奶奶的夜空就完成了！<br>从<b>1号</b>开始依次点击天空中<b>带编号的星星</b>，或用手指划过把它们连起来。",
    puzzle:"图画被打散了。把一块拼图<b>拖到</b>另一块上，它们就会交换位置（也可以依次<b>点击</b>两块）。<br>卡住了吗？按住<b>查看完整图</b>就能看到完成的图画。"},
   start:"开始",again:"再玩一次",other:"选择别的游戏",close:"关闭游戏",easy:"简单 3×3",normal:"普通 4×4",hard:"困难 5×5",peek:"👁 查看完整图",
   houses:(n,g)=>`🏠 ${n} / ${g}`,constProg:(s,s2,n,N)=>`星座 ${s} / ${s2} · ${n} / ${N}`,puzProg:(k,N)=>`已拼对 ${k} / ${N}`,moves:n=>`移动 ${n}次`,
@@ -1607,10 +1653,10 @@ const MGT={
   winP:"✨ 图画完成了！",winPp:"散落的夜空又合而为一。<br>奶奶撒下的星星照亮了岳和村庄。",noteP:(n,mv,s)=>`${n}×${n} · 移动${mv}次 · ${Math.floor(s/60)}分${s%60}秒`}
 };
 /* 별똥별 받기: 규칙 설명(3단계)과 시작 안내 */
-MGT.ko.intro.stars="<b>규칙은 간단해요</b><br>① 하늘에서 떨어지는 별을 <b>눌러서</b> 받아요.<br>② 별을 하나 받으면 아래 마을 집에 <b>불이 하나</b> 켜져요.<br>③ <b>60초 안에 집 8채</b>를 모두 밝히면 성공! (분홍빛 큰 별은 두 채)<br>별은 천천히 떨어지니, 서두르지 않아도 돼요.";
-MGT.en.intro.stars="<b>The rules are simple</b><br>① <b>Tap</b> the stars falling from the sky.<br>② Each star you catch <b>lights one house</b> in the village below.<br>③ Light all <b>8 houses within 60 seconds</b> to win! (A big pink star lights two.)<br>The stars fall slowly, so there's no need to rush.";
-MGT.ja.intro.stars="<b>ルールはかんたん</b><br>① 空から落ちてくる星を<b>押して</b>受けとめます。<br>② 星をひとつ受けとめると、下の村の家に<b>明かりがひとつ</b>ともります。<br>③ <b>60秒以内に家8軒</b>をすべて明るくできたら成功！（ピンクの大きな星は2軒）<br>星はゆっくり落ちるので、あわてなくて大丈夫です。";
-MGT.zh.intro.stars="<b>规则很简单</b><br>① <b>点击</b>从天上落下的星星来接住它。<br>② 每接住一颗星星，下面村子里就会<b>亮起一盏灯</b>。<br>③ 在<b>60秒内点亮全部8座房子</b>就成功！（粉色大星星可以点亮两座）<br>星星落得很慢，不用着急。";
+MGT.ko.intro.stars="🏡 <b>집 8채</b>에 모두 불을 켜면 마을이 환하게 밝아져요!<br>① 하늘에서 떨어지는 별을 <b>눌러서</b> 받아요.<br>② 별을 하나 받으면 집에 <b>불이 하나</b> 켜져요.<br>③ <b>60초 안에</b> 8채를 모두 밝히면 성공! (분홍빛 큰 별은 두 채)<br>별은 천천히 떨어지니, 서두르지 않아도 돼요.";
+MGT.en.intro.stars="🏡 Light all <b>8 houses</b> and the whole village glows!<br>① <b>Tap</b> the stars falling from the sky.<br>② Each star you catch <b>lights one house</b>.<br>③ Do it <b>within 60 seconds</b> to win! (A big pink star lights two.)<br>The stars fall slowly, so there's no need to rush.";
+MGT.ja.intro.stars="🏡 <b>家8軒</b>すべてに明かりをともすと、村がぱっと明るくなります！<br>① 空から落ちてくる星を<b>押して</b>受けとめます。<br>② 星をひとつ受けとめると、家に<b>明かりがひとつ</b>ともります。<br>③ <b>60秒以内</b>に8軒をすべて明るくできたら成功！（ピンクの大きな星は2軒）<br>星はゆっくり落ちるので、あわてなくて大丈夫です。";
+MGT.zh.intro.stars="🏡 点亮全部<b>8座房子</b>，整个村子就会亮起来！<br>① <b>点击</b>从天上落下的星星来接住它。<br>② 每接住一颗星星，就会<b>亮起一盏灯</b>。<br>③ 在<b>60秒内</b>全部点亮就成功！（粉色大星星可以点亮两座）<br>星星落得很慢，不用着急。";
 Object.assign(MGT.ko,{sfirst:"떨어지는 별을 눌러 보세요"});Object.assign(MGT.en,{sfirst:"Tap a falling star"});Object.assign(MGT.ja,{sfirst:"落ちてくる星を押してみましょう"});Object.assign(MGT.zh,{sfirst:"点击落下的星星"});
 /* 별자리 이름과 완성 글: 진짜 별자리 (카시오페이아 · 북두칠성 · 오리온) */
 MGT.ko.cnames=[["카시오페이아","W 모양으로 반짝이는 하늘의 왕비별"],["북두칠성","길을 알려 주는 일곱 개의 별"],["오리온","하늘을 걷는 사냥꾼의 별"]];
