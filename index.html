@@ -242,8 +242,10 @@
   .mg-top button:hover,.mg-top button:focus-visible{background:rgba(169,139,255,.32);outline:none}
   .mg-top button.x{width:34px;height:34px;padding:0;display:grid;place-items:center;font-size:1rem}
   .mg-stage{position:relative;aspect-ratio:1280/853;border-radius:18px;overflow:hidden;touch-action:none;user-select:none;-webkit-user-select:none;background:#0b0a26}
-  .mg-stage>img,.mg-stage>canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .mg-stage>img,.mg-stage>canvas,.mg-stage>video{position:absolute;inset:0;width:100%;height:100%;display:block}
   .mg-board{position:absolute;inset:0}
+  .mg-vid{object-fit:cover;opacity:0;transition:opacity .9s ease;pointer-events:none}   /* 놀이 배경 영상: 영상 양옆 띠(7.8%)는 cover 로 맞추면 정확히 잘려 나간다 */
+  .mg-vid.on{opacity:1} .mg-vid.over{z-index:6}   /* 퍼즐을 다 맞추면 조각 위로 덮는다 */
   .mg-tile{position:absolute;background-repeat:no-repeat;cursor:grab;box-shadow:inset 0 0 0 1px rgba(8,6,30,.75);transition:left .25s ease,top .25s ease,box-shadow .3s;touch-action:none}
   .mg-tile.sel{box-shadow:inset 0 0 0 3px #ffe29a,0 0 18px rgba(255,226,154,.7);z-index:2}
   .mg-tile.drag{transition:none;z-index:5;cursor:grabbing;box-shadow:0 8px 26px rgba(0,0,0,.55),inset 0 0 0 2px #fff}
@@ -637,10 +639,11 @@ const S={
   text:["오백 명의 아들과 이웃들은 저마다 호기심이 많았습니다. “이걸 넣으면 어떤 맛일까?” 한 명은 유채꽃을, 한 명은 동백잎을, 또 한 명은 바다에서 건진 미역을, 또 다른 한 명은 새콤달콤한 귤을 솥에 넣었지요.","죽은 한 숟갈마다 맛이 달랐습니다. 달콤하고, 구수하고, 짭짤하고, 향긋했어요. 흉년의 밤이 갑자기 잔칫날처럼 떠들썩해졌습니다.","새로운 것을 궁금해하는 마음이 가장 따뜻한 밥상을 만들었습니다. 이것은 당신이 호기심으로 열어 낸 숨은 결말입니다."],
   art:{mood:"ember",alt:"오백 가지 맛이 담긴 죽 잔치",mount:1,orum:6,pot:true,potSafe:true,lights:24,p:["petal",18],fg:"flowers"}},
  /* 미니게임 고르기: 결말 화면의 '미니게임으로 넘어가기'에서 온다. 그림은 images/game.jpg, 놀이는 아래 MG 가 연다 */
- game:{ch:["번외","할망의 별밤 놀이"],title:"할망의 별밤 놀이",
+ game:{ch:["번외","할망의 별밤 놀이"],title:"할망의 별밤 놀이",pic:"game_intro",   /* pic: 장면 배경 영상(images/game_intro.mp4). 놀이 창은 images/game.jpg 를 따로 쓴다 */
+
   text:["이야기를 마친 밤, 할망이 오름 꼭대기에서 은하수에 별을 한 줌 뿌렸습니다.","“얘들아, 잠들기 전에 별이랑 조금만 더 놀다 가렴.”","그림 속 반짝이는 곳을 눌러 마음에 드는 놀이를 하나 골라 보세요."],
-  art:{mood:"night",alt:"오름 꼭대기에서 은하수에 별을 뿌리는 할망",mount:1,orum:10,village:true,fig:"stand",x:140,s:.85,arms:"up",p:["star",3],fg:"flowers"},
-  choices:[["떨어지는 별똥별을 받아 마을을 밝힌다","mg:stars"],["별을 이어 별자리를 만든다","mg:const"],["흩어진 밤하늘 그림을 맞춘다","mg:puzzle"]]}
+  art:{mood:"night",alt:"오름 꼭대기에서 은하수에 별을 뿌리는 할망",mount:1,orum:10,village:true,fig:"stand",x:140,s:.85,arms:"up",fg:"flowers"},
+  choices:[["별똥별 받기","mg:stars"],["별자리 잇기","mg:const"],["그림 맞추기","mg:puzzle"]]}
 };
 const ENDINGS=["e_bridge","e_ninety","e_stones","e_porridge","e_star","e_boat","e_mountain","e_flavors"];
 const HIDDEN=["e_star","e_boat","e_mountain","e_flavors"];
@@ -931,7 +934,7 @@ function fxUpdate(){
   else if(!want&&FX.on){FX.on=false;cancelAnimationFrame(FX.raf);FX.cv.style.display="none"}}
 addEventListener("resize",()=>{fxUpdate();if(FX.on)fxResize()});
 const BG_SCENES=Object.keys(S);   // 배경을 깔 장면: 지금은 모든 장면 (일부만 쓰려면 ["start","c2_soft"] 처럼 장면 이름을 적는다)
-const HOT_POS={"d":{"start":[[67,68]],"c1_dark":[[17,67],[83,67]],"c1_listen":[[71,56]],"c1_push":[[83,50],[18,50]],"c1_feel":[[80,51]],"c1_walk":[[69,59],[38,70]],"c2_dive":[[53,66]],"c2_soil":[[81,58],[31,62]],"c2_tall":[[18,58]],"c2_soft":[[69,57]],"c2_orum":[[84,55],[64,60]],"c2_name":[[67,24]],"c2_seed":[[60,24]],"c2_rest":[[82,63],[42,41]],"c2_splash":[[21,59]],"c2_sky":[[13,21]],"c3_people":[[32,38],[72,58]],"c3_listen":[[49,55]],"c3_palm":[[52,65]],"c3_wish":[[75,34],[23,46]],"c3_silk":[[19,21],[82,21]],"c3_weave":[[47,62]],"c3_ninety":[[38,58]],"c4_sons":[[67,69],[18,66]],"c4_pot":[[49,61]],"c4_together":[[50,61]],"ai#result":[[18,71],[88,67]]}};
+const HOT_POS={"d":{"start":[[67,68]],"c1_dark":[[17,67],[83,67]],"c1_listen":[[71,56]],"c1_push":[[83,50],[18,50]],"c1_feel":[[80,51]],"c1_walk":[[69,59],[38,70]],"c2_dive":[[53,66]],"c2_soil":[[81,58],[31,62]],"c2_tall":[[18,58]],"c2_soft":[[69,57]],"c2_orum":[[84,55],[64,60]],"c2_name":[[67,24]],"c2_seed":[[60,24]],"c2_rest":[[82,63],[42,41]],"c2_splash":[[21,59]],"c2_sky":[[13,21]],"c3_people":[[32,38],[72,58]],"c3_listen":[[49,55]],"c3_palm":[[52,65]],"c3_wish":[[75,34],[23,46]],"c3_silk":[[19,21],[82,21]],"c3_weave":[[47,62]],"c3_ninety":[[38,58]],"c4_sons":[[67,69],[18,66]],"c4_pot":[[49,61]],"c4_together":[[50,61]],"ai#result":[[18,71],[88,67]],"game":[[64,17],[30,13],[14,23]]},"m":{"game":[[64,16],[83,4],[10,17]]}};
 const EDIT=new URLSearchParams(location.search).get("edit")==="1";
 const vmode=()=>innerWidth<=640?"m":"d";
 let HOT_LOCAL={};try{HOT_LOCAL=JSON.parse(localStorage.getItem("seolmun_hot_v1")||"{}")}catch(e){}
@@ -1060,7 +1063,7 @@ addEventListener("resize",()=>{if($("stage").classList.contains("words"))wordZon
 const IMG_FOCUS={ai:[20,0],w_rainbow:[30,0],w_whale:[0,0],w_camellia:[0,0],w_tangerine:[0,0],w_shootingstar:[0,0],w_hareubang:[0,0],w_haenyeo:[0,0],w_wind:[0,0],w_hallasan:[0,0],w_baengnokdam:[0,0],c2_orum:[22,0],c2_name:[22,0],c2_seed:[28,0],c2_soil:[50,0],c2_soft:[30,0],c2_tall:[22,50],c2_rest:[0,12],c2_sky:[0,12],c2_splash:[30,0],c3_wish:[8,0],c3_palm:[10,0],c3_people:[30,0],c3_silk:[50,45]};  // 그림별 초점 [가로%, 세로%] — 잘리는 화면에서도 얼굴이 보이도록 조정
 const IMG_EXT=["jpg","png","webp","gif","mp4"], imgCache={};
 /* 영상(mp4)이 있는 그림 이름: 이 이름은 jpg·png·webp·gif 를 먼저 뒤지지 않고(없는 파일을 4번 물어보느라 느려졌다) 바로 영상을 찾는다. 영상을 새로 넣으면 여기에 이름을 더한다 */
-const MP4_IDS=new Set(["ai", "ai_result", "c1_dark", "c2_dive", "c2_soil", "c3_people", "start", "w_baengnokdam", "w_camellia", "w_haenyeo", "w_hallasan", "w_hareubang", "w_rainbow", "w_shootingstar", "w_tangerine", "w_whale", "w_wind"]);
+const MP4_IDS=new Set(["ai", "ai_result", "c1_dark", "c2_dive", "c2_soil", "c3_people", "game_intro", "start", "w_baengnokdam", "w_camellia", "w_haenyeo", "w_hallasan", "w_hareubang", "w_rainbow", "w_shootingstar", "w_tangerine", "w_whale", "w_wind"]);
 function findImage(id){ // images/<id>.jpg|png|webp 를 차례로 찾는다. 없으면 false (→ 코드 그림 사용)
   if(!id) return Promise.resolve(false);
   if(id in imgCache) return Promise.resolve(imgCache[id]);
@@ -1074,7 +1077,7 @@ function findImage(id){ // images/<id>.jpg|png|webp 를 차례로 찾는다. 없
     im.onload=()=>{imgCache[id]=u;res(u)}; im.onerror=next; im.src=u};
     next()})}
 /* 영상(mp4) 안에 좌우 검은 띠가 같이 들어 있는 장면: 장면 이름 → 한쪽 띠의 폭(영상 가로의 %). 예) 4:3 그림을 16:9 영상에 넣은 경우 12.5. 띠가 없어지도록 위쪽 기준으로 확대한다 */
-const VIDEO_PAD={c2_soil:12.5,c3_people:7.8,w_rainbow:7.8,w_whale:7.8,w_camellia:7.8,w_hareubang:7.8,w_haenyeo:7.8,w_baengnokdam:7.8,w_hallasan:7.8,w_wind:10.9,ai_result:7.8,ai:7.8,w_shootingstar:7.8,c2_dive:7.8};   // 연·바람 영상은 영상 속 그림이 8초 동안 서서히 작아져서 띠 폭이 7.7% → 10.6% 로 커진다. 가장 큰 폭(10.9%)에 맞춰 배율을 고정한다 (배율을 계속 바꾸면 화면이 흔들려 보임). 배열 [처음, 끝] 로 쓰면 재생에 맞춰 배율이 변한다
+const VIDEO_PAD={c2_soil:12.5,c3_people:7.8,w_rainbow:7.8,w_whale:7.8,w_camellia:7.8,w_hareubang:7.8,w_haenyeo:7.8,w_baengnokdam:7.8,w_hallasan:7.8,w_wind:10.9,ai_result:7.8,ai:7.8,w_shootingstar:7.8,c2_dive:7.8,game_intro:7.8};   // 연·바람 영상은 영상 속 그림이 8초 동안 서서히 작아져서 띠 폭이 7.7% → 10.6% 로 커진다. 가장 큰 폭(10.9%)에 맞춰 배율을 고정한다 (배율을 계속 바꾸면 화면이 흔들려 보임). 배열 [처음, 끝] 로 쓰면 재생에 맞춰 배율이 변한다
 /* 영상이 도착하기 전에 먼저 보이는 첫 화면 사진(포스터): images/p_<이름>.jpg */
 const posterOf=id=>(typeof EMB!=="undefined"&&EMB["p_"+id+".jpg"])||`images/p_${id}.jpg`;
 let paintToken=0;
@@ -1375,7 +1378,7 @@ function go(id,choiceText,trait,isBack){
   if(sc.set) st.end=sc.set;
   cur=id; hot([]); document.body.classList.toggle("hasbg",BG_SCENES.includes(id)); fxUpdate();
   const V=sceneView(id,sc);                      // 지금 언어의 제목·장·본문
-  showTraits(); $("back").hidden=(id==="start"||!HIST.length); $("home").hidden=(id==="start"); paint(sc.art,V.ch,id);
+  showTraits(); $("back").hidden=(id==="start"||!HIST.length); $("home").hidden=(id==="start"); paint(sc.art,V.ch,sc.pic||id);
   $("title").textContent=V.title; $("choices").className=""; $("choices").innerHTML=""; $("recap").innerHTML=""; $("ai").className="ai";
   setTag(sc.end?{t:(sc.hidden?U("tagHidden"):"")+(sc.mine?U("tagMine"):U("tagOld")),cls:sc.mine?"mine":""}:null);
   const vk=voiceKey(id,sc);                      // 이 장면에 읽어 주는 목소리가 있으면 그 길이에 맞춰 글이 나온다
@@ -1449,9 +1452,9 @@ Object.assign(UI.ko,{toGame:"미니게임으로 넘어가기"}); Object.assign(U
 SCN.en.game={t:"Grandmother's Starry Night Games",ch:["Extra","Grandmother's Starry Night Games"],x:["When the story was over, Grandmother scattered a handful of stars into the Milky Way from the top of the oreum.","“Children, stay and play with the stars a little longer before you sleep.”","Tap a sparkling spot in the picture to pick a game you like."]};
 SCN.ja.game={t:"ハルマンの星夜あそび",ch:["番外","ハルマンの星夜あそび"],x:["お話が終わった夜、ハルマンはオルムのてっぺんから天の川へ星をひとつかみまきました。","「みんな、眠る前にもう少しだけ星と遊んでいきなさい。」","絵の中のきらめく場所を押して、好きなあそびをひとつ選んでください。"]};
 SCN.zh.game={t:"奶奶的星夜游戏",ch:["番外","奶奶的星夜游戏"],x:["故事结束的那个夜晚，奶奶站在岳的山顶，把一把星星撒进了银河。","“孩子们，睡觉前再和星星玩一会儿吧。”","点击画面中闪闪发光的地方，选一个你喜欢的游戏。"]};
-Object.assign(CHO.en,{"떨어지는 별똥별을 받아 마을을 밝힌다":"Catch falling stars to light up the village","별을 이어 별자리를 만든다":"Connect the stars into constellations","흩어진 밤하늘 그림을 맞춘다":"Put the scattered night sky back together"});
-Object.assign(CHO.ja,{"떨어지는 별똥별을 받아 마을을 밝힌다":"流れ星を受けとめて村を明るくする","별을 이어 별자리를 만든다":"星をつないで星座をつくる","흩어진 밤하늘 그림을 맞춘다":"ばらばらの夜空の絵を元にもどす"});
-Object.assign(CHO.zh,{"떨어지는 별똥별을 받아 마을을 밝힌다":"接住流星，点亮村庄","별을 이어 별자리를 만든다":"把星星连成星座","흩어진 밤하늘 그림을 맞춘다":"拼回散落的夜空图画"});
+Object.assign(CHO.en,{"별똥별 받기":"Catch stars","별자리 잇기":"Connect stars","그림 맞추기":"Sky puzzle"});
+Object.assign(CHO.ja,{"별똥별 받기":"流れ星キャッチ","별자리 잇기":"星座つなぎ","그림 맞추기":"夜空パズル"});
+Object.assign(CHO.zh,{"별똥별 받기":"接流星","별자리 잇기":"连星座","그림 맞추기":"夜空拼图"});
 const MGT={
  ko:{t:{stars:"✨ 별똥별 받기",const:"🌟 별자리 잇기",puzzle:"🧩 밤하늘 그림 맞추기"},
   intro:{stars:"할망이 뿌린 별이 떨어져요. 떨어지는 별을 <b>눌러서</b> 받으면 아래 마을 집에 불이 켜져요.<br>45초 안에 <b>집 8채</b>를 모두 밝혀 보세요. 분홍빛 큰 별은 두 채를 밝혀요.",
@@ -1515,7 +1518,7 @@ const MG=(()=>{
   const W=1280,H=853, el=id=>document.getElementById(id);
   document.body.insertAdjacentHTML("beforeend",`<div class="mg" id="mg" hidden role="dialog" aria-modal="true" aria-labelledby="mgTitle"><div class="mg-box">
     <div class="mg-top"><b id="mgTitle"></b><span class="mg-pill" id="mgA" hidden></span><span class="mg-pill" id="mgB" hidden></span><button type="button" id="mgPeek" hidden></button><button type="button" class="x" id="mgX">✕</button></div>
-    <div class="mg-stage" id="mgStage"><img id="mgImg" alt=""><canvas id="mgCv" width="${W}" height="${H}" aria-hidden="true"></canvas><div class="mg-board" id="mgBoard" hidden></div>
+    <div class="mg-stage" id="mgStage"><img id="mgImg" alt=""><video class="mg-vid" id="mgVid" muted loop playsinline preload="auto" aria-hidden="true"></video><canvas id="mgCv" width="${W}" height="${H}" aria-hidden="true"></canvas><div class="mg-board" id="mgBoard" hidden></div>
       <img class="mg-peek" id="mgPeekImg" alt=""><canvas id="mgFx" width="${W}" height="${H}" aria-hidden="true" style="pointer-events:none;z-index:7"></canvas><div class="mg-toast" id="mgToast" aria-live="polite"></div>
       <div class="mg-card" id="mgCard"><div><h3 id="mgCT"></h3><p id="mgCP"></p><p class="note" id="mgCN"></p><div class="mg-btns" id="mgCB"></div></div></div></div></div></div>`);
   const stage=el("mgStage"), cv=el("mgCv"), c=cv.getContext("2d"), fx=el("mgFx").getContext("2d"), board=el("mgBoard");
@@ -1537,7 +1540,13 @@ const MG=(()=>{
     g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.01);g.gain.exponentialRampToValueAtTime(.0005,t+len);o.connect(g);g.connect(ac.destination);o.start(t);o.stop(t+len+.05)}
   function audioOn(){try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();ac.resume()}catch(e){}}
   function confetti(){for(let i=0;i<90;i++)bits.push({x:Math.random()*W,y:-20-Math.random()*400,vy:80+Math.random()*140,vx:(Math.random()-.5)*60,r:2+Math.random()*4,h:Math.random()<.5?"#ffe29a":"#d8c9ff"})}
-  function clear(){on=false;G={};c.clearRect(0,0,W,H);board.innerHTML="";board.hidden=true;board.classList.remove("solved");pill("mgA",null);pill("mgB",null);el("mgPeek").hidden=true;el("mgPeekImg").classList.remove("on");el("mgToast").classList.remove("on")}
+  /* 놀이 배경 영상: 별똥별 받기·별자리 잇기는 하는 내내, 그림 맞추기는 다 맞췄을 때 나온다. 놀이마다 다른 영상을 쓰려면 MG_VIDEO 의 파일 이름만 바꾸면 된다 */
+  const vid=el("mgVid"), vsrc=n=>(typeof EMB!=="undefined"&&EMB[n+".mp4"])||`images/${n}.mp4`, MG_VIDEO={stars:"game_intro",const:"game_intro",puzzle:"game_intro"};
+  vid.addEventListener("playing",()=>{if(vid.dataset.want==="1")vid.classList.add("on")});
+  function vidShow(k,over){const n=MG_VIDEO[k];if(!n)return;const u=vsrc(n);if(vid.dataset.n!==n){vid.dataset.n=n;vid.src=u}
+    vid.dataset.want="1";vid.classList.toggle("over",!!over);try{vid.currentTime=0}catch(_){}const p=vid.play();if(p&&p.catch)p.catch(()=>{})}
+  function vidHide(){vid.dataset.want="0";vid.classList.remove("on","over");vid.pause()}
+  function clear(){if(kind!=="stars"&&kind!=="const")vidHide();on=false;G={};c.clearRect(0,0,W,H);board.innerHTML="";board.hidden=true;board.classList.remove("solved");pill("mgA",null);pill("mgB",null);el("mgPeek").hidden=true;el("mgPeekImg").classList.remove("on");el("mgToast").classList.remove("on")}
   function finishCard(t,p,note){on=false;card(t,p,note,[[mt("again"),1,()=>start()],[mt("other"),0,close]])}
 
   /* ───── 1) 별똥별 받기 ───── */
@@ -1573,11 +1582,25 @@ const MG=(()=>{
   const flower=(cx,cy,R,r)=>{const p=[];for(let k=0;k<5;k++){const a=(-90+72*k)*Math.PI/180,b=a+36*Math.PI/180;p.push([cx+R*Math.cos(a),cy+R*Math.sin(a)],[cx+r*Math.cos(b),cy+r*Math.sin(b)])}return p};
   const SETS=[{close:true,color:"#ff9ab8",pts:flower(300,128,78,34)},
     {close:false,color:"#bfe3ff",pts:[[400,150],[460,98],[498,66],[515,74],[532,74],[550,66],[588,98],[648,150]]},
-    {close:true,color:"#ffe08a",pts:[[1020,110],[1045,70],[1075,70],[1100,110],[1095,175],[1100,250],[1080,300],[1040,300],[1020,250],[1025,175]]}], HIT=36;
+    {close:true,color:"#ffe08a",pts:[[1020,110],[1045,70],[1075,70],[1100,110],[1095,175],[1100,250],[1080,300],[1040,300],[1020,250],[1025,175]]}], HIT0=36;
+  /* 폰처럼 화면이 작으면 별이 손가락보다 작아지므로, 화면에 보이는 크기(약 30px 반지름)가 나오도록 누름 반경과 별 크기를 키운다 */
+  const dsc=()=>{const w=cv.getBoundingClientRect().width;return w?w/W:1}, zk=()=>Math.min(2.4,Math.max(1,.75/dsc()));
+  /* 폰처럼 화면이 작으면 ① 별 개수를 줄이고(10·8·10개 → 5·5·6개) ② 세 별자리가 서로 겹치지 않게 하늘의 정해진 칸에 하나씩 나눠 놓는다 (칸 안에서 모양은 그대로 키움) */
+  const BASE=SETS.map(q=>q.pts.map(p=>p.slice()));
+  const MOB=[[[300,50],[374,104],[346,191],[254,191],[226,104]],                  // 동백: 꽃잎 5장 (바깥 꼭짓점만)
+             [[400,150],[470,95],[524,66],[578,95],[648,150]],                      // 한라산: 봉우리 5개 점
+             [[1045,70],[1100,110],[1100,250],[1060,300],[1020,250],[1020,110]]],   // 돌하르방: 머리 윤곽 6개 점
+        BOX=[[90,70,350,330],[440,60,770,200],[950,60,1170,420]];                   // 칸 [왼,위,오른,아래] (그림 1280×853 기준): 왼쪽 위 / 가운데 위 / 오른쪽
+  function layoutSets(){const small=dsc()<.5;
+    SETS.forEach((q,i)=>{
+      if(!small){q.pts=BASE[i].map(p=>p.slice());q.f=1;q.o=[0,0];return}
+      const b=MOB[i],xs=b.map(p=>p[0]),ys=b.map(p=>p[1]),mnx=Math.min(...xs),mxx=Math.max(...xs),mny=Math.min(...ys),mxy=Math.max(...ys),bx=BOX[i];
+      const f=Math.min(2.4,(bx[2]-bx[0])/(mxx-mnx),(bx[3]-bx[1])/(mxy-mny)),cx=(mnx+mxx)/2,cy=(mny+mxy)/2,bcx=(bx[0]+bx[2])/2,bcy=(bx[1]+bx[3])/2;
+      q.f=f;q.o=[bcx-cx*f,bcy-cy*f];q.pts=b.map(p=>[p[0]*f+q.o[0],p[1]*f+q.o[1]])})}
   const curSet=()=>SETS[G.set];
   function constHud(){const s=curSet();pill("mgA",s?mt("constProg",G.set+1,SETS.length,G.n,s.pts.length):mt("constProg",SETS.length,SETS.length,SETS[2].pts.length,SETS[2].pts.length))}
-  function constStart(){G={t:0,set:0,n:0,done:[],idle:0,drag:false,ptr:null,shake:0,flash:0,miss:0};on=true;constHud();toast(mt("cfirst"))}
-  function tryConnect(x,y,tap){const s=curSet();if(!s||!on)return false;const p=s.pts[G.n];
+  function constStart(){layoutSets();G={t:0,set:0,n:0,done:[],idle:0,drag:false,ptr:null,shake:0,flash:0,miss:0};on=true;constHud();toast(mt("cfirst"))}
+  function tryConnect(x,y,tap){const s=curSet();if(!s||!on)return false;const p=s.pts[G.n],HIT=Math.max(HIT0,30/dsc());
     if(Math.hypot(p[0]-x,p[1]-y)<HIT){G.n++;G.idle=0;const sc=[0,2,4,7,9,12,14,16,19,21,24];sound(392*Math.pow(2,sc[(G.n-1)%sc.length]/12),1,.08);constHud();
       if(G.n>=s.pts.length){const nm=mt("cnames")[G.set];G.done.push({set:G.set,t0:G.t});G.flash=1;toast(`<b>${esc(nm[0])}</b> · ${esc(nm[1])}`,2600);G.set++;G.n=0;G.drag=false;constHud();
         if(G.set>=SETS.length){on=false;setTimeout(()=>{if(kind==="const"&&!el("mg").hidden){confetti();finishCard(mt("winC"),mt("winCp"),mt("noteC",G.miss))}},2200)}}
@@ -1589,14 +1612,14 @@ const MG=(()=>{
     G.t+=dt;G.idle+=dt;G.shake=Math.max(0,G.shake-dt);G.flash=Math.max(0,G.flash-dt*.7);c.clearRect(0,0,W,H);
     G.done.forEach(d=>{const s=SETS[d.set],a=Math.min(1,(G.t-d.t0)/1.2);c.save();c.globalAlpha=.25*a;c.fillStyle=s.color;c.beginPath();s.pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));if(s.close){c.closePath();c.fill()}c.restore();
       line(s.pts,s.close,s.pts.length,s.color,.9*a,3);s.pts.forEach(p=>dot(p[0],p[1],14,.95));
-      if(d.set===2){c.globalAlpha=.8*a;c.fillStyle=s.color;[[1045,150],[1075,150]].forEach(q=>{c.beginPath();c.arc(q[0],q[1],4,0,7);c.fill()});c.beginPath();c.ellipse(1060,180,7,14,0,0,7);c.fill();c.globalAlpha=1}});
+      if(d.set===2){const f=s.f||1,o=s.o||[0,0],T=(x,y)=>[x*f+o[0],y*f+o[1]];c.globalAlpha=.8*a;c.fillStyle=s.color;[[1045,150],[1075,150]].forEach(q=>{const t=T(q[0],q[1]);c.beginPath();c.arc(t[0],t[1],4*f,0,7);c.fill()});const e=T(1060,180);c.beginPath();c.ellipse(e[0],e[1],7*f,14*f,0,0,7);c.fill();c.globalAlpha=1}});
     const s=curSet();if(!s||!on)return;
     line(s.pts,false,G.n,"#ffffff",.95,3);
     if(G.drag&&G.n>0&&G.ptr){const l=s.pts[G.n-1];c.globalAlpha=.5;c.strokeStyle="#fff";c.setLineDash([6,8]);c.lineWidth=2;c.beginPath();c.moveTo(l[0],l[1]);c.lineTo(G.ptr[0],G.ptr[1]);c.stroke();c.setLineDash([]);c.globalAlpha=1}
     s.pts.forEach((p,i)=>{const nx=i===G.n,dn=i<G.n,dx=nx&&G.shake?Math.sin(G.t*60)*5:0,pu=nx?1+.25*Math.sin(G.t*6)+(G.idle>4?.5+.3*Math.sin(G.t*8):0):1;
-      dot(p[0]+dx,p[1],(dn?13:10)*pu,dn?1:nx?.95:.6);
-      if(!dn){c.font="bold 15px sans-serif";c.textAlign="center";c.lineWidth=3;c.strokeStyle="rgba(10,8,40,.85)";c.strokeText(i+1,p[0]+dx,p[1]-16);c.fillStyle=nx?"#ffe29a":"rgba(255,255,255,.75)";c.fillText(i+1,p[0]+dx,p[1]-16)}
-      if(nx&&G.idle>4){c.globalAlpha=.6;c.strokeStyle="#ffe29a";c.lineWidth=2;c.beginPath();c.arc(p[0],p[1],22+10*Math.sin(G.t*5),0,7);c.stroke();c.globalAlpha=1}});
+      dot(p[0]+dx,p[1],(dn?13:10)*pu*zk(),dn?1:nx?.95:.6);
+      if(!dn){const z=zk();c.font="bold "+Math.round(15*z)+"px sans-serif";c.textAlign="center";c.lineWidth=3;c.strokeStyle="rgba(10,8,40,.85)";c.strokeText(i+1,p[0]+dx,p[1]-16*z);c.fillStyle=nx?"#ffe29a":"rgba(255,255,255,.75)";c.fillText(i+1,p[0]+dx,p[1]-16*z)}
+      if(nx&&(G.idle>4||(zk()>1.2&&G.idle>1.5))){c.globalAlpha=.6;c.strokeStyle="#ffe29a";c.lineWidth=2*zk();c.beginPath();c.arc(p[0],p[1],(22+10*Math.sin(G.t*5))*zk(),0,7);c.stroke();c.globalAlpha=1}});
     if(G.flash){c.globalAlpha=G.flash*.25;c.fillStyle="#fff6d0";c.fillRect(0,0,W,H);c.globalAlpha=1}
   }
 
@@ -1616,7 +1639,7 @@ const MG=(()=>{
   function slotAt(x,y){const r=board.getBoundingClientRect();if(x<r.left||y<r.top||x>=r.right||y>=r.bottom)return -1;return(((y-r.top)/r.height*G.N)|0)*G.N+(((x-r.left)/r.width*G.N)|0)}
   function swap(a,b){if(a===b||a<0||b<0)return;[G.slots[a],G.slots[b]]=[G.slots[b],G.slots[a]];G.moves++;puzPaint();
     if(G.slots[a]===a||G.slots[b]===b){toast(rand(mt("pok")),900);sound(659,.6,.06)}
-    if(okCount()===G.N*G.N){on=false;board.classList.add("solved");confetti();const sec=Math.round((performance.now()-G.t0)/1000);setTimeout(()=>finishCard(mt("winP"),mt("winPp"),mt("noteP",G.N,G.moves,sec)),1400)}}
+    if(okCount()===G.N*G.N){on=false;board.classList.add("solved");vidShow("puzzle",true);confetti();const sec=Math.round((performance.now()-G.t0)/1000);setTimeout(()=>finishCard(mt("winP"),mt("winPp"),mt("noteP",G.N,G.moves,sec)),1400)}}
   function tapTile(t){if(!G.sel){G.sel=t;t.classList.add("sel")}else{const a=G.sel;a.classList.remove("sel");G.sel=null;if(a!==t)swap(slotOf(a),slotOf(t))}}
   board.addEventListener("pointerdown",e=>{const t=e.target.closest(".mg-tile");if(!t||!on)return;G.drag={t,x:e.clientX,y:e.clientY,moved:false};try{t.setPointerCapture(e.pointerId)}catch(_){}});
   board.addEventListener("pointermove",e=>{const d=G.drag;if(!d)return;const dx=e.clientX-d.x,dy=e.clientY-d.y;
@@ -1652,9 +1675,10 @@ const MG=(()=>{
     back=document.activeElement;kind=k;try{voicePlay(null)}catch(e){}
     const u=await findImage("game");imgUrl=u||"images/game.jpg";el("mgImg").src=imgUrl;el("mgPeekImg").src=imgUrl;
     el("mgTitle").textContent=mt("t")[k];el("mgX").setAttribute("aria-label",mt("close"));el("mgX").title=mt("close");
+    vidHide();if(k==="stars"||k==="const")vidShow(k);   // 별똥별 받기·별자리 잇기는 영상 위에서
     el("mg").hidden=false;document.body.style.overflow="hidden";bits=[];intro();cancelAnimationFrame(raf);last=performance.now();raf=requestAnimationFrame(frame);
   }
-  function close(){clear();cancelAnimationFrame(raf);el("mg").hidden=true;document.body.style.overflow="";kind=null;
+  function close(){vidHide();clear();cancelAnimationFrame(raf);el("mg").hidden=true;document.body.style.overflow="";kind=null;
     if(cur==="game"){renderChoices("game",S.game);const f=document.querySelector("#hot .hs");f&&f.focus({preventScroll:true})}   // 반짝이(놀이 3개)를 다시 보여 준다
     else if(back&&back.isConnected&&back.focus)back.focus({preventScroll:true})}
   el("mgX").onclick=close;
