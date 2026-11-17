@@ -1169,10 +1169,10 @@ async function wordZones(){
 }
 addEventListener("resize",()=>{if($("stage").classList.contains("words"))wordZones.force=true,wordZones()});
 
-const IMG_FOCUS={ai:[20,0],w_rainbow:[30,0],w_whale:[0,0],w_camellia:[0,0],w_tangerine:[0,0],w_shootingstar:[0,0],w_hareubang:[0,0],w_haenyeo:[0,0],w_wind:[0,0],w_hallasan:[0,0],w_baengnokdam:[0,0],c2_orum:[22,0],c2_name:[22,0],c2_seed:[28,0],c2_soil:[50,0],c2_soft:[30,0],c2_tall:[22,50],c2_rest:[0,12],c2_sky:[0,12],c2_splash:[30,0],c3_wish:[8,0],c3_palm:[10,0],c3_people:[30,0],c3_silk:[50,45]};  // 그림별 초점 [가로%, 세로%] — 잘리는 화면에서도 얼굴이 보이도록 조정
+const IMG_FOCUS={c1_walk:[50,0],ai:[20,0],w_rainbow:[30,0],w_whale:[0,0],w_camellia:[0,0],w_tangerine:[0,0],w_shootingstar:[0,0],w_hareubang:[0,0],w_haenyeo:[0,0],w_wind:[0,0],w_hallasan:[0,0],w_baengnokdam:[0,0],c2_orum:[22,0],c2_name:[22,0],c2_seed:[28,0],c2_soil:[50,0],c2_soft:[30,0],c2_tall:[22,50],c2_rest:[0,12],c2_sky:[0,12],c2_splash:[30,0],c3_wish:[8,0],c3_palm:[10,0],c3_people:[30,0],c3_silk:[50,45]};  // 그림별 초점 [가로%, 세로%] — 잘리는 화면에서도 얼굴이 보이도록 조정
 const IMG_EXT=["jpg","png","webp","gif","mp4"], imgCache={};
 /* 영상(mp4)이 있는 그림 이름: 이 이름은 jpg·png·webp·gif 를 먼저 뒤지지 않고(없는 파일을 4번 물어보느라 느려졌다) 바로 영상을 찾는다. 영상을 새로 넣으면 여기에 이름을 더한다 */
-const MP4_IDS=new Set(["c1_feel", "c1_push", "ai", "ai_result", "c1_dark", "c1_listen", "c2_dive", "c2_soil", "c3_people", "game_intro", "start", "w_baengnokdam", "w_camellia", "w_haenyeo", "w_hallasan", "w_hareubang", "w_rainbow", "w_shootingstar", "w_tangerine", "w_whale", "w_wind"]);
+const MP4_IDS=new Set(["c1_walk", "c1_feel", "c1_push", "ai", "ai_result", "c1_dark", "c1_listen", "c2_dive", "c2_soil", "c3_people", "game_intro", "start", "w_baengnokdam", "w_camellia", "w_haenyeo", "w_hallasan", "w_hareubang", "w_rainbow", "w_shootingstar", "w_tangerine", "w_whale", "w_wind"]);
 function findImage(id){ // images/<id>.jpg|png|webp 를 차례로 찾는다. 없으면 false (→ 코드 그림 사용)
   if(!id) return Promise.resolve(false);
   if(id in imgCache) return Promise.resolve(imgCache[id]);
