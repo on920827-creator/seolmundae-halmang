@@ -356,6 +356,12 @@
   @keyframes chipHint{50%{box-shadow:0 0 0 1px rgba(255,236,170,.6),0 0 12px rgba(255,226,140,.5)}}
   @keyframes chipBump{0%{transform:scale(1)}30%{transform:scale(1.28);box-shadow:0 0 0 2px #fff4c4,0 0 26px rgba(255,226,140,.95)}100%{transform:scale(1)}}
   @media (prefers-reduced-motion:reduce){.meta .chip.hintable,.meta .chip.bump{animation:none}}
+  /* 별자리를 다 이으면 어둡던 배경이 환하게 밝아지며 완성된 그림이 드러난다 */
+  .mg-stage>img,.mg-stage>video.mg-vid{transition:filter 1.4s ease,opacity .9s ease}
+  .mg-stage::after{transition:opacity 1.4s ease}
+  .mg-stage.bright::after{opacity:0}
+  .mg-stage.bright>img#mgImg{filter:brightness(1.05) saturate(1.08)!important}
+  .mg-stage.bright>video.mg-vid:not(.over){filter:none}
 </style>
 </head>
 <body>
@@ -1730,7 +1736,7 @@ const MG=(()=>{
     G.stars=G.stars.filter(s=>{if(s.y>CLOUD_Y||s.x<-40||s.x>W+40){G.missed++;return false}return true});
     G.flies=G.flies.filter(f=>{if(G.t-f.t0>=f.dur){G.lit[f.h]=.001;toast(rand(mt("lit")));return false}return true});
     G.lit=G.lit.map(v=>v>0?Math.min(1,v+dt*1.5):0);G.pops=G.pops.filter(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;return G.t-p.t0<.7});starsHud();
-    if(lit()>=GOAL&&!G.flies.length)finishCard(mt("winS"),mt("winSp"),mt("noteS",G.caught,G.missed));
+    if(lit()>=GOAL&&!G.flies.length){on=false;confetti();el("mgStage").classList.add("bright");setTimeout(()=>{if(kind==="stars"&&!el("mg").hidden)finishCard(mt("winS"),mt("winSp"),mt("noteS",G.caught,G.missed))},3200)}   /* 마을이 모두 밝아진 모습을 3초쯤 보여 준 뒤 카드 */
     else if(G.left<=0)finishCard(mt("loseS",lit()),mt("loseSp",GOAL-lit()),mt("noteS",G.caught,G.missed));
   }
   function starsDraw(){
@@ -1768,7 +1774,7 @@ const MG=(()=>{
   function tryConnect(x,y,tap){const s=curSet();if(!s||!on)return false;const p=s.pts[G.n],HIT=Math.max(HIT0,30/dsc());
     if(Math.hypot(p[0]-x,p[1]-y)<HIT){G.n++;G.idle=0;const sc=[0,2,4,7,9,12,14,16,19,21,24];sound(392*Math.pow(2,sc[(G.n-1)%sc.length]/12),1,.08);constHud();
       if(G.n>=s.pts.length){const nm=mt("cnames")[G.set];G.done.push({set:G.set,t0:G.t});G.flash=1;toast(`<b>${esc(nm[0])}</b> · ${esc(nm[1])}`,2600);G.set++;G.n=0;G.drag=false;constHud();
-        if(G.set>=SETS.length){on=false;setTimeout(()=>{if(kind==="const"&&!el("mg").hidden){confetti();finishCard(mt("winC"),mt("winCp"),mt("noteC",G.miss))}},2200)}}
+        if(G.set>=SETS.length){on=false;confetti();el("mgStage").classList.add("bright");setTimeout(()=>{if(kind==="const"&&!el("mg").hidden){finishCard(mt("winC"),mt("winCp"),mt("noteC",G.miss))}},3200)}}   /* 다 이으면 완성된 하늘을 3초쯤 보여 준 뒤 완성 카드 */
       return true}
     if(tap&&s.pts.some(q=>Math.hypot(q[0]-x,q[1]-y)<HIT)){G.shake=.5;G.miss++;sound(330,.3,.04,"triangle");toast(mt("cwrong"))}return false}
   function line(pts,close,n,color,a,w){if(n<2)return;c.save();c.globalAlpha=a*.55;c.strokeStyle="rgba(10,6,40,.9)";c.lineWidth=w+4;c.lineJoin="round";c.beginPath();for(let i=0;i<n;i++)i?c.lineTo(pts[i][0],pts[i][1]):c.moveTo(pts[i][0],pts[i][1]);c.stroke();c.globalAlpha=a;c.strokeStyle=color;c.lineWidth=w;c.shadowColor=color;c.shadowBlur=12;c.lineJoin="round";c.beginPath();for(let i=0;i<n;i++)i?c.lineTo(pts[i][0],pts[i][1]):c.moveTo(pts[i][0],pts[i][1]);if(close&&n===pts.length)c.closePath();c.stroke();c.restore()}
@@ -1804,7 +1810,7 @@ const MG=(()=>{
   function slotAt(x,y){const r=board.getBoundingClientRect();if(x<r.left||y<r.top||x>=r.right||y>=r.bottom)return -1;return(((y-r.top)/r.height*G.N)|0)*G.N+(((x-r.left)/r.width*G.N)|0)}
   function swap(a,b){if(a===b||a<0||b<0)return;[G.slots[a],G.slots[b]]=[G.slots[b],G.slots[a]];G.moves++;puzPaint();
     if(G.slots[a]===a||G.slots[b]===b){toast(rand(mt("pok")),900);sound(659,.6,.06)}
-    if(okCount()===G.N*G.N){on=false;board.classList.add("solved");if(!PZ_BG[cur])vidShow("puzzle",true);confetti();const sec=Math.round((performance.now()-G.t0)/1000);setTimeout(()=>finishCard(pzs("win"),pzs("wp"),mt("noteP",G.N,G.moves,sec)),1400)}}
+    if(okCount()===G.N*G.N){on=false;board.classList.add("solved");if(!PZ_BG[cur])vidShow("puzzle",true);confetti();const sec=Math.round((performance.now()-G.t0)/1000);el("mgStage").classList.add("bright");setTimeout(()=>{if(kind==="puzzle"&&!el("mg").hidden)finishCard(pzs("win"),pzs("wp"),mt("noteP",G.N,G.moves,sec))},3200)}}
   function tapTile(t){if(!G.sel){G.sel=t;t.classList.add("sel")}else{const a=G.sel;a.classList.remove("sel");G.sel=null;if(a!==t)swap(slotOf(a),slotOf(t))}}
   board.addEventListener("pointerdown",e=>{const t=e.target.closest(".mg-tile");if(!t||!on)return;G.drag={t,x:e.clientX,y:e.clientY,moved:false};try{t.setPointerCapture(e.pointerId)}catch(_){}});
   board.addEventListener("pointermove",e=>{const d=G.drag;if(!d)return;const dx=e.clientX-d.x,dy=e.clientY-d.y;
@@ -1838,7 +1844,7 @@ const MG=(()=>{
     card(tt(kind),mt("intro")[kind],"",btns)}
   async function open(k){
     back=document.activeElement;kind=k;try{voicePlay(null)}catch(e){}
-    const bgId=(k==="const"&&MG_BG[cur])||(k==="puzzle"&&PZ_BG[cur])||"game";const u=await findImage(bgId);imgUrl=u||(bgId==="game"?"images/game.jpg":"images/"+bgId+".jpg");el("mgImg").src=imgUrl;el("mgImg").style.filter=(k==="const"&&MG_BG[cur])?"brightness(.55) saturate(.9)":"";el("mgPeekImg").src=imgUrl;
+    const bgId=(k==="const"&&MG_BG[cur])||(k==="puzzle"&&PZ_BG[cur])||"game";const u=await findImage(bgId);imgUrl=u||(bgId==="game"?"images/game.jpg":"images/"+bgId+".jpg");el("mgImg").src=imgUrl;el("mgStage").classList.remove("bright");el("mgImg").style.filter=(k==="const"&&MG_BG[cur])?"brightness(.55) saturate(.9)":"";el("mgPeekImg").src=imgUrl;
     el("mgTitle").textContent=tt(k);el("mgX").setAttribute("aria-label",mt("close"));el("mgX").title=mt("close");
     vidHide();if(k==="stars"||(k==="const"&&!MG_BG[cur]))vidShow(k);   // 별똥별 받기·별자리 잇기는 영상 위에서
     el("mg").hidden=false;document.body.style.overflow="hidden";bits=[];intro();cancelAnimationFrame(raf);last=performance.now();raf=requestAnimationFrame(frame);
