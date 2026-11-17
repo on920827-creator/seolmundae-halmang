@@ -1330,7 +1330,8 @@ $("voice").onclick=e=>{ e.stopPropagation(); VOICE.on=!VOICE.on; try{localStorag
 voiceBtn();
 /* 브라우저는 소리 자동 재생을 막으므로, 첫 화면에서 처음 눌렀을 때 아직 읽기가 시작되지 않았으면 그 장면의 읽기를 시작한다 */
 /* 자동 재생이 막혀 읽기가 시작되지 못했다면, 화면을 누르는 순간(휴대폰은 손을 뗄 때) 다시 시도한다. 이미 읽은 장면은 다시 읽지 않는다 */
-const voiceGesture=()=>{ if(!VOICE.on||VOICE._lock||(cur==="ai"&&st.aiScene))return;   // 단어로 지어진 장면(결과 화면)에서는 인사말 읽기를 다시 시작하지 않는다
+const voiceGesture=()=>{ if(!VOICE.on||VOICE._lock||(cur==="ai"&&st.aiScene)||document.getElementById("opening"))return;   // 오프닝이 떠 있는 동안은 읽지 않는다
+    // 단어로 지어진 장면(결과 화면)에서는 인사말 읽기를 다시 시작하지 않는다
  const k=voiceKey(cur,S[cur]); if(!k||VOICE.played===k||(VOICE.id===k&&!VOICE.a.paused))return; VOICE._lock=1; setTimeout(()=>VOICE._lock=0,300); voicePlay(k,true) };
 ["pointerup","touchend","click"].forEach(ev=>addEventListener(ev,voiceGesture,true));
 
@@ -1646,9 +1647,51 @@ const MG=(()=>{
     solveAllButOne:()=>{G.slots=G.slots.map((_,i)=>i);[G.slots[0],G.slots[1]]=[G.slots[1],G.slots[0]];puzPaint()}};   // 마지막 줄은 확인(테스트)용
 })();
 
+/* ═══ 오프닝: 제일 첫 화면 (이야기 첫 장면 앞) ═══
+   영상(images/opening.mp4)이 계속 반복 재생되고 첫 화면 음악(images/bgm_start.mp3)이 흐른다. '시작하기'(또는 Enter·Space)를 누르면 이야기의 첫 화면으로 가고, 음악은 끊김 없이 이어진다.
+   주소에 ?scene=… 이나 ?open=0 이 있으면 오프닝을 건너뛴다. 처음부터 다시(집 모양 버튼)에서도 나오지 않는다. */
+Object.assign(UI.ko,{opSub:"제주에 깃든 이야기를 관람자와 함께 써 내려간다",opGo:"시작하기",opHint:"♪ 화면을 누르면 음악이 시작돼요"});
+Object.assign(UI.en,{opSub:"Writing a story of Jeju together with the viewer",opGo:"Begin",opHint:"♪ Tap the screen to start the music"});
+Object.assign(UI.ja,{opSub:"済州に宿る物語を、あなたといっしょにつづる",opGo:"はじめる",opHint:"♪ 画面をタッチすると音楽が始まります"});
+Object.assign(UI.zh,{opSub:"与观众一起书写栖息在济州的故事",opGo:"开始",opHint:"♪ 点击屏幕开始播放音乐"});
+const OPENING=(()=>{
+  const css=document.createElement("style");
+  css.textContent=`.opening{position:fixed;inset:0;z-index:100;background:#0b0a26;overflow:hidden;cursor:pointer;transition:opacity .8s ease}
+  .opening.out{opacity:0;pointer-events:none}
+  .opening video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:70% 0%}   /* 위쪽 기준: 화면이 가로로 아주 길어도 할망의 머리가 잘리지 않는다 (아래쪽 바다가 잘린다) */
+  .op-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,6,48,0) 45%,rgba(10,6,48,.38) 72%,rgba(10,6,48,.62) 100%)}
+  .op-text{position:absolute;left:clamp(20px,5vw,72px);right:clamp(20px,5vw,72px);bottom:clamp(22px,7vh,64px);color:#fff6e0;text-shadow:0 2px 14px rgba(26,10,60,.75),0 1px 3px rgba(26,10,60,.8)}
+  .op-text small{display:block;font-size:clamp(.78rem,1.4vw,1rem);letter-spacing:.06em;color:#f6dda0;margin-bottom:8px;opacity:0;animation:opIn 1s ease .5s forwards}
+  .op-text h2{margin:0;font-size:clamp(1.7rem,5.4vw,3.6rem);font-weight:800;line-height:1.2;opacity:0;animation:opIn 1.1s ease 1.4s forwards}
+  .op-text p{margin:10px 0 0;font-size:clamp(.92rem,1.9vw,1.4rem);opacity:0;animation:opIn 1.1s ease 2.8s forwards}
+  .op-text button{margin-top:18px;font:inherit;font-weight:700;font-size:clamp(.95rem,1.6vw,1.15rem);color:#fff;cursor:pointer;border:0;border-radius:999px;padding:12px 30px;background:linear-gradient(90deg,#b8a0ff,#8d6df0);box-shadow:0 8px 24px rgba(125,91,216,.5);text-shadow:none;opacity:0;animation:opIn 1s ease 4.2s forwards}
+  .op-text button:hover,.op-text button:focus-visible{filter:brightness(1.12);outline:2px solid #fff;outline-offset:3px}
+  .op-hint{position:absolute;top:clamp(14px,3vh,28px);right:clamp(14px,3vw,36px);font-size:clamp(.78rem,1.3vw,.95rem);color:#fff6e0;background:rgba(10,6,48,.45);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;opacity:0;animation:opIn 1s ease 1s forwards}
+  .op-hint[hidden]{display:none}
+  @keyframes opIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.op-text *{animation-duration:.01s!important;animation-delay:0s!important}}`;
+  document.head.appendChild(css);
+  function show(done){
+    const src=(typeof EMB!=="undefined"&&EMB["opening.mp4"])||"images/opening.mp4", pst=(typeof EMB!=="undefined"&&EMB["p_opening.jpg"])||"images/p_opening.jpg";
+    document.body.insertAdjacentHTML("beforeend",`<div class="opening" id="opening" role="dialog" aria-label="${esc(U("hdr"))}"><video id="opv" src="${src}" poster="${pst}" muted loop playsinline autoplay preload="auto"></video><div class="op-shade"></div><div class="op-hint" id="ophint" hidden>${esc(U("opHint"))}</div><div class="op-text"><small>과제 E · 몬스테라텍</small><h2>${esc(U("hdr"))}</h2><p>${esc(U("opSub"))}</p><button type="button" id="opgo">${esc(U("opGo"))}</button></div></div>`);
+    const root=document.getElementById("opening"), v=document.getElementById("opv"), hint=document.getElementById("ophint"); let fin=false;
+    const p=v.play(); if(p&&p.catch)p.catch(()=>{});
+    bgmSwap("start"); if(BGM.on)bgmUnlock();                                       // 오프닝에서도 첫 화면 음악을 튼다 (브라우저가 막으면 첫 누름에 시작)
+    setTimeout(()=>{ if(!fin&&BGM.on&&bgmA.paused)hint.hidden=false },900);       // 소리가 아직 안 나오면 안내 글을 보여 준다
+    const end=()=>{ if(fin)return; fin=true; document.removeEventListener("keydown",key,true); root.classList.add("out"); setTimeout(()=>{root.remove();done()},650) };
+    const key=e=>{ if(e.key==="Enter"||e.key===" "||e.key==="Escape"){e.preventDefault();end()} };
+    root.addEventListener("click",e=>{ if(e.target.closest("#opgo")){end();return}         // 버튼만 오프닝을 닫는다. 다른 곳을 누르면 음악만 시작한다
+      if(BGM.on&&bgmA.paused){bgmUnlock();hint.hidden=true} });
+    document.addEventListener("keydown",key,true);
+    document.getElementById("opgo").focus({preventScroll:true});
+  }
+  return {show};
+})();
 applyLang(); showTraits();
-{const q=new URLSearchParams(location.search).get("scene");   // 주소 끝 ?scene=장면이름 → 그 장면부터 시작 (예: ?scene=ai)
- if(q&&S[q]){st.curious=st.curious||2;go(q)}else go("start")}
+{const P=new URLSearchParams(location.search), q=P.get("scene");   // 주소 끝 ?scene=장면이름 → 그 장면부터 시작 (예: ?scene=ai)
+ if(q&&S[q]){st.curious=st.curious||2;go(q)}
+ else if(P.get("open")==="0")go("start");
+ else OPENING.show(()=>go("start"))}      // 오프닝 영상이 끝난 뒤 '시작하기'를 누르면 첫 장면으로
 editOut();
 /* ═══ 젤리 글자 (임시) — 장면 제목 · 상단 제목 · 장면 만들기 버튼. 말랑하게 출렁인다 ═══
    hover: 올라간 글자와 양옆 1글자 / 제목은 장면이 바뀔 때 한 번 물결 / 클릭: 그 글자가 튀어오름 */
