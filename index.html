@@ -265,6 +265,22 @@
   .mg-btns button{font:inherit;font-size:.98rem;font-weight:700;color:#fff;cursor:pointer;border-radius:999px;padding:11px 20px;border:1.5px solid rgba(190,170,255,.85);background:rgba(169,139,255,.14)}
   .mg-btns button.main{border:0;background:linear-gradient(90deg,#b8a0ff,#8d6df0);box-shadow:0 8px 22px rgba(125,91,216,.45)}
   .mg-btns button:hover,.mg-btns button:focus-visible{filter:brightness(1.1);outline:2px solid #fff;outline-offset:2px}
+
+  /* ── 휴대폰 화면(폭 560px 이하): 제목부터 아래까지 크기를 줄여 그림이 더 위에서 시작하게 한다 ── */
+  html{-webkit-text-size-adjust:100%;text-size-adjust:100%}   /* 폰의 '글자 크기 크게' 설정 때문에 제목이 두 줄로 꺾이는 것을 막는다 */
+  @media(max-width:560px){
+    .bar{padding:12px 12px 2px;gap:6px}
+    .bar h2{font-size:clamp(.82rem,4vw,1.05rem);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1 1 auto}   /* 제목은 한 줄 */
+    .back{width:32px;height:32px} .back svg{width:20px;height:20px}
+    .langbtn{height:30px}
+    .meta{padding:4px 12px 6px;gap:5px}
+    .chip{font-size:.74rem;padding:3px 9px 3px 7px;gap:4px} .chip svg{width:14px;height:14px}
+    .found{font-size:.74rem;padding-left:8px;gap:5px} .found svg{width:15px;height:15px}
+    .tapnote{font-size:clamp(.66rem,3.2vw,.86rem);padding:3px 12px;margin:0 auto 8px}
+    .book{margin:-26px 10px 0;padding:20px 16px 18px;border-radius:24px}
+    h1{font-size:1.45rem} h1::after{margin:10px 0 12px}
+    .bgmbtn{width:40px;height:40px;right:10px;bottom:10px} .bgmbtn svg{width:20px;height:20px} .vcbtn{right:58px}
+  }
 </style>
 </head>
 <body>
