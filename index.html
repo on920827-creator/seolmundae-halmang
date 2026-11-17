@@ -317,6 +317,20 @@
   .hs.mgsel .lbl{border:2px solid #f2cf7a;box-shadow:0 0 0 1px rgba(255,235,170,.35),0 0 14px rgba(242,207,122,.55);color:#fff4d2}
   .hs.mgsel .ring{border-color:#f2cf7a}
   .hs.mgsel .ic{color:#f2cf7a}
+  /* 걸어온 길: 지나온 장면 목록. 누르면 그 장면으로 돌아간다 */
+  #trailpanel{position:fixed;top:58px;right:12px;z-index:45;width:min(92vw,340px);max-height:62vh;overflow:auto;background:rgba(22,17,62,.97);border:1px solid rgba(190,170,255,.35);border-radius:16px;padding:12px 10px;box-shadow:0 12px 36px rgba(0,0,0,.5);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  #trailpanel[hidden]{display:none}
+  #trailpanel h3{margin:2px 8px 8px;font-size:.88rem;font-weight:700;color:#cfc3ff;letter-spacing:.02em}
+  #trailpanel ol{list-style:none;margin:0;padding:0;position:relative}
+  #trailpanel li{position:relative;padding-left:22px}
+  #trailpanel li::before{content:"";position:absolute;left:8px;top:0;bottom:0;border-left:2px dashed rgba(190,170,255,.35)}
+  #trailpanel li:first-child::before{top:50%}#trailpanel li:last-child::before{bottom:50%}
+  #trailpanel li::after{content:"";position:absolute;left:3px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:#8f7cff;box-shadow:0 0 0 3px rgba(143,124,255,.25)}
+  #trailpanel li.now::after{background:#f2cf7a;box-shadow:0 0 0 3px rgba(242,207,122,.3)}
+  #trailpanel button{display:block;width:100%;text-align:left;background:none;border:0;color:#efeaff;font:inherit;font-size:.95rem;line-height:1.35;padding:9px 10px;border-radius:10px;cursor:pointer}
+  #trailpanel button:hover,#trailpanel button:focus-visible{background:rgba(143,124,255,.22);outline:none}
+  #trailpanel li.now button{color:#ffe9b0;font-weight:700;cursor:default}
+  #trailpanel small{display:block;color:#ffe9b0;font-size:.82rem;margin-top:2px;line-height:1.35}
 </style>
 </head>
 <body>
@@ -324,9 +338,11 @@
   <header class="bar">
     <button class="back" id="back" hidden aria-label="이전 장면으로" title="이전 장면으로"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
     <h2 id="hdr">설문대할망 · 제주를 빚은 거인</h2>
-    <button class="back" id="home" hidden aria-label="처음부터 다시" title="처음부터 다시" style="margin-left:auto"><svg viewBox="0 0 24 24"><path d="M3 11l9-7.5 9 7.5M5.5 9.5V20h13V9.5"/></svg></button>
+    <button class="back" id="trail" hidden aria-label="걸어온 길" title="걸어온 길" aria-haspopup="true" aria-expanded="false" style="margin-left:auto"><svg viewBox="0 0 24 24"><circle cx="5.5" cy="18.5" r="2"/><circle cx="18.5" cy="5.5" r="2"/><path d="M7 17.5c4-1 2-5.5 6-6.5s3-3.5 4.5-4.5" stroke-dasharray="2.6 2.6"/></svg></button>
+    <button class="back" id="home" hidden aria-label="처음부터 다시" title="처음부터 다시"><svg viewBox="0 0 24 24"><path d="M3 11l9-7.5 9 7.5M5.5 9.5V20h13V9.5"/></svg></button>
     <div class="langbox"><button class="langbtn" id="langbtn" type="button" aria-haspopup="true" aria-expanded="false" aria-label="언어 선택" title="언어 선택"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></svg><span id="langcur">한국어</span></button><ul class="langmenu" id="langmenu" role="menu" hidden></ul></div>
   </header>
+  <div id="trailpanel" hidden role="dialog"></div>
   <div class="meta" title="선택이 이야기에 영향을 줘요">
     <span class="chip" id="c-warm"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.7 5 6 5c2 0 3.4 1.1 4 2.2C10.6 6.1 12 5 14 5c3.3 0 5.1 3.4 3.6 6.8C19.5 16.4 12 21 12 21z"/></svg><span data-i="warm">따뜻함</span> <b id="t-warm"></b></span>
     <span class="chip" id="c-curious"><svg viewBox="0 0 24 24"><path d="M12 2l2.3 6.4L21 10.8l-6.7 2.4L12 20l-2.3-6.8L3 10.8l6.7-2.4z"/></svg><span data-i="curious">호기심</span> <b id="t-curious"></b></span>
@@ -1409,6 +1425,31 @@ function goBack(){
   if(h.id==="ai"){st.aiScene=null; if(WORD_LINE.test(st.path[st.path.length-1]||""))st.path.pop()}
   go(h.id,null,null,true);
 }
+/* ── 걸어온 길: 지나온 장면 목록 (누르면 그 장면으로 되돌아감) ── */
+function trailClose(){const p=$("trailpanel");if(p&&!p.hidden){p.hidden=true;$("trail").setAttribute("aria-expanded","false")}}
+function trailOpen(){
+  const p=$("trailpanel");
+  const row=(id,i,now)=>{const sc=S[id];if(!sc)return"";const v=sceneView(id,sc);let pk="";
+    if(!now){const nx=(i+1<HIST.length?HIST[i+1].st.path:st.path),c=nx[HIST[i].st.path.length];if(c)pk=pathText(c)}   // 이 장면에서 고른 선택지
+    return `<li class="${now?"now":""}"><button type="button" data-i="${i}" ${now?'aria-current="step"':""}>${esc(v.title)}${pk?`<small>▶ ${esc(pk)}</small>`:""}</button></li>`};
+  p.innerHTML=`<h3>${esc(U("path"))}</h3><ol>${HIST.map((h,i)=>row(h.id,i,false)).join("")}${row(cur,-1,true)}</ol>`;
+  p.hidden=false;$("trail").setAttribute("aria-expanded","true");
+  const n=p.querySelector("li.now");if(n)n.scrollIntoView({block:"nearest"});
+}
+function trailJump(i){
+  if(typer){clearInterval(typer);typer=null}
+  const h=HIST[i];if(!h)return;
+  HIST.length=i;st=h.st;
+  if(h.id==="ai"){st.aiScene=null;if(WORD_LINE.test(st.path[st.path.length-1]||""))st.path.pop()}
+  go(h.id,null,null,true);
+}
+document.addEventListener("click",e=>{
+  const p=$("trailpanel");if(!p)return;
+  if(e.target.closest("#trail")){p.hidden?trailOpen():trailClose();return}
+  const b=e.target.closest("#trailpanel button");
+  if(b){const i=+b.dataset.i;trailClose();if(i>=0)trailJump(i);return}
+  if(!p.hidden&&!e.target.closest("#trailpanel"))trailClose()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")trailClose()});
 function restart(){st={warm:0,curious:0,brave:0,end:"",path:[],aiScene:null};HIST.length=0;cur=null;go("start")}
 function go(id,choiceText,trait,isBack){
   const sc=S[id]; if(!sc)return; clearScrollHint();
@@ -1419,7 +1460,7 @@ function go(id,choiceText,trait,isBack){
   if(sc.set) st.end=sc.set;
   cur=id; hot([]); document.body.classList.toggle("hasbg",BG_SCENES.includes(id)); fxUpdate();
   const V=sceneView(id,sc);                      // 지금 언어의 제목·장·본문
-  showTraits(); $("back").hidden=(id==="start"||!HIST.length); $("home").hidden=(id==="start"); paint(sc.art,V.ch,sc.pic||id); if(id==="c3_wish"||id==="c4_sons"||id==="ai")warmVideos(WARM_WORD);
+  showTraits(); $("back").hidden=(id==="start"||!HIST.length); $("home").hidden=(id==="start"); $("trail").hidden=(id==="start"||!HIST.length); trailClose(); paint(sc.art,V.ch,sc.pic||id); if(id==="c3_wish"||id==="c4_sons"||id==="ai")warmVideos(WARM_WORD);
   $("title").textContent=V.title; $("choices").className=""; $("choices").innerHTML=""; $("recap").innerHTML=""; $("ai").className="ai";
   setTag(sc.end?{t:(sc.hidden?U("tagHidden"):"")+(sc.mine?U("tagMine"):U("tagOld")),cls:sc.mine?"mine":""}:null);
   const vk=voiceKey(id,sc);                      // 이 장면에 읽어 주는 목소리가 있으면 그 길이에 맞춰 글이 나온다
@@ -1758,6 +1799,7 @@ const MG=(()=>{
   }
   function close(){vidHide();clear();cancelAnimationFrame(raf);el("mg").hidden=true;document.body.style.overflow="";kind=null;
     if(cur==="game"){renderChoices("game",S.game);const f=document.querySelector("#hot .hs");f&&f.focus({preventScroll:true})}   // 반짝이(놀이 3개)를 다시 보여 준다
+    else if(typeof S!=="undefined"&&S[cur]&&!S[cur].end&&S[cur].choices&&(MG_BG[cur]||PZ_BG[cur])){renderChoices(cur,S[cur]);const f=document.querySelector("#hot .hs");f&&f.focus({preventScroll:true})}   // 이야기 속 놀이를 중간에 꺼도 선택지(다음 장면으로 가는 길)를 다시 보여 준다
     else if(back&&back.isConnected&&back.focus)back.focus({preventScroll:true})}
   el("mgX").onclick=close;
   document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!el("mg").hidden)close()});
