@@ -843,7 +843,7 @@ function applyLang(){
   document.querySelectorAll("[data-i]").forEach(e=>e.textContent=U(e.dataset.i));
   document.querySelectorAll("[data-ih]").forEach(e=>e.innerHTML=U(e.dataset.ih));
   $("hdr").textContent=U("hdr"); $("word").placeholder=U("ph"); $("word").setAttribute("aria-label",U("wordAria"));
-  [["back","back"],["home","home"]].forEach(([id,k])=>{$(id).title=U(k);$(id).setAttribute("aria-label",U(k))});
+  [["back","back"],["home","home"],["trail","path"]].forEach(([id,k])=>{$(id).title=U(k);$(id).setAttribute("aria-label",U(k))});
   document.querySelector(".meta").title=U("meta"); $("bgm").setAttribute("aria-label",U("bgmAria")); $("voice").setAttribute("aria-label",U("vcAria"));
   $("langbtn").setAttribute("aria-label",U("langAria")); $("langbtn").title=U("langAria"); $("langcur").textContent=LANGS.find(l=>l[0]===LANG)[1];
   $("chips").innerHTML=CHIPS_L[LANG].map(c=>`<button type="button">${c}</button>`).join("");
@@ -1618,7 +1618,7 @@ const MGT={
  en:{t:{stars:"✨ Catch the Shooting Stars",const:"🌟 Connect the Constellations",puzzle:"🧩 Night Sky Puzzle"},
   intro:{stars:"🏡 Light all <b>8 houses</b> and the whole village glows!<br><b>Tap</b> a falling star to catch it and light a house. You have 60 seconds. A big pink star lights two.",
    const:"✨ Connect three constellations to complete Grandmother's night sky!<br>Tap the <b>numbered stars</b> <b>in order from 1</b>, or drag through them.",
-   puzzle:"The picture has been scattered. <b>Drag</b> a piece onto another to swap them (or <b>tap</b> two pieces one after the other).<br>Stuck? Hold <b>Show picture</b> to see the finished image."},
+   puzzle:"🖼 Put every piece in place to complete the picture!<br><b>Drag</b> a piece onto another to swap them (or <b>tap</b> two pieces one after the other). Stuck? Hold <b>Show picture</b> to see the finished image."},
   start:"Start",again:"Play again",other:"Choose another game",close:"Close game",easy:"Easy 3×3",normal:"Normal 4×4",hard:"Hard 5×5",peek:"👁 Show picture",
   houses:(n,g)=>`🏠 ${n} / ${g}`,constProg:(s,s2,n,N)=>`Constellation ${s} / ${s2} · ${n} / ${N}`,puzProg:(k,N)=>`In place ${k} / ${N}`,moves:n=>`Moves ${n}`,
   lit:["A warm light came on","The house is bright now","Starlight settled in"],
@@ -1632,7 +1632,7 @@ const MGT={
  ja:{t:{stars:"✨ 流れ星キャッチ",const:"🌟 星座つなぎ",puzzle:"🧩 夜空のパズル"},
   intro:{stars:"🏡 <b>家8軒</b>すべてに明かりをともすと、村がぱっと明るくなります！<br>落ちてくる星を<b>押して</b>受けとめると家に明かりがともります。60秒でチャレンジ！ピンクの大きな星は2軒を明るくします。",
    const:"✨ 星座を3つつなぐと、ハルマンの夜空が完成します！<br>空の<b>番号のついた星</b>を<b>1番から順に</b>押すか、なぞってつないでください。",
-   puzzle:"絵がばらばらになりました。ピースを<b>ドラッグ</b>してほかのピースの上に置くと入れかわります（2つのピースを順に<b>押して</b>もOK）。<br>困ったら<b>完成図を見る</b>を押している間、完成した絵が見えます。"},
+   puzzle:"🖼 ピースをすべて合わせると、絵が完成します！<br>ピースを<b>ドラッグ</b>してほかのピースの上に置くと入れかわります（2つのピースを順に<b>押して</b>もOK）。困ったら<b>完成図を見る</b>を押している間、完成した絵が見えます。"},
   start:"はじめる",again:"もう一度",other:"ほかのあそびを選ぶ",close:"あそびを閉じる",easy:"かんたん 3×3",normal:"ふつう 4×4",hard:"むずかしい 5×5",peek:"👁 完成図を見る",
   houses:(n,g)=>`🏠 ${n} / ${g}`,constProg:(s,s2,n,N)=>`星座 ${s} / ${s2} · ${n} / ${N}`,puzProg:(k,N)=>`そろったピース ${k} / ${N}`,moves:n=>`移動 ${n}`,
   lit:["あたたかい明かりがともりました","家が明るくなりました","星の光が降りてきました"],
@@ -1646,7 +1646,7 @@ const MGT={
  zh:{t:{stars:"✨ 接流星",const:"🌟 连星座",puzzle:"🧩 夜空拼图"},
   intro:{stars:"🏡 点亮全部<b>8座房子</b>，整个村子就会亮起来！<br><b>点击</b>落下的星星接住它，房子就会亮灯。限时60秒！粉色的大星星可以点亮两座。",
    const:"✨ 连成三个星座，奶奶的夜空就完成了！<br>从<b>1号</b>开始依次点击天空中<b>带编号的星星</b>，或用手指划过把它们连起来。",
-   puzzle:"图画被打散了。把一块拼图<b>拖到</b>另一块上，它们就会交换位置（也可以依次<b>点击</b>两块）。<br>卡住了吗？按住<b>查看完整图</b>就能看到完成的图画。"},
+   puzzle:"🖼 把所有拼图拼对，图画就完成了！<br>把一块拼图<b>拖到</b>另一块上，它们就会交换位置（也可以依次<b>点击</b>两块）。卡住了吗？按住<b>查看完整图</b>就能看到完成的图画。"},
   start:"开始",again:"再玩一次",other:"选择别的游戏",close:"关闭游戏",easy:"简单 3×3",normal:"普通 4×4",hard:"困难 5×5",peek:"👁 查看完整图",
   houses:(n,g)=>`🏠 ${n} / ${g}`,constProg:(s,s2,n,N)=>`星座 ${s} / ${s2} · ${n} / ${N}`,puzProg:(k,N)=>`已拼对 ${k} / ${N}`,moves:n=>`移动 ${n}次`,
   lit:["温暖的灯光亮起来了","房子变亮了","星光落下来了"],
