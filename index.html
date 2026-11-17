@@ -79,8 +79,7 @@
   #choices button.cta .lb,#choices[data-n="1"] button .lb{text-align:center;margin-left:1.3em}
   #choices.endrow{flex-direction:row;flex-wrap:wrap}   /* 결말: 두 버튼을 나란히 (좁은 화면에서는 아래로) */
   #choices.endrow button{flex:1 1 240px}
-  #choices button.cta.alt{background:rgba(169,139,255,.14);border:1.5px solid rgba(190,170,255,.85);box-shadow:0 8px 22px rgba(125,91,216,.25)}
-  #choices button.cta.alt:hover,#choices button.cta.alt:focus-visible{background:rgba(169,139,255,.3)}
+  /* 결말의 두 버튼(처음부터 / 미니게임)은 같은 보라색 */
   #choices button .tg{font-size:.72rem;font-weight:600;color:#d9ccff;background:rgba(169,139,255,.2);border-radius:999px;padding:1px 9px;white-space:nowrap}
   .ai{margin-top:14px;display:none} .ai.show{display:block}
   .ai .row{display:flex;gap:10px;flex-wrap:wrap}
@@ -94,7 +93,14 @@
   .spin{display:none;color:#d9ccff;margin-top:12px} .spin.show{display:block}
   .recap{margin-top:16px;font-size:.9rem;color:#c9c5ee;border-top:1px solid var(--line);padding-top:14px}
   .recap li{margin-left:1.2em} .recap blockquote{border-left:3px solid var(--acc);padding-left:12px;margin:8px 0;color:#e0dcff}
-  .recap .found2{margin-top:10px;color:#d9ccff;font-size:.92rem;font-weight:600}
+  .recap .found2{margin-top:10px;color:#d9ccff;font-size:.92rem;font-weight:600} .recap .found2.dim{font-weight:500;color:#c4bfe8}
+  .recap .epi{margin-bottom:4px;font-size:1rem;color:#efeaff}
+  .recap details.route{margin-top:12px} .recap details.route summary{cursor:pointer;font-weight:700;color:#e4dcff;padding:6px 0} .recap details.route[open] summary{margin-bottom:6px}
+  .credits{margin-top:26px;padding:22px 8px 6px;border-top:1px solid var(--line);text-align:center;color:#d6d2f3}
+  .credits h4{font-size:.8rem;letter-spacing:.3em;color:#f0d696;font-weight:700;margin-bottom:12px}
+  .credits p{font-size:.98rem;line-height:1.75;margin:6px auto;max-width:34em}
+  .credits p.cr2{font-size:.9rem;color:#b9b4df;margin:2px auto}
+  .credits p.thx{margin-top:16px;font-weight:700;color:#fff6e0}
   .foot{display:flex;gap:8px;align-items:flex-start;justify-content:center;color:var(--mute);font-size:.82rem;padding:18px 28px 0;line-height:1.55}
   .foot svg{flex:none;width:18px;height:18px;margin-top:2px;stroke:currentColor;fill:none;stroke-width:1.6}
   /* ── 그림 애니메이션 ── */
@@ -283,6 +289,30 @@
     h1{font-size:1.45rem} h1::after{margin:10px 0 12px}
     .bgmbtn{width:40px;height:40px;right:10px;bottom:10px} .bgmbtn svg{width:20px;height:20px} .vcbtn{right:58px}
   }
+
+  /* ── 읽기 쉽게 (멘토 의견: 가독성): 휴대폰·태블릿(폭 900px 미만)의 본문과 작은 글자를 키우고 흐린 글자를 밝게 ── */
+  :root{--mute:#bdbae6}
+  @media(max-width:899px){
+    #text p{font-size:1.1rem;line-height:1.8;color:#f0eeff}
+    .hint{font-size:.88rem}
+    .foot{font-size:.9rem}
+    .tapnote{font-size:clamp(.74rem,3.5vw,.95rem)}
+    .recap{font-size:.96rem} .recap .found2{font-size:.96rem}
+    .credits p{font-size:1.02rem} .credits p.cr2{font-size:.94rem}
+    .mg-card p{font-size:clamp(.92rem,2.2vw,1.05rem);line-height:1.7}
+  }
+  @media(max-width:560px){
+    .chip{font-size:.8rem} .found{font-size:.8rem}
+    h1{font-size:1.5rem}
+    .hs .lbl{font-size:clamp(.82rem,3.6vw,1rem)}
+  }
+
+  .scrollhint{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:55;max-width:calc(100vw - 130px);padding:9px 20px;border-radius:999px;border:1px solid rgba(240,214,150,.7);background:rgba(26,22,80,.92);color:#fff6e0;font:inherit;font-weight:700;font-size:.95rem;line-height:1.4;cursor:pointer;box-shadow:0 8px 24px rgba(6,4,30,.55);animation:shBob 1.7s ease-in-out infinite}
+  .scrollhint:hover,.scrollhint:focus-visible{background:rgba(60,50,150,.95);outline:2px solid #fff;outline-offset:2px}
+  @keyframes shBob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,6px)}}
+  @media(max-width:560px){.scrollhint{font-size:.86rem;padding:8px 14px;bottom:16px}}
+  @media(prefers-reduced-motion:reduce){.scrollhint{animation:none}}
+  .hs .lbl{white-space:pre-line}
 </style>
 </head>
 <body>
@@ -541,7 +571,7 @@ const S={
  c2_tall:{title:"하늘 가까이 솟은 산",
   text:["흙무더기가 쑥쑥 올라갔습니다. 구름을 뚫고 하늘 가까이까지 솟은 그 산이 바로 한라산입니다.","꼭대기에는 움푹 파인 곳이 생겼는데, 훗날 맑은 물이 고여 백록담이라 불리게 됩니다.","할망은 이마에 손을 대고 올려다보며 뿌듯하게 웃었습니다."],
   art:{mood:"golden",alt:"하늘 가까이 솟은 한라산",mount:1,fig:"stand",x:130,s:.7,p:["bird",5],clouds:6},
-  choices:[["치마를 탈탈 털어 남은 흙을 뿌린다","c2_orum"]]},
+  choices:[["치마를 탈탈 털어 남은 흙을 뿌린다","c2_orum"],["미니게임\n- 그림 맞추기","mg:puzzle","curious"]]},
  c2_soft:{title:"어머니의 품 같은 산",
   text:["할망은 손바닥으로 흙을 토닥토닥 다독였습니다. 가파르지 않고 넉넉하게 펼쳐진 한라산이 만들어졌습니다.","그 품이 얼마나 넓은지, 훗날 사람들은 한라산을 ‘어머니의 산’이라고 부르게 됩니다.","할망은 완성된 산을 쓰다듬으며 나직이 흥얼거렸습니다."],
   art:{mood:"golden",alt:"넉넉한 한라산",mount:.82,fig:"stand",x:130,s:.7,p:["petal",14],clouds:5},
@@ -569,7 +599,7 @@ const S={
  c2_sky:{title:"별을 세는 밤",
   text:["하나, 둘, 셋… 할망이 별을 셀 때마다 별빛이 한 줄기씩 섬 위로 내려앉았습니다.","“언젠가 이 섬에 누군가 찾아오면, 이 별들을 함께 세어 주어야지.” 할망은 소원처럼 중얼거렸습니다.","그때 별똥별 하나가 긴 꼬리를 그으며 바다로 떨어졌습니다."],
   art:{mood:"night",alt:"별이 가득한 밤하늘",mount:1,orum:8,fig:"lie",isle:880,p:["star",3],fg:"grass"},
-  choices:[["아침이 되어 섬을 둘러본다","c3_people"]]},
+  choices:[["아침이 되어 섬을 둘러본다","c3_people"],["미니게임\n- 별자리 잇기","mg:const","curious"]]},
  c3_people:{ch:["제3장","섬에 온 사람들"],title:"섬에 온 사람들",
   text:["시간이 흘러 섬에 하나둘 사람들이 찾아왔습니다. 오름 아래 초가집이 들어서고, 굴뚝마다 저녁 연기가 피어올랐습니다.","사람들은 산처럼 커다란 할망을 올려다보며 처음에는 겁을 냈습니다. 하지만 할망이 환하게 웃자 어느새 곁으로 모여들었지요.","돌담을 쌓고 밭을 일구며, 섬은 점점 사람의 냄새로 따뜻해졌습니다."],
   art:{mood:"golden",alt:"마을이 생긴 섬",mount:1,orum:10,village:true,fig:"stand",x:110,s:.75,fg:"flowers"},
@@ -805,6 +835,13 @@ function localScene(word){
       pick([`사람들은 ${w}${josa(w,"을","를")} 올려다보며 “이 섬에는 이런 멋진 일도 있구나” 하고 웃었습니다.`,`아이들은 ${w}${josa(w,"과","와")} 함께 뛰어놀며 오래오래 이 섬을 기억하기로 했습니다.`,`그날 이후 제주 사람들은 ${w}${josa(w,"을","를")} 볼 때마다 설문대할망의 선물을 떠올렸습니다.`],5)],
     mood:pick(["dawn","day","golden","dusk","night","mist"],4),element:el?el[1]:pick(["flower","light","star","wind"],6)};
 }
+/* 전용 영상이 없는 단어는 서버(GPT 이미지)에 그 단어가 소재인 그림을 부탁한다. 오래 걸리거나 안 되면 null → 기본 영상으로 이어 간다 */
+async function fetchWordImage(word){
+  const ctl=new AbortController(), timer=setTimeout(()=>ctl.abort(),100000);
+  try{const r=await fetch(`${STORY_API}/story/image?word=${encodeURIComponent(word)}`,{signal:ctl.signal}); if(!r.ok)return null;
+    const d=await r.json(); return (d&&typeof d.image==="string"&&d.image.startsWith("data:image/"))?d.image:null}
+  catch(e){return null} finally{clearTimeout(timer)}
+}
 async function makeScene(word){
   const q=new URLSearchParams({word,warm:st.warm,curious:st.curious,brave:st.brave,end:st.end||""});
   const ctl=new AbortController(), timer=setTimeout(()=>ctl.abort(),12000);
@@ -883,7 +920,7 @@ const GLOW={
  c1_walk:[[69,48.5,"down"],[34,48.5,"down"]],              // 물속에 손을 넣어 → 오른손 / 치마폭을 활짝 펼쳐 → 왼손 (두 손 높이를 같게)
  c2_dive:[[39,66,"down","left"]],                           // 흙을 치마폭에 가득 담는다 → 손끝이 흙에 닿는 곳 (넓은 화면은 글자를 빛의 왼쪽에)
  c2_soil:[[80.7,47.9,"down"],[31.9,50.8,"down"]],   // 하늘에 닿을 만큼 높이 → 오른손 / 넓고 포근하게 → 왼손 (치마폭 양쪽을 잡은 손)
- c2_tall:[[39,68.5,"down","right"]],                             // 치마를 탈탈 털어 남은 흙을 뿌린다 → 앞쪽 오름 위 (넓은 화면은 글자를 빛의 오른쪽 한 줄로)
+ c2_tall:[[39,68.5,"down","right"],[72,20,"down"]],                             // 치마를 탈탈 털어 남은 흙을 뿌린다 → 앞쪽 오름 위 (넓은 화면은 글자를 빛의 오른쪽 한 줄로)
  c2_soft:[[68.2,39.8,"down"]],                         // 치마를 탈탈 털어 남은 흙을 뿌린다 → 산꼭대기 호수(백록담) 한가운데
  c2_orum:[[68,52,"down"],[50,50,"down"]],                  // 오름마다 이름을 불러 준다 → 먼 오름 / 오름 위에 꽃씨를 뿌려 준다 → 흙이 쏟아지는 곳
  c2_name:[[65,13,"down"]],                           // 한라산 품에 안겨 쉬어 본다 → 한라산 정상
@@ -898,11 +935,11 @@ const GLOW={
  c3_listen:[[66.8,64.5,"down","left"]],                   // 사람들에게 소원을 물어본다 → 오른쪽 아래 등불 (넓은 화면은 글자를 등불 왼쪽 한 줄로)
  c2_rest:[[92,42,"down"],[50,15,"down"]],                  // 발을 담그고 물장구 → 해가 비친 바다 / 누운 채 별을 세어 본다 → 하늘의 별
  c2_splash:[[46.6,13.2,"down","right"]],                       // 일어나 섬을 둘러본다 → 하늘로 튀어 오른 큰 물방울 하나
- c2_sky:[[12.8,12.4,"right"]]                          // 아침이 되어 섬을 둘러본다 → 달 한가운데 (글자는 할망 얼굴을 피해 달 오른쪽 하늘에 한 줄로)
+ c2_sky:[[12.8,12.4,"right"],[70,14,"down"]]                          // 아침이 되어 섬을 둘러본다 → 달 한가운데 (글자는 할망 얼굴을 피해 달 오른쪽 하늘에 한 줄로)
 };
 /* 단어 장면이 만들어진 뒤 나오는 두 선택("이야기를 이어 간다" / "다른 단어로 다시 지어 본다")의 자리.
    모든 그림에서 할망·아이들 얼굴은 왼쪽 위와 아래쪽에 있으므로 오른쪽 위 하늘 쪽에 위아래로 둔다.  [빛 x%, 빛 y%] (글자는 빛 아래) */
-const RES_POS={default:[[80,8],[80,32]], w_haenyeo:[[68,17],[86,17]], w_whale:[[91,63],[75,63]], w_rainbow:[[10,57],[88,57]], w_camellia:[[70,34],[87,34]], w_tangerine:[[74,19],[90,19]], w_shootingstar:[[68,37],[87,37]], w_hareubang:[[69,12],[85,12]], w_wind:[[70,24],[88,24]], w_hallasan:[[70,19],[87,19]], w_baengnokdam:[[70,13],[87,13]], ai_result:[[13,40],[87,40]]};   // 고래: 고래 몸이 아니라 앞쪽 바다 위
+const RES_POS={default:[[80,8],[80,32]], w_haenyeo:[[68,17],[86,17]], w_whale:[[91,63],[75,63]], w_rainbow:[[10,57],[88,57]], w_camellia:[[70,34],[87,34]], w_tangerine:[[74,19],[90,19]], w_shootingstar:[[68,37],[87,37]], w_hareubang:[[69,12],[85,12]], w_wind:[[70,24],[88,24]], w_hallasan:[[70,19],[87,19]], w_baengnokdam:[[70,13],[87,13]], ai_result:[[13,40],[87,40]], ai_gpt:[[11,50],[88,42]]};   // 고래: 고래 몸이 아니라 앞쪽 바다 위
 /* 넓은 화면 배경 그림(images/bg_wide)을 깔 장면. 먼저 한 장면에서만 시험 중 — 마음에 들면 목록에 장면을 더하거나 모든 장면으로 넓힌다 */
 
 /* ───────── 넓은 화면 배경 효과: 하늘에 가끔 별똥별, 아래쪽 풀밭에 은은한 반딧불 ─────────
@@ -1370,7 +1407,7 @@ function goBack(){
 }
 function restart(){st={warm:0,curious:0,brave:0,end:"",path:[],aiScene:null};HIST.length=0;cur=null;go("start")}
 function go(id,choiceText,trait,isBack){
-  const sc=S[id]; if(!sc)return;
+  const sc=S[id]; if(!sc)return; clearScrollHint();
   if(!isBack&&cur&&cur!==id){HIST.push({id:cur,st:copySt()});if(HIST.length>80)HIST.shift()}
   bgmSwap(id); bgmSet(bgmMoodOf(id));                       // 장(챕터)에 맞는 배경 음악으로 이어 간다
   if(choiceText) st.path.push(choiceText);
@@ -1378,7 +1415,7 @@ function go(id,choiceText,trait,isBack){
   if(sc.set) st.end=sc.set;
   cur=id; hot([]); document.body.classList.toggle("hasbg",BG_SCENES.includes(id)); fxUpdate();
   const V=sceneView(id,sc);                      // 지금 언어의 제목·장·본문
-  showTraits(); $("back").hidden=(id==="start"||!HIST.length); $("home").hidden=(id==="start"); paint(sc.art,V.ch,sc.pic||id);
+  showTraits(); $("back").hidden=(id==="start"||!HIST.length); $("home").hidden=(id==="start"); paint(sc.art,V.ch,sc.pic||id); if(id==="c3_wish"||id==="c4_sons"||id==="ai")warmVideos(WARM_WORD);
   $("title").textContent=V.title; $("choices").className=""; $("choices").innerHTML=""; $("recap").innerHTML=""; $("ai").className="ai";
   setTag(sc.end?{t:(sc.hidden?U("tagHidden"):"")+(sc.mine?U("tagMine"):U("tagOld")),cls:sc.mine?"mine":""}:null);
   const vk=voiceKey(id,sc);                      // 이 장면에 읽어 주는 목소리가 있으면 그 길이에 맞춰 글이 나온다
@@ -1391,10 +1428,15 @@ function renderChoices(id,sc){
     const found=loadFound(); if(!found.includes(id)){found.push(id);saveFound(found)} showFound();
     const top=Object.entries(TR).map(([k,v])=>[st[k],trName(k)]).sort((a,b)=>b[0]-a[0]);
     const epi=top[0][0]===0?"":top[0][0]===top[1][0]?U("epiEven"):U("epiTop",top[0][1]);
-    $("recap").innerHTML=`<div class="recap">${epi?`<p>${esc(epi)}</p>`:""}<b>${esc(U("path"))}</b><ul>${st.path.map(p=>`<li>${esc(pathText(p))}</li>`).join("")}</ul>
-      ${st.aiScene?`<b>${esc(U("made",st.aiScene.title))}</b><blockquote>${esc(st.aiScene.paragraphs.join(" "))}</blockquote>`:""}
-      <div class="found2">${esc(U("foundCount",loadFound().length,ENDINGS.length,loadFound().length>=ENDINGS.length))}</div>${loadFound().filter(x=>HIDDEN.includes(x)).length<HIDDEN.length?`<div class="found2">${esc(U("hiddenHint",HIDDEN.length))}</div>`:""}</div>`;
-    box.dataset.n=2; box.innerHTML=`<button class="cta" data-to="start" data-reset="1"><span class="lb">${esc(U("restart"))}</span></button><button class="cta alt" data-to="game"><span class="lb">${esc(U("toGame"))}</span></button>`;   // 결말: 처음부터 다시 / 미니게임으로
+    /* 결말 화면: 글 → 버튼 → 엔딩 크레딧 순서. 걸어온 길 목록은 접어 두어 한 화면이 길어지지 않게 한다 */
+    const foundN=loadFound().length, hid=loadFound().filter(x=>HIDDEN.includes(x)).length<HIDDEN.length;
+    $("recap").innerHTML=`<div class="recap">${epi?`<p class="epi">${esc(epi)}</p>`:""}
+      <div class="found2">${esc(U("foundCount",foundN,ENDINGS.length,foundN>=ENDINGS.length))}</div>${hid?`<div class="found2 dim">${esc(U("hiddenHint",HIDDEN.length))}</div>`:""}
+      <details class="route"><summary>${esc(U("path"))}</summary><ul>${st.path.map(p=>`<li>${esc(pathText(p))}</li>`).join("")}</ul>
+      ${st.aiScene?`<b>${esc(U("made",st.aiScene.title))}</b><blockquote>${esc(st.aiScene.paragraphs.join(" "))}</blockquote>`:""}</details></div>
+      <div class="credits"><h4>${esc(U("crTitle"))}</h4><p>${esc(U("crIntent"))}</p><p class="cr2">${esc(U("crTeam"))}</p><p class="cr2">${esc(U("crAI"))}</p><p class="cr2">${esc(U("crMusic"))}</p><p class="thx">${esc(U("crThanks"))}</p></div>`;
+    setTimeout(showScrollHint,400);
+    box.dataset.n=2; box.innerHTML=`<button class="cta" data-to="start" data-reset="1"><span class="lb">${esc(U("restart"))}</span></button><button class="cta alt" data-mg="stars"><span class="lb">${esc(U("toStars"))}</span></button>`;   // 결말: 처음부터 다시 / 미니게임으로
   }else{
     const pos=hp(id,sc.choices.length,HPOS[Math.min(3,sc.choices.length)]);
     const gl=GLOW[id]&&GLOW[id].length>=sc.choices.length?GLOW[id].map(g=>{const q=bodyToStage(id,g[0],g[1]);const wide=innerWidth>=900&&g[3];return q?[q[0],q[1],wide||g[2]||"down",wide?(g[4]||0):0]:null}):null;
@@ -1406,6 +1448,7 @@ function renderChoices(id,sc){
 }
 $("choices").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
   if(b.dataset.reset){restart();return}
+  if(b.dataset.mg){MG.open(b.dataset.mg);return}          // 결말 → 별똥별 받기 (놀이 고르는 화면을 거치지 않는다)
   go(b.dataset.to,b.dataset.t==="이야기를 시작한다"?"":b.dataset.t,b.dataset.tr)});
 
 /* AI 장면 화면 */
@@ -1416,11 +1459,14 @@ async function runAI(){
   $("make").disabled=true;$("spin").classList.add("show");
   voicePlay(null);                                   // 단어를 넣고 장면이 지어지면 '할망의 마지막 부탁' 읽기는 멈춘다
   hot([]); $("stage").classList.remove("words");
-  const sc=await makeScene(word);
+  const wk0=word.replace(/\s/g,""), hasArt=!!(WORD_ART[wk0]||WORD_ART_X[wk0.toLowerCase()]);
+  const imgP=hasArt?Promise.resolve(null):fetchWordImage(word);      // 글과 그림을 동시에 만든다
+  const sc=await makeScene(word), gimg=await imgP;
   $("make").disabled=false;$("spin").classList.remove("show");
   st.aiScene=sc; st.path.push(`“${word}”라는 단어로 장면을 지었다`);
   const wk=word.replace(/\s/g,""), wid=WORD_ART[wk]||WORD_ART_X[wk.toLowerCase()], wimg=wid&&await findImage("w_"+wid);
-  await paint(aiArt(sc),null,wimg?"w_"+wid:"ai_result");
+  if(gimg)imgCache["gpt:"+wk]=gimg;                 // GPT 그림이 왔으면 그것을 그림으로 쓴다
+  await paint(aiArt(sc),null,gimg?"gpt:"+wk:(wimg?"w_"+wid:"ai_result"));
   /* 단어 그림이 없는 단어: 예전에는 그림 가운데에 단어 말풍선(.wbub)을 얹었지만, 그림을 가리므로 뺐다 (단어는 아래 제목에 나온다) */
   $("title").textContent=sc.title;
   setTag({t:sc.source==="ai"?U("tagAI"):U("tagLocal"),cls:"ai"});
@@ -1428,7 +1474,7 @@ async function runAI(){
   const wvk=(sc.source!=="ai"&&wid&&VOICE_W.includes(wid))?"w_"+wid:null;   // 오프라인 장면(녹음한 글과 같은 글)일 때만 읽어 준다 (한국어·영어·일본어·중국어)
   sc._vk=wvk; if(wvk){voicePlay(wvk,true)}
   typeText(sc.paragraphs,()=>{
-    const pk=wimg?"w_"+wid:"ai_result", rk="res:"+pk;
+    const pk=gimg?"ai_gpt":(wimg?"w_"+wid:"ai_result"), rk="res:"+pk;
     const q=hp(rk,2,null)||RES_POS[pk]||RES_POS.default;   // 편집 모드로 끌어 저장한 자리 > RES_POS(그림마다 얼굴을 피한 자리)
     hot([{x:q[0][0],y:q[0][1],pin:"down",ic:"tap",label:U("cont"),fn:()=>go(resolveEnd())},
          {x:q[1][0],y:q[1][1],pin:"down",ic:"refresh",label:U("again"),fn:()=>{voicePlay(null);hot([]);cur="ai";paint(S.ai.art,null,"ai");$("title").textContent=sceneView("ai",S.ai).title;setTag(null);$("ai").className="ai show";wordZones.force=true;wordZones()}}],rk)},wvk&&VOICE.on&&VOICE.dur[LANG+":"+wvk]?VOICE.dur[LANG+":"+wvk]*1000*.78:0);   // 목소리가 있으면 글이 목소리 길이에 맞춰 나온다
@@ -1448,7 +1494,9 @@ $("home").onclick=()=>{ if(confirm(U("confirm")))restart() };
    결말 화면 → '미니게임으로 넘어가기' → game 장면 → 반짝이 3개 중 하나 → 이 창(MG)에서 놀이.
    놀이 결과는 이야기 점수·결말에 영향을 주지 않는다. 좌표는 모두 그림(images/game.jpg, 1280×853) 기준.
    영어·일본어·중국어 문구는 직접 번역한 것이라 검수가 필요하다. */
-Object.assign(UI.ko,{toGame:"미니게임으로 넘어가기"}); Object.assign(UI.en,{toGame:"Go to the mini games"}); Object.assign(UI.ja,{toGame:"ミニゲームへ進む"}); Object.assign(UI.zh,{toGame:"进入小游戏"});
+Object.assign(CHO.en,{"미니게임\n- 그림 맞추기":"Mini game\n- Sky Puzzle"});Object.assign(CHO.ja,{"미니게임\n- 그림 맞추기":"ミニゲーム\n- パズル"});Object.assign(CHO.zh,{"미니게임\n- 그림 맞추기":"小游戏\n- 拼图"});
+Object.assign(CHO.en,{"미니게임\n- 별자리 잇기":"Mini game\n- Connect the Stars"});Object.assign(CHO.ja,{"미니게임\n- 별자리 잇기":"ミニゲーム\n- 星座つなぎ"});Object.assign(CHO.zh,{"미니게임\n- 별자리 잇기":"小游戏\n- 连星座"});
+Object.assign(UI.ko,{toGame:"미니게임으로 넘어가기",toStars:"별똥별 받으러 가기"}); Object.assign(UI.en,{toGame:"Go to the mini games",toStars:"Go catch the shooting stars"}); Object.assign(UI.ja,{toGame:"ミニゲームへ進む",toStars:"流れ星をつかまえに行く"}); Object.assign(UI.zh,{toGame:"进入小游戏",toStars:"去接流星"});
 SCN.en.game={t:"Grandmother's Starry Night Games",ch:["Extra","Grandmother's Starry Night Games"],x:["When the story was over, Grandmother scattered a handful of stars into the Milky Way from the top of the oreum.","“Children, stay and play with the stars a little longer before you sleep.”","Tap a sparkling spot in the picture to pick a game you like."]};
 SCN.ja.game={t:"ハルマンの星夜あそび",ch:["番外","ハルマンの星夜あそび"],x:["お話が終わった夜、ハルマンはオルムのてっぺんから天の川へ星をひとつかみまきました。","「みんな、眠る前にもう少しだけ星と遊んでいきなさい。」","絵の中のきらめく場所を押して、好きなあそびをひとつ選んでください。"]};
 SCN.zh.game={t:"奶奶的星夜游戏",ch:["番外","奶奶的星夜游戏"],x:["故事结束的那个夜晚，奶奶站在岳的山顶，把一把星星撒进了银河。","“孩子们，睡觉前再和星星玩一会儿吧。”","点击画面中闪闪发光的地方，选一个你喜欢的游戏。"]};
@@ -1513,6 +1561,21 @@ const MGT={
   pok:["正好拼上！","找到位置了","太棒了！"],phint:"拖动拼图来交换位置",
   winP:"✨ 图画完成了！",winPp:"散落的夜空又合而为一。<br>奶奶撒下的星星照亮了岳和村庄。",noteP:(n,mv,s)=>`${n}×${n} · 移动${mv}次 · ${Math.floor(s/60)}分${s%60}秒`}
 };
+/* 별똥별 받기: 규칙 설명(3단계)과 시작 안내 */
+MGT.ko.intro.stars="<b>규칙은 간단해요</b><br>① 하늘에서 떨어지는 별을 <b>눌러서</b> 받아요.<br>② 별을 하나 받으면 아래 마을 집에 <b>불이 하나</b> 켜져요.<br>③ <b>60초 안에 집 8채</b>를 모두 밝히면 성공! (분홍빛 큰 별은 두 채)<br>별은 천천히 떨어지니, 서두르지 않아도 돼요.";
+MGT.en.intro.stars="<b>The rules are simple</b><br>① <b>Tap</b> the stars falling from the sky.<br>② Each star you catch <b>lights one house</b> in the village below.<br>③ Light all <b>8 houses within 60 seconds</b> to win! (A big pink star lights two.)<br>The stars fall slowly, so there's no need to rush.";
+MGT.ja.intro.stars="<b>ルールはかんたん</b><br>① 空から落ちてくる星を<b>押して</b>受けとめます。<br>② 星をひとつ受けとめると、下の村の家に<b>明かりがひとつ</b>ともります。<br>③ <b>60秒以内に家8軒</b>をすべて明るくできたら成功！（ピンクの大きな星は2軒）<br>星はゆっくり落ちるので、あわてなくて大丈夫です。";
+MGT.zh.intro.stars="<b>规则很简单</b><br>① <b>点击</b>从天上落下的星星来接住它。<br>② 每接住一颗星星，下面村子里就会<b>亮起一盏灯</b>。<br>③ 在<b>60秒内点亮全部8座房子</b>就成功！（粉色大星星可以点亮两座）<br>星星落得很慢，不用着急。";
+Object.assign(MGT.ko,{sfirst:"떨어지는 별을 눌러 보세요"});Object.assign(MGT.en,{sfirst:"Tap a falling star"});Object.assign(MGT.ja,{sfirst:"落ちてくる星を押してみましょう"});Object.assign(MGT.zh,{sfirst:"点击落下的星星"});
+/* 별자리 이름과 완성 글: 진짜 별자리 (카시오페이아 · 북두칠성 · 오리온) */
+MGT.ko.cnames=[["카시오페이아","W 모양으로 반짝이는 하늘의 왕비별"],["북두칠성","길을 알려 주는 일곱 개의 별"],["오리온","하늘을 걷는 사냥꾼의 별"]];
+MGT.ko.winCp="카시오페이아, 북두칠성, 오리온이 하늘에 떠올랐어요.<br>사람들은 길을 잃을 때마다 이 별들을 보고 집을 찾아왔대요.";
+MGT.en.cnames=[["Cassiopeia","The W-shaped queen of the night sky"],["The Big Dipper","Seven stars that point the way"],["Orion","The hunter who walks across the sky"]];
+MGT.en.winCp="Cassiopeia, the Big Dipper and Orion have risen in the sky.<br>They say people found their way home by these stars whenever they got lost.";
+MGT.ja.cnames=[["カシオペヤ座","Wの形に光る夜空の女王星"],["北斗七星","道を教えてくれる七つの星"],["オリオン座","空を歩く狩人の星"]];
+MGT.ja.winCp="カシオペヤ座、北斗七星、オリオン座が空にのぼりました。<br>人々は道に迷うたび、この星を見て家に帰ったそうです。";
+MGT.zh.cnames=[["仙后座","闪耀成W形的夜空女王星"],["北斗七星","为人指路的七颗星"],["猎户座","行走在天空中的猎人之星"]];
+MGT.zh.winCp="仙后座、北斗七星和猎户座升上了天空。<br>据说人们每次迷路时，都会看着这些星星找到回家的路。";
 const mt=(k,...a)=>{const v=(MGT[LANG]&&MGT[LANG][k]!==undefined)?MGT[LANG][k]:MGT.ko[k];return typeof v==="function"?v(...a):v};
 const MG=(()=>{
   const W=1280,H=853, el=id=>document.getElementById(id);
@@ -1542,25 +1605,32 @@ const MG=(()=>{
   function confetti(){for(let i=0;i<90;i++)bits.push({x:Math.random()*W,y:-20-Math.random()*400,vy:80+Math.random()*140,vx:(Math.random()-.5)*60,r:2+Math.random()*4,h:Math.random()<.5?"#ffe29a":"#d8c9ff"})}
   /* 놀이 배경 영상: 별똥별 받기·별자리 잇기는 하는 내내, 그림 맞추기는 다 맞췄을 때 나온다. 놀이마다 다른 영상을 쓰려면 MG_VIDEO 의 파일 이름만 바꾸면 된다 */
   const vid=el("mgVid"), vsrc=n=>(typeof EMB!=="undefined"&&EMB[n+".mp4"])||`images/${n}.mp4`, MG_VIDEO={stars:"game_intro",const:"game_intro",puzzle:"game_intro"};
+  /* 이야기 속 장면에서 여는 그림 맞추기는 '밤하늘' 글 대신 장면에 맞는 글을 쓴다 */
+  const PZT={ko:{t:"🧩 그림 맞추기",win:"✨ 그림이 완성됐어요!",wp:"흩어졌던 그림이 다시 하나가 되었어요.<br>구름을 뚫고 솟은 한라산이 모습을 드러냈어요."},
+    en:{t:"🧩 Picture Puzzle",win:"✨ The picture is complete!",wp:"The scattered picture is whole again.<br>Hallasan, rising through the clouds, appears."},
+    ja:{t:"🧩 絵合わせパズル",win:"✨ 絵が完成しました！",wp:"ばらばらだった絵が、またひとつになりました。<br>雲をつらぬいてそびえるハルラ山があらわれました。"},
+    zh:{t:"🧩 拼图",win:"✨ 图画完成了！",wp:"散落的图画又合而为一。<br>穿云而起的汉拿山显现出来了。"}};
+  const tt=k=>(k==="puzzle"&&PZ_BG[cur])?(PZT[LANG]||PZT.ko).t:mt("t")[k], pzs=n=>PZ_BG[cur]?(PZT[LANG]||PZT.ko)[n]:mt(n==="win"?"winP":"winPp");
+  const MG_BG={c2_sky:"c2_sky"}, PZ_BG={c2_tall:"c2_tall"};   // 이야기 속 장면에서 여는 별자리 잇기는 그 장면 그림을 배경으로 쓴다 (영상 없음)
   vid.addEventListener("playing",()=>{if(vid.dataset.want==="1")vid.classList.add("on")});
   function vidShow(k,over){const n=MG_VIDEO[k];if(!n)return;const u=vsrc(n);if(vid.dataset.n!==n){vid.dataset.n=n;vid.src=u}
     vid.dataset.want="1";vid.classList.toggle("over",!!over);try{vid.currentTime=0}catch(_){}const p=vid.play();if(p&&p.catch)p.catch(()=>{})}
   function vidHide(){vid.dataset.want="0";vid.classList.remove("on","over");vid.pause()}
   function clear(){if(kind!=="stars"&&kind!=="const")vidHide();on=false;G={};c.clearRect(0,0,W,H);board.innerHTML="";board.hidden=true;board.classList.remove("solved");pill("mgA",null);pill("mgB",null);el("mgPeek").hidden=true;el("mgPeekImg").classList.remove("on");el("mgToast").classList.remove("on")}
-  function finishCard(t,p,note){on=false;card(t,p,note,[[mt("again"),1,()=>start()],[mt("other"),0,close]])}
+  function finishCard(t,p,note){on=false;card(t,p,note,[[mt("again"),1,()=>start()]])}
 
   /* ───── 1) 별똥별 받기 ───── */
-  const HAND={x:705,y:168}, HOUSES=[[215,688],[268,684],[318,682],[758,742],[845,746],[948,728],[1022,710],[1068,725]], GOAL=8, TIME=45, CLOUD_Y=640;
+  const HAND={x:705,y:168}, HOUSES=[[215,688],[268,684],[318,682],[758,742],[845,746],[948,728],[1022,710],[1068,725]], GOAL=8, TIME=60, CLOUD_Y=640, SLOW=.55;   // TIME: 제한 시간(초) · SLOW: 별이 떨어지는 빠르기(작을수록 천천히)
   const lit=()=>G.lit.filter(v=>v>0).length;
   function starsHud(){pill("mgA",mt("houses",lit(),GOAL));pill("mgB",`⏳ <span class="mg-time"><i style="transform:scaleX(${Math.max(0,G.left/TIME)})"></i></span>`)}
-  function starsStart(){G={t:0,left:TIME,stars:[],flies:[],pops:[],lit:HOUSES.map(()=>0),next:.3,caught:0,missed:0};on=true;starsHud()}
-  function spawn(){const big=Math.random()<.12,sl=reduce?.6:1;G.stars.push({x:HAND.x-30+Math.random()*220,y:HAND.y-90+Math.random()*80,vx:(Math.random()*2-1)*260*sl,vy:(40+Math.random()*90)*sl,g:(55+Math.random()*40)*sl,r:big?17:10+Math.random()*4,big,tw:Math.random()*6,trail:[]})}
-  function catchAt(x,y){let best=-1,bd=1e9;G.stars.forEach((s,i)=>{const d=Math.hypot(s.x-x,s.y-y);if(d<s.r+44&&d<bd){bd=d;best=i}});if(best<0)return false;
+  function starsStart(){G={t:0,left:TIME,stars:[],flies:[],pops:[],lit:HOUSES.map(()=>0),next:.3,caught:0,missed:0};on=true;starsHud();toast(mt("sfirst"),2200)}
+  function spawn(){const big=Math.random()<.12,sl=reduce?.4:SLOW;G.stars.push({x:HAND.x-30+Math.random()*220,y:HAND.y-90+Math.random()*80,vx:(Math.random()*2-1)*260*sl,vy:(40+Math.random()*90)*sl,g:(55+Math.random()*40)*sl,r:big?17:10+Math.random()*4,big,tw:Math.random()*6,trail:[]})}
+  function catchAt(x,y){let best=-1,bd=1e9;G.stars.forEach((s,i)=>{const d=Math.hypot(s.x-x,s.y-y);if(d<s.r+Math.max(44,28/dsc())&&d<bd){bd=d;best=i}});if(best<0)return false;
     const s=G.stars.splice(best,1)[0];G.caught++;sound(rand([523,587,659,784,880])*(s.big?.5:1),1.2,.09);
     for(let k=0;k<(s.big?2:1);k++){const h=G.lit.findIndex((v,i)=>v===0&&!G.flies.some(f=>f.h===i));if(h<0)break;G.flies.push({x0:s.x,y0:s.y,h,t0:G.t+k*.15,dur:.9,big:s.big})}
     for(let j=0;j<10;j++)G.pops.push({x:s.x,y:s.y,vx:(Math.random()-.5)*240,vy:(Math.random()-.5)*240,t0:G.t,c:s.big?PINK:GOLD});return true}
   function starsStep(dt){
-    G.t+=dt;G.left-=dt;G.next-=dt;if(G.next<=0){spawn();G.next=Math.max(.55,1.25-G.t*.012)*(.7+Math.random()*.6)}
+    G.t+=dt;G.left-=dt;G.next-=dt;if(G.next<=0){spawn();G.next=Math.max(1.05,1.9-G.t*.01)*(.75+Math.random()*.6)}
     G.stars.forEach(s=>{s.trail.push([s.x,s.y]);if(s.trail.length>12)s.trail.shift();s.vy+=s.g*dt;s.x+=s.vx*dt;s.y+=s.vy*dt});
     G.stars=G.stars.filter(s=>{if(s.y>CLOUD_Y||s.x<-40||s.x>W+40){G.missed++;return false}return true});
     G.flies=G.flies.filter(f=>{if(G.t-f.t0>=f.dur){G.lit[f.h]=.001;toast(rand(mt("lit")));return false}return true});
@@ -1580,23 +1650,23 @@ const MG=(()=>{
 
   /* ───── 2) 별자리 잇기 ───── */
   const flower=(cx,cy,R,r)=>{const p=[];for(let k=0;k<5;k++){const a=(-90+72*k)*Math.PI/180,b=a+36*Math.PI/180;p.push([cx+R*Math.cos(a),cy+R*Math.sin(a)],[cx+r*Math.cos(b),cy+r*Math.sin(b)])}return p};
-  const SETS=[{close:true,color:"#ff9ab8",pts:flower(300,128,78,34)},
-    {close:false,color:"#bfe3ff",pts:[[400,150],[460,98],[498,66],[515,74],[532,74],[550,66],[588,98],[648,150]]},
-    {close:true,color:"#ffe08a",pts:[[1020,110],[1045,70],[1075,70],[1100,110],[1095,175],[1100,250],[1080,300],[1040,300],[1020,250],[1025,175]]}], HIT0=36;
+  const SETS=[{close:false,color:"#ff9ab8",pts:[[60,118],[135,62],[210,120],[285,58],[360,120]]},                                   // 카시오페이아 (W 모양)
+    {close:false,color:"#bfe3ff",pts:[[730,55],[795,38],[860,52],[920,82],[935,140],[1030,150],[1038,92]]},                       // 북두칠성 (국자: 손잡이 3 + 그릇 4)
+    {close:false,color:"#ffe08a",pts:[[80,350],[95,290],[70,225],[225,225],[195,286],[215,352]]}], HIT0=36;                        // 오리온 (모래시계 모양)
   /* 폰처럼 화면이 작으면 별이 손가락보다 작아지므로, 화면에 보이는 크기(약 30px 반지름)가 나오도록 누름 반경과 별 크기를 키운다 */
   const dsc=()=>{const w=cv.getBoundingClientRect().width;return w?w/W:1}, zk=()=>Math.min(2.4,Math.max(1,.75/dsc()));
-  /* 폰처럼 화면이 작으면 ① 별 개수를 줄이고(10·8·10개 → 5·5·6개) ② 세 별자리가 서로 겹치지 않게 하늘의 정해진 칸에 하나씩 나눠 놓는다 (칸 안에서 모양은 그대로 키움) */
+  /* 폰에서는 별자리를 제 중심에서 1.25배로 넓히되 그림 밖으로 나가지 않게 한다 */
   const BASE=SETS.map(q=>q.pts.map(p=>p.slice()));
-  const MOB=[[[300,50],[374,104],[346,191],[254,191],[226,104]],                  // 동백: 꽃잎 5장 (바깥 꼭짓점만)
-             [[400,150],[470,95],[524,66],[578,95],[648,150]],                      // 한라산: 봉우리 5개 점
-             [[1045,70],[1100,110],[1100,250],[1060,300],[1020,250],[1020,110]]],   // 돌하르방: 머리 윤곽 6개 점
-        BOX=[[90,70,350,330],[440,60,770,200],[950,60,1170,420]];                   // 칸 [왼,위,오른,아래] (그림 1280×853 기준): 왼쪽 위 / 가운데 위 / 오른쪽
-  function layoutSets(){const small=dsc()<.5;
-    SETS.forEach((q,i)=>{
-      if(!small){q.pts=BASE[i].map(p=>p.slice());q.f=1;q.o=[0,0];return}
-      const b=MOB[i],xs=b.map(p=>p[0]),ys=b.map(p=>p[1]),mnx=Math.min(...xs),mxx=Math.max(...xs),mny=Math.min(...ys),mxy=Math.max(...ys),bx=BOX[i];
-      const f=Math.min(2.4,(bx[2]-bx[0])/(mxx-mnx),(bx[3]-bx[1])/(mxy-mny)),cx=(mnx+mxx)/2,cy=(mny+mxy)/2,bcx=(bx[0]+bx[2])/2,bcy=(bx[1]+bx[3])/2;
-      q.f=f;q.o=[bcx-cx*f,bcy-cy*f];q.pts=b.map(p=>[p[0]*f+q.o[0],p[1]*f+q.o[1]])})}
+  /* 장면 그림마다 별자리 자리를 따로 둘 수 있다 (달·별똥별·할망 몸을 피해서). 순서: 카시오페이아, 북두칠성, 오리온 */
+  const ALT={c2_sky:[[[330,120],[405,62],[480,122],[555,58],[630,120]],
+    [[960,215],[1010,200],[1060,215],[1110,245],[1120,300],[1200,305],[1205,250]],
+    [[690,175],[705,115],[680,50],[800,50],[775,112],[795,177]]]};
+  function layoutSets(){const f=dsc()<.5?1.25:1,alt=MG_BG[cur]&&ALT[MG_BG[cur]];
+    SETS.forEach((q,i)=>{const b=alt?alt[i]:BASE[i];let cx=0,cy=0;b.forEach(p=>{cx+=p[0];cy+=p[1]});cx/=b.length;cy/=b.length;
+      const pts=b.map(p=>[cx+(p[0]-cx)*f,cy+(p[1]-cy)*f]),xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);let dx=0,dy=0;
+      const mnx=Math.min(...xs),mxx=Math.max(...xs),mny=Math.min(...ys),mxy=Math.max(...ys);
+      if(mnx<36)dx=36-mnx;else if(mxx>W-36)dx=W-36-mxx;if(mny<36)dy=36-mny;else if(mxy>H-90)dy=H-90-mxy;
+      q.pts=pts.map(p=>[p[0]+dx,p[1]+dy]);q.f=f;q.o=[cx*(1-f)+dx,cy*(1-f)+dy]})}
   const curSet=()=>SETS[G.set];
   function constHud(){const s=curSet();pill("mgA",s?mt("constProg",G.set+1,SETS.length,G.n,s.pts.length):mt("constProg",SETS.length,SETS.length,SETS[2].pts.length,SETS[2].pts.length))}
   function constStart(){layoutSets();G={t:0,set:0,n:0,done:[],idle:0,drag:false,ptr:null,shake:0,flash:0,miss:0};on=true;constHud();toast(mt("cfirst"))}
@@ -1606,13 +1676,13 @@ const MG=(()=>{
         if(G.set>=SETS.length){on=false;setTimeout(()=>{if(kind==="const"&&!el("mg").hidden){confetti();finishCard(mt("winC"),mt("winCp"),mt("noteC",G.miss))}},2200)}}
       return true}
     if(tap&&s.pts.some(q=>Math.hypot(q[0]-x,q[1]-y)<HIT)){G.shake=.5;G.miss++;sound(330,.3,.04,"triangle");toast(mt("cwrong"))}return false}
-  function line(pts,close,n,color,a,w){if(n<2)return;c.save();c.globalAlpha=a;c.strokeStyle=color;c.lineWidth=w;c.shadowColor=color;c.shadowBlur=12;c.lineJoin="round";c.beginPath();for(let i=0;i<n;i++)i?c.lineTo(pts[i][0],pts[i][1]):c.moveTo(pts[i][0],pts[i][1]);if(close&&n===pts.length)c.closePath();c.stroke();c.restore()}
+  function line(pts,close,n,color,a,w){if(n<2)return;c.save();c.globalAlpha=a*.55;c.strokeStyle="rgba(10,6,40,.9)";c.lineWidth=w+4;c.lineJoin="round";c.beginPath();for(let i=0;i<n;i++)i?c.lineTo(pts[i][0],pts[i][1]):c.moveTo(pts[i][0],pts[i][1]);c.stroke();c.globalAlpha=a;c.strokeStyle=color;c.lineWidth=w;c.shadowColor=color;c.shadowBlur=12;c.lineJoin="round";c.beginPath();for(let i=0;i<n;i++)i?c.lineTo(pts[i][0],pts[i][1]):c.moveTo(pts[i][0],pts[i][1]);if(close&&n===pts.length)c.closePath();c.stroke();c.restore()}
   const dot=(x,y,r,a)=>{c.globalAlpha=a;c.drawImage(WHITE,x-r*2,y-r*2,r*4,r*4);c.globalAlpha=1};
   function constDraw(dt){
     G.t+=dt;G.idle+=dt;G.shake=Math.max(0,G.shake-dt);G.flash=Math.max(0,G.flash-dt*.7);c.clearRect(0,0,W,H);
     G.done.forEach(d=>{const s=SETS[d.set],a=Math.min(1,(G.t-d.t0)/1.2);c.save();c.globalAlpha=.25*a;c.fillStyle=s.color;c.beginPath();s.pts.forEach((p,i)=>i?c.lineTo(p[0],p[1]):c.moveTo(p[0],p[1]));if(s.close){c.closePath();c.fill()}c.restore();
       line(s.pts,s.close,s.pts.length,s.color,.9*a,3);s.pts.forEach(p=>dot(p[0],p[1],14,.95));
-      if(d.set===2){const f=s.f||1,o=s.o||[0,0],T=(x,y)=>[x*f+o[0],y*f+o[1]];c.globalAlpha=.8*a;c.fillStyle=s.color;[[1045,150],[1075,150]].forEach(q=>{const t=T(q[0],q[1]);c.beginPath();c.arc(t[0],t[1],4*f,0,7);c.fill()});const e=T(1060,180);c.beginPath();c.ellipse(e[0],e[1],7*f,14*f,0,0,7);c.fill();c.globalAlpha=1}});
+      });
     const s=curSet();if(!s||!on)return;
     line(s.pts,false,G.n,"#ffffff",.95,3);
     if(G.drag&&G.n>0&&G.ptr){const l=s.pts[G.n-1];c.globalAlpha=.5;c.strokeStyle="#fff";c.setLineDash([6,8]);c.lineWidth=2;c.beginPath();c.moveTo(l[0],l[1]);c.lineTo(G.ptr[0],G.ptr[1]);c.stroke();c.setLineDash([]);c.globalAlpha=1}
@@ -1639,7 +1709,7 @@ const MG=(()=>{
   function slotAt(x,y){const r=board.getBoundingClientRect();if(x<r.left||y<r.top||x>=r.right||y>=r.bottom)return -1;return(((y-r.top)/r.height*G.N)|0)*G.N+(((x-r.left)/r.width*G.N)|0)}
   function swap(a,b){if(a===b||a<0||b<0)return;[G.slots[a],G.slots[b]]=[G.slots[b],G.slots[a]];G.moves++;puzPaint();
     if(G.slots[a]===a||G.slots[b]===b){toast(rand(mt("pok")),900);sound(659,.6,.06)}
-    if(okCount()===G.N*G.N){on=false;board.classList.add("solved");vidShow("puzzle",true);confetti();const sec=Math.round((performance.now()-G.t0)/1000);setTimeout(()=>finishCard(mt("winP"),mt("winPp"),mt("noteP",G.N,G.moves,sec)),1400)}}
+    if(okCount()===G.N*G.N){on=false;board.classList.add("solved");if(!PZ_BG[cur])vidShow("puzzle",true);confetti();const sec=Math.round((performance.now()-G.t0)/1000);setTimeout(()=>finishCard(pzs("win"),pzs("wp"),mt("noteP",G.N,G.moves,sec)),1400)}}
   function tapTile(t){if(!G.sel){G.sel=t;t.classList.add("sel")}else{const a=G.sel;a.classList.remove("sel");G.sel=null;if(a!==t)swap(slotOf(a),slotOf(t))}}
   board.addEventListener("pointerdown",e=>{const t=e.target.closest(".mg-tile");if(!t||!on)return;G.drag={t,x:e.clientX,y:e.clientY,moved:false};try{t.setPointerCapture(e.pointerId)}catch(_){}});
   board.addEventListener("pointermove",e=>{const d=G.drag;if(!d)return;const dx=e.clientX-d.x,dy=e.clientY-d.y;
@@ -1670,12 +1740,12 @@ const MG=(()=>{
   }
   function intro(){clear();
     const btns=kind==="puzzle"?[[mt("easy"),1,()=>start(3)],[mt("normal"),1,()=>start(4)],[mt("hard"),0,()=>start(5)]]:[[mt("start"),1,()=>start()],[mt("close"),0,close]];
-    card(mt("t")[kind],mt("intro")[kind],"",btns)}
+    card(tt(kind),mt("intro")[kind],"",btns)}
   async function open(k){
     back=document.activeElement;kind=k;try{voicePlay(null)}catch(e){}
-    const u=await findImage("game");imgUrl=u||"images/game.jpg";el("mgImg").src=imgUrl;el("mgPeekImg").src=imgUrl;
-    el("mgTitle").textContent=mt("t")[k];el("mgX").setAttribute("aria-label",mt("close"));el("mgX").title=mt("close");
-    vidHide();if(k==="stars"||k==="const")vidShow(k);   // 별똥별 받기·별자리 잇기는 영상 위에서
+    const bgId=(k==="const"&&MG_BG[cur])||(k==="puzzle"&&PZ_BG[cur])||"game";const u=await findImage(bgId);imgUrl=u||(bgId==="game"?"images/game.jpg":"images/"+bgId+".jpg");el("mgImg").src=imgUrl;el("mgImg").style.filter=(k==="const"&&MG_BG[cur])?"brightness(.55) saturate(.9)":"";el("mgPeekImg").src=imgUrl;
+    el("mgTitle").textContent=tt(k);el("mgX").setAttribute("aria-label",mt("close"));el("mgX").title=mt("close");
+    vidHide();if(k==="stars"||(k==="const"&&!MG_BG[cur]))vidShow(k);   // 별똥별 받기·별자리 잇기는 영상 위에서
     el("mg").hidden=false;document.body.style.overflow="hidden";bits=[];intro();cancelAnimationFrame(raf);last=performance.now();raf=requestAnimationFrame(frame);
   }
   function close(){vidHide();clear();cancelAnimationFrame(raf);el("mg").hidden=true;document.body.style.overflow="";kind=null;
@@ -1687,6 +1757,21 @@ const MG=(()=>{
     solveAllButOne:()=>{G.slots=G.slots.map((_,i)=>i);[G.slots[0],G.slots[1]]=[G.slots[1],G.slots[0]];puzPaint()}};   // 마지막 줄은 확인(테스트)용
 })();
 
+/* 결말 화면: "아래로 내리면 걸어온 길과 크레딧이 있어요" 안내. 크레딧이 보이면 사라지고, 누르면 그곳으로 내려간다 */
+let _shObs=null;
+function clearScrollHint(){const h=document.getElementById("scrollhint");if(h)h.remove();if(_shObs){_shObs.disconnect();_shObs=null}}
+function showScrollHint(){
+  clearScrollHint(); const cr=document.querySelector(".credits"); if(!cr)return;
+  if(document.documentElement.scrollHeight<=innerHeight+40)return;        // 한 화면에 다 들어오면 필요 없다
+  const b=document.createElement("button");b.type="button";b.id="scrollhint";b.className="scrollhint";b.textContent=U("crScroll");
+  b.onclick=()=>{cr.scrollIntoView({behavior:"smooth",block:"center"})};document.body.appendChild(b);
+  if("IntersectionObserver" in window){_shObs=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting))clearScrollHint()},{threshold:.35});_shObs.observe(cr)}
+}
+/* 엔딩 크레딧 글 (기획 의도 · 만든 이 · AI 고지) */
+Object.assign(UI.ko,{crTitle:"엔딩 크레딧",crIntent:"설문대할망 신화를 ‘읽는 이야기’에서 ‘함께 쓰는 이야기’로 바꾸고 싶었습니다. 관람자가 고르고 단어 하나를 말하면, 이야기의 끝이 달라지고 새 장면이 그려집니다.",crTeam:"기획·제작  과제 E · 몬스테라텍",crAI:"그림·영상·음악·목소리는 AI 도구로 만들었습니다.",crMusic:"배경 음악은 무료로 쓸 수 있는 음원입니다.",crThanks:"끝까지 함께해 주셔서 고맙습니다.",crScroll:"↓ 아래로 내리면 걸어온 길과 크레딧이 있어요"});
+Object.assign(UI.en,{crTitle:"Ending Credits",crIntent:"We wanted to turn the myth of Grandmother Seolmundae from a story you read into a story you write together. The viewer chooses, says a single word, and the ending changes and a new scene is drawn.",crTeam:"Planning & production  Task E · Monsteratech",crAI:"The pictures, videos, music and voices were made with AI tools.",crMusic:"The background music uses royalty-free tracks.",crThanks:"Thank you for walking the story with us.",crScroll:"↓ Scroll down for your path and the credits"});
+Object.assign(UI.ja,{crTitle:"エンディングクレジット",crIntent:"ソルムンデハルマンの神話を、読むお話から、いっしょにつづるお話に変えたいと思いました。あなたが選び、言葉をひとつ言うと、お話の結末が変わり、新しい場面が描かれます。",crTeam:"企画・制作  課題E・モンステラテック",crAI:"絵・映像・音楽・声は、AIツールで作りました。",crMusic:"背景音楽は、無料で使える音源です。",crThanks:"最後までごいっしょくださり、ありがとうございました。",crScroll:"↓ 下にスクロールすると、歩んだ道とクレジットがあります"});
+Object.assign(UI.zh,{crTitle:"片尾字幕",crIntent:"我们想把雪门台奶奶的神话，从“读的故事”变成“一起写的故事”。观众来选择，说出一个词，故事的结局就会改变，并画出新的场景。",crTeam:"策划·制作  课题E · 蒙斯特拉科技",crAI:"图画、视频、音乐和声音均由AI工具制作。",crMusic:"背景音乐使用的是可免费使用的音源。",crThanks:"感谢你陪我们走到最后。",crScroll:"↓ 向下滑动可以看到走过的路和片尾字幕"});
 /* ═══ 오프닝: 제일 첫 화면 (이야기 첫 장면 앞) ═══
    영상(images/opening.mp4)이 계속 반복 재생되고 첫 화면 음악(images/bgm_start.mp3)이 흐른다. '시작하기'(또는 Enter·Space)를 누르면 이야기의 첫 화면으로 가고, 음악은 끊김 없이 이어진다.
    주소에 ?scene=… 이나 ?open=0 이 있으면 오프닝을 건너뛴다. 처음부터 다시(집 모양 버튼)에서도 나오지 않는다. */
@@ -1694,6 +1779,15 @@ Object.assign(UI.ko,{opSub:"제주에 깃든 이야기를 관람자와 함께 �
 Object.assign(UI.en,{opSub:"Writing a story of Jeju together with the viewer",opGo:"Begin",opHint:"♪ Tap the screen to start the music"});
 Object.assign(UI.ja,{opSub:"済州に宿る物語を、あなたといっしょにつづる",opGo:"はじめる",opHint:"♪ 画面をタッチすると音楽が始まります"});
 Object.assign(UI.zh,{opSub:"与观众一起书写栖息在济州的故事",opGo:"开始",opHint:"♪ 点击屏幕开始播放音乐"});
+/* 다음에 나올 영상을 미리 받아 둔다 (인터넷 주소에서만. 단일 HTML 파일은 영상이 이미 안에 있어서 하지 않는다. 데이터 절약 모드·느린 망에서도 하지 않는다).
+   한 번에 하나씩, 낮은 우선순위로 받아서 지금 보는 화면의 로딩을 방해하지 않는다 */
+const WARM_STORY=["start","c1_dark","c2_dive","c2_soil","c3_people","ai","ai_result","game_intro"], WARM_WORD=["w_rainbow","w_whale","w_camellia","w_tangerine","w_shootingstar","w_hareubang","w_haenyeo","w_wind","w_hallasan","w_baengnokdam"], warmDone=new Set();
+function warmVideos(list){
+  if(typeof EMB!=="undefined")return; const cn=navigator.connection; if(cn&&(cn.saveData||/(^|-)2g$/.test(cn.effectiveType||"")))return;
+  const todo=list.filter(n=>!warmDone.has(n)); todo.forEach(n=>warmDone.add(n));
+  const next=()=>{const n=todo.shift(); if(!n)return; fetch(`images/${n}.mp4`,{priority:"low"}).then(r=>r.blob()).catch(()=>{}).finally(()=>setTimeout(next,400))};
+  next();
+}
 const OPENING=(()=>{
   const css=document.createElement("style");
   css.textContent=`.opening{position:fixed;inset:0;z-index:100;background:#0b0a26;overflow:hidden;cursor:pointer;transition:opacity .8s ease}
@@ -1731,7 +1825,7 @@ applyLang(); showTraits();
 {const P=new URLSearchParams(location.search), q=P.get("scene");   // 주소 끝 ?scene=장면이름 → 그 장면부터 시작 (예: ?scene=ai)
  if(q&&S[q]){st.curious=st.curious||2;go(q)}
  else if(P.get("open")==="0")go("start");
- else OPENING.show(()=>go("start"))}      // 오프닝 영상이 끝난 뒤 '시작하기'를 누르면 첫 장면으로
+ else{warmVideos(WARM_STORY);OPENING.show(()=>go("start"))}}      // 오프닝 영상이 끝난 뒤 '시작하기'를 누르면 첫 장면으로
 editOut();
 /* ═══ 젤리 글자 (임시) — 장면 제목 · 상단 제목 · 장면 만들기 버튼. 말랑하게 출렁인다 ═══
    hover: 올라간 글자와 양옆 1글자 / 제목은 장면이 바뀔 때 한 번 물결 / 클릭: 그 글자가 튀어오름 */
