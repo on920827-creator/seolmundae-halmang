@@ -998,7 +998,7 @@ const RES_POS={default:[[80,8],[80,32]], w_haenyeo:[[68,17],[86,17]], w_whale:[[
    배경 그림이 깔린 장면(BG_SCENES)의 넓은 화면에서만 돈다. '동작 줄이기' 설정이면 켜지 않는다. */
 const FX={sparks:[],cv:null,cx:null,on:false,raf:0,last:0,t:0,w:0,h:0,flies:[],stars:[],next:0};
 const FX_OFF=["c2_sky"];   // 영상 속에 별똥별·별빛이 이미 있는 장면은 화면 효과를 끈다
-const fxWanted=()=>document.body.classList.contains("hasbg")&&innerWidth>=900&&!reduce&&!FX_OFF.includes(cur);
+const fxWanted=()=>document.body.classList.contains("hasbg")&&innerWidth>=900&&!reduce&&!FX_OFF.includes(cur)&&!MP4_IDS.has(cur);   // 영상이 있는 장면에는 화면 효과(반짝임·별똥별·반딧불)를 얹지 않는다
 function fxResize(){if(!FX.cv)return;const d=Math.min(devicePixelRatio||1,2);FX.w=innerWidth;FX.h=innerHeight;FX.cv.width=FX.w*d;FX.cv.height=FX.h*d;FX.cx.setTransform(d,0,0,d,0,0);fxSeed();fxSparkSeed()}
 function fxSeed(){const n=Math.round(Math.min(72,Math.max(38,FX.w*FX.h/24000)));FX.flies=Array.from({length:n},()=>({x:Math.random()*FX.w,y:FX.h*(.40+Math.random()*.60),r:1.4+Math.random()*2.1,ph:Math.random()*6.28,sp:.00035+Math.random()*.0006,tw:.0014+Math.random()*.002,ax:14+Math.random()*26,ay:10+Math.random()*20,rise:.004+Math.random()*.008}))}
 function fxSparkSeed(){FX.sparks=Array.from({length:Math.round(Math.min(46,Math.max(24,FX.w*FX.h/38000)))},()=>({x:Math.random()*FX.w,y:Math.random()*FX.h*.42,r:.8+Math.random()*1.5,ph:Math.random()*6.28,tw:.0009+Math.random()*.0022}))}
@@ -1212,7 +1212,7 @@ async function paint(a,chapter,id){
                  vd.style.transformOrigin=`${ox+w/2}px 0px`;vd.style.transform=`scale(${s.toFixed(4)})`};
                vd.addEventListener("loadedmetadata",fit);fit();addEventListener("resize",fit);
                if(grow){const tick=()=>{if(!vd.isConnected)return;fit();requestAnimationFrame(tick)};requestAnimationFrame(tick)}}}
-           stage.querySelector(".bgwrap").insertAdjacentHTML("afterend",fxOnly(a)); }
+           if(!isVid)stage.querySelector(".bgwrap").insertAdjacentHTML("afterend",fxOnly(a)); }   // 영상 장면에는 그림 위에 얹는 장식(반딧불·꽃잎·별 등)을 올리지 않는다
   else stage.insertAdjacentHTML("afterbegin",art(a));
   if(chapter&&!reduce) stage.insertAdjacentHTML("beforeend",`<div class="chapter" onanimationend="this.remove()"><small>${chapter[0]}</small><b>${chapter[1]}</b></div>`);
 }
