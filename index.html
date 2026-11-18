@@ -377,6 +377,7 @@
     .mg-card h3::after{display:none}
     .mg-card p{font-size:.76rem!important;line-height:1.33!important;margin:1px 0}
     .mg-card p.note{font-size:.7rem!important}
+    .mg-card p,.mg-card h3{text-wrap:balance}   /* 줄이 한 단어만 남아 어색하게 내려가지 않게 균형 있게 나눈다 */
     .mg-btns{margin-top:4px;gap:6px}
     .mg-btns button{font-size:.84rem;padding:6px 13px}
   }
@@ -384,6 +385,11 @@
     .mg{padding:4px}
     .mg-box{width:min(98vw,calc((100vh - 64px)*1.5));padding:6px}
     .mg-top{padding:0 2px 6px}
+  }
+  /* 줄 끝에 글자 한두 개만 남아 어색하게 내려가는 것을 막는다 (폰·태블릿). 일본어·중국어는 마침표 하나만 다음 줄로 내려가던 곳이 많았다 */
+  @media(max-width:899px){
+    #text p,.recap p,.credits p,.tapnote,#tapnote{text-wrap:pretty}
+    html:lang(ja) #text p,html:lang(zh) #text p{text-wrap:balance;line-break:strict}
   }
 </style>
 </head>
@@ -1686,10 +1692,10 @@ const MGT={
   winP:"✨ 图画完成了！",winPp:"散落的夜空又合而为一。<br>奶奶撒下的星星照亮了岳和村庄。",noteP:(n,mv,s)=>`${n}×${n} · 移动${mv}次 · ${Math.floor(s/60)}分${s%60}秒`}
 };
 /* 별똥별 받기: 규칙 설명(3단계)과 시작 안내 */
-MGT.ko.intro.stars="🏡 <b>집 8채</b>에 모두 불을 켜면 마을이 환하게 밝아져요!<br>① 하늘에서 떨어지는 별을 <b>눌러서</b> 받아요.<br>② 별을 하나 받으면 집에 <b>불이 하나</b> 켜져요.<br>③ <b>60초 안에</b> 8채를 모두 밝히면 성공! (분홍빛 큰 별은 두 채)<br>별은 천천히 떨어지니, 서두르지 않아도 돼요.";
-MGT.en.intro.stars="🏡 Light all <b>8 houses</b> and the whole village glows!<br>① <b>Tap</b> the stars falling from the sky.<br>② Each star you catch <b>lights one house</b>.<br>③ Do it <b>within 60 seconds</b> to win! (A big pink star lights two.)<br>The stars fall slowly, so there's no need to rush.";
-MGT.ja.intro.stars="🏡 <b>家8軒</b>すべてに明かりをともすと、村が明るくなります！<br>① 落ちてくる星を<b>押して</b>受けとめます。<br>② 受けとめると、家に<b>明かりがひとつ</b>ともります。<br>③ <b>60秒以内</b>に8軒すべて明るくできたら成功！（ピンクの星は2軒）<br>星はゆっくり落ちるので大丈夫です。";
-MGT.zh.intro.stars="🏡 点亮全部<b>8座房子</b>，整个村子就会亮起来！<br>① <b>点击</b>从天上落下的星星来接住它。<br>② 每接住一颗星星，就会<b>亮起一盏灯</b>。<br>③ 在<b>60秒内</b>全部点亮就成功！（粉色大星星可以点亮两座）<br>星星落得很慢，不用着急。";
+MGT.ko.intro.stars="🏡 <b>집 8채</b>에 모두 불을 켜면 마을이 환해져요!<br>① 하늘에서 떨어지는 별을 <b>눌러서</b> 받아요.<br>② 별을 받으면 집에 <b>불이 하나</b> 켜져요.<br>③ <b>60초 안에</b> 8채를 모두 밝히면 성공!<br>(분홍빛 큰 별은 두 채를 밝혀요)<br>별은 천천히 떨어져요. 서두르지 않아도 돼요.";
+MGT.en.intro.stars="🏡 Light all <b>8 houses</b> and the village glows!<br>① <b>Tap</b> the falling stars to catch them.<br>② Each star lights <b>one house</b>.<br>③ Light all 8 within <b>60 seconds</b> to win!<br>(A big pink star lights two.)<br>The stars fall slowly, so no need to rush.";
+MGT.ja.intro.stars="🏡 <b>家8軒</b>すべてに明かりをともすと、村が明るくなります！<br>① 落ちてくる星を<b>押して</b>受けとめます。<br>② 受けとめると、家に<b>明かりがひとつ</b>ともります。<br>③ <b>60秒以内</b>に8軒すべて明るくできたら成功！<br>（ピンクの星は2軒）<br>星はゆっくり落ちるので大丈夫です。";
+MGT.zh.intro.stars="🏡 点亮全部<b>8座房子</b>，整个村子就会亮起来！<br>① <b>点击</b>落下的星星来接住它。<br>② 每接住一颗星星，就会<b>亮起一盏灯</b>。<br>③ 在<b>60秒内</b>全部点亮就成功！<br>（粉色大星星可以点亮两座）<br>星星落得很慢，不用着急。";
 Object.assign(MGT.ko,{sfirst:"떨어지는 별을 눌러 보세요"});Object.assign(MGT.en,{sfirst:"Tap a falling star"});Object.assign(MGT.ja,{sfirst:"落ちてくる星を押してみましょう"});Object.assign(MGT.zh,{sfirst:"点击落下的星星"});
 /* 별자리 이름과 완성 글: 진짜 별자리 (카시오페이아 · 북두칠성 · 오리온) */
 MGT.ko.cnames=[["카시오페이아","W 모양으로 반짝이는 하늘의 왕비별"],["북두칠성","길을 알려 주는 일곱 개의 별"],["오리온","하늘을 걷는 사냥꾼의 별"]];
