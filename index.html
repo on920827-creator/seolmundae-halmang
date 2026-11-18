@@ -398,6 +398,8 @@
   html[lang="ko"] body{word-break:keep-all;overflow-wrap:break-word}
   .recap .epi,.recap .found2,.credits p,.credits h4,.recap blockquote,#trailpanel button{text-wrap:balance}
   .recap p,.recap li,.foot,.hint{text-wrap:pretty}
+  /* 일본어: 말마디(문절) 단위로 줄을 나눈다 (지원하는 브라우저에서만 적용, 나머지는 기존대로) */
+  html[lang="ja"] .credits p,html[lang="ja"] .recap p,html[lang="ja"] .recap .epi,html[lang="ja"] .recap .found2,html[lang="ja"] #text p{word-break:auto-phrase!important}
 </style>
 </head>
 <body>
