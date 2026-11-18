@@ -1943,7 +1943,7 @@ const OPENING=(()=>{
   .op-hint{position:absolute;top:clamp(14px,3vh,28px);right:clamp(14px,3vw,36px);font-size:clamp(.78rem,1.3vw,.95rem);color:#fff6e0;background:rgba(10,6,48,.45);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:6px 14px;opacity:0;animation:opIn 1s ease 1s forwards}
   .op-hint[hidden]{display:none}
   @keyframes opIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-  @media (max-width:560px){.opening video{object-position:92% 0%}.op-text h2{font-size:clamp(1.3rem,6.4vw,1.7rem);text-wrap:balance;word-break:keep-all}.op-text p{text-wrap:balance;word-break:keep-all;font-size:.92rem}}   /* 폰: 제목이 한 글자만 남아 내려가지 않게 크기를 줄이고 줄을 고르게 나눈다 */
+  @media (max-width:560px){.op-text h2{font-size:clamp(1.3rem,6.4vw,1.7rem);text-wrap:balance;word-break:keep-all}.op-text p{text-wrap:balance;word-break:keep-all;font-size:.92rem}}   /* 폰: 제목이 한 글자만 남아 내려가지 않게 크기를 줄이고 줄을 고르게 나눈다 */
     @media (prefers-reduced-motion:reduce){.op-text *{animation-duration:.01s!important;animation-delay:0s!important}}`;
   document.head.appendChild(css);
   function show(done){
