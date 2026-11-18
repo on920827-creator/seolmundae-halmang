@@ -394,6 +394,10 @@
   /* 폰: 아직 안 보이는 버튼(뒤로·길·처음)이 자리를 차지해 제목이 "…"으로 잘리던 것을 막는다 */
   @media(max-width:560px){.back[hidden]{display:none}}
   @media(max-width:420px){.bar{gap:4px}.back{width:30px;height:30px}.bar h2{font-size:clamp(.74rem,3.55vw,.92rem);letter-spacing:-.02em}}
+  /* 한국어는 단어 중간에서 줄이 끊기지 않게 하고, 한두 글자만 따로 내려가는 줄을 줄인다 (결말 글·크레딧·걸어온 길·안내문) */
+  html[lang="ko"] body{word-break:keep-all;overflow-wrap:break-word}
+  .recap .epi,.recap .found2,.credits p,.credits h4,.recap blockquote,#trailpanel button{text-wrap:balance}
+  .recap p,.recap li,.foot,.hint{text-wrap:pretty}
 </style>
 </head>
 <body>
