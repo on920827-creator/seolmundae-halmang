@@ -362,6 +362,22 @@
   .mg-stage.bright::after{opacity:0}
   .mg-stage.bright>img#mgImg{filter:brightness(1.05) saturate(1.08)!important}
   .mg-stage.bright>video.mg-vid:not(.over){filter:none}
+  /* 폰 게임 화면(모바일): 놀이 창 여백을 줄여 그림을 조금 더 크게, 안내 글은 위쪽 별자리를 가리지 않게 아래쪽으로, 가로로 돌리면 더 크게 */
+  @media(max-width:560px){
+    .mg{padding:6px}
+    .mg-box{width:calc(100vw - 12px);padding:8px;border-radius:20px}
+    .mg-top{padding:0 2px 8px}
+    .mg-top b{font-size:.98rem}
+    .mg-stage{border-radius:14px}
+    .mg-toast{top:auto;bottom:6%;font-size:.84rem;padding:5px 12px}
+    .mg-card{padding:8px}
+    .mg-card>div{padding:12px 12px}
+  }
+  @media(max-height:480px) and (orientation:landscape){
+    .mg{padding:4px}
+    .mg-box{width:min(98vw,calc((100vh - 64px)*1.5));padding:6px}
+    .mg-top{padding:0 2px 6px}
+  }
 </style>
 </head>
 <body>
@@ -1205,11 +1221,13 @@ async function paint(a,chapter,id){
              if(pad){   // 영상 안에 좌우 검은 띠가 같이 들어 있는 경우: 위쪽(머리)은 그대로 두고 그림이 화면 가로를 꽉 채우도록 확대한다 (아래쪽이 조금 잘린다)
                const grow=Array.isArray(pad);   // [처음 띠 폭, 끝 띠 폭] : 영상 속 그림이 점점 작아지며 띠가 커지는 영상은 그 변화를 따라 확대 배율도 함께 바꾼다
                const fit=()=>{const r=$("stage").getBoundingClientRect(),vw=vd.videoWidth||1280,vh=vd.videoHeight||720;if(!r.width)return;
-                 const k=Math.max(r.width/vw,r.height/vh),w=vw*k,ox=(r.width-w)*fo[0]/100;
-                 let p=grow?pad[0]:pad;
-                 if(grow){const f=Math.min(1,Math.max(0,(vd.currentTime||0)/(vd.duration||8)));p=pad[0]+(pad[1]-pad[0])*f}
-                 const s=Math.max(1,r.width/(w*(1-2*p/100)));
-                 vd.style.transformOrigin=`${ox+w/2}px 0px`;vd.style.transform=`scale(${s.toFixed(4)})`};
+                 const k=Math.max(r.width/vw,r.height/vh),w=vw*k;   // 영상이 화면에 그려진 가로 크기
+                 let p=(grow?pad[0]:pad)/100;
+                 if(grow){const f=Math.min(1,Math.max(0,(vd.currentTime||0)/(vd.duration||8)));p=(pad[0]+(pad[1]-pad[0])*f)/100}
+                 // 영상 양옆 검은 띠를 잘라 낸 '그림 부분'이 화면을 빈틈없이 덮도록 확대하고, 남는 가로 폭 안에서 초점(fo[0])에 맞춰 놓는다 (폰처럼 좁은 화면에서도 왼쪽 검은 띠가 보이거나 인물이 잘리지 않게)
+                 const wc=w*(1-2*p), s=Math.max(1,r.width/wc), over=wc*s-r.width, tx=-over*fo[0]/100-s*w*p;
+                 vd.style.maxWidth="none";vd.style.width=w.toFixed(2)+"px";vd.style.objectPosition=`0% ${fo[1]}%`;   // 영상 전체가 상자 안에 들어오도록 상자 가로를 영상 크기에 맞춘다
+                 vd.style.transformOrigin="0px 0px";vd.style.transform=`translateX(${tx.toFixed(2)}px) scale(${s.toFixed(4)})`};
                vd.addEventListener("loadedmetadata",fit);fit();addEventListener("resize",fit);
                if(grow){const tick=()=>{if(!vd.isConnected)return;fit();requestAnimationFrame(tick)};requestAnimationFrame(tick)}}}
            if(!isVid)stage.querySelector(".bgwrap").insertAdjacentHTML("afterend",fxOnly(a)); }   // 영상 장면에는 그림 위에 얹는 장식(반딧불·꽃잎·별 등)을 올리지 않는다
@@ -1716,6 +1734,7 @@ const MG=(()=>{
     vid.dataset.want="1";vid.classList.toggle("over",!!over);try{vid.currentTime=0}catch(_){}const p=vid.play();if(p&&p.catch)p.catch(()=>{})}
   function vidHide(){vid.dataset.want="0";vid.classList.remove("on","over");vid.pause()}
   function clear(){if(kind!=="stars"&&kind!=="const")vidHide();on=false;G={};c.clearRect(0,0,W,H);board.innerHTML="";board.hidden=true;board.classList.remove("solved");pill("mgA",null);pill("mgB",null);el("mgPeek").hidden=true;el("mgPeekImg").classList.remove("on");el("mgToast").classList.remove("on")}
+  MGT.ko.rotate="📱 폰을 가로로 돌리면 더 크게 할 수 있어요";MGT.en.rotate="📱 Turn your phone sideways for a bigger view";MGT.ja.rotate="📱 スマホを横にすると大きく遊べます";MGT.zh.rotate="📱 把手机横过来，画面会更大";
   const NXT={ko:"이야기 계속하기",en:"Continue the story",ja:"お話をつづける",zh:"继续故事"};
   /* 이야기 속 장면에서 연 놀이는 끝난 뒤 바로 다음 장면으로 넘어갈 수 있다 (그 장면의 첫 번째 선택지로) */
   function finishCard(t,p,note){on=false;const btns=[[mt("again"),1,()=>start()]],sc=(typeof S!=="undefined")&&S[cur],ch=sc&&sc.choices&&sc.choices.find(c=>!c[1].startsWith("mg:"));
@@ -1790,7 +1809,7 @@ const MG=(()=>{
     line(s.pts,false,G.n,"#ffffff",.95,3);
     if(G.drag&&G.n>0&&G.ptr){const l=s.pts[G.n-1];c.globalAlpha=.5;c.strokeStyle="#fff";c.setLineDash([6,8]);c.lineWidth=2;c.beginPath();c.moveTo(l[0],l[1]);c.lineTo(G.ptr[0],G.ptr[1]);c.stroke();c.setLineDash([]);c.globalAlpha=1}
     s.pts.forEach((p,i)=>{const nx=i===G.n,dn=i<G.n,dx=nx&&G.shake?Math.sin(G.t*60)*5:0,pu=nx?1+.25*Math.sin(G.t*6)+(G.idle>4?.5+.3*Math.sin(G.t*8):0):1;
-      dot(p[0]+dx,p[1],(dn?13:10)*pu*zk(),dn?1:nx?.95:.6);
+      dot(p[0]+dx,p[1],(dn?13:10)*pu*zk(),dn?1:nx?.95:(zk()>1.2?.85:.6));
       if(!dn){const z=zk();c.font="bold "+Math.round(15*z)+"px sans-serif";c.textAlign="center";c.lineWidth=3;c.strokeStyle="rgba(10,8,40,.85)";c.strokeText(i+1,p[0]+dx,p[1]-16*z);c.fillStyle=nx?"#ffe29a":"rgba(255,255,255,.75)";c.fillText(i+1,p[0]+dx,p[1]-16*z)}
       if(nx&&(G.idle>4||(zk()>1.2&&G.idle>1.5))){c.globalAlpha=.6;c.strokeStyle="#ffe29a";c.lineWidth=2*zk();c.beginPath();c.arc(p[0],p[1],(22+10*Math.sin(G.t*5))*zk(),0,7);c.stroke();c.globalAlpha=1}});
     if(G.flash){c.globalAlpha=G.flash*.25;c.fillStyle="#fff6d0";c.fillRect(0,0,W,H);c.globalAlpha=1}
@@ -1844,7 +1863,7 @@ const MG=(()=>{
   }
   function intro(){clear();
     const btns=kind==="puzzle"?[[mt("easy"),1,()=>start(3)],[mt("normal"),1,()=>start(4)],[mt("hard"),0,()=>start(5)]]:[[mt("start"),1,()=>start()],[mt("close"),0,close]];
-    card(tt(kind),mt("intro")[kind],"",btns)}
+    card(tt(kind),mt("intro")[kind],(innerWidth<=560&&innerHeight>innerWidth)?mt("rotate"):"",btns)}
   async function open(k){
     back=document.activeElement;kind=k;try{voicePlay(null);const vk=voiceKey(cur,S[cur]);if(vk)VOICE.played=vk}catch(e){}   // 놀이를 여는 순간 읽기를 멈추고, 놀이를 닫은 뒤 화면을 눌러도 같은 장면을 다시 읽지 않게 '이미 읽음'으로 둔다
     const bgId=(k==="const"&&MG_BG[cur])||(k==="puzzle"&&PZ_BG[cur])||"game";const u=await findImage(bgId);imgUrl=u||(bgId==="game"?"images/game.jpg":"images/"+bgId+".jpg");el("mgImg").src=imgUrl;el("mgStage").classList.remove("bright");el("mgImg").style.filter=(k==="const"&&MG_BG[cur])?"brightness(.55) saturate(.9)":"";el("mgPeekImg").src=imgUrl;
