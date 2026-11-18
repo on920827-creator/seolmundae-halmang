@@ -1173,7 +1173,7 @@ addEventListener("resize",()=>{if($("stage").classList.contains("words"))wordZon
 const IMG_FOCUS={c1_walk:[50,0],ai:[20,0],w_rainbow:[30,0],w_whale:[0,0],w_camellia:[0,0],w_tangerine:[0,0],w_shootingstar:[0,0],w_hareubang:[0,0],w_haenyeo:[0,0],w_wind:[0,0],w_hallasan:[0,0],w_baengnokdam:[0,0],c2_orum:[22,0],c2_name:[22,0],c2_seed:[28,0],c2_soil:[50,0],c2_soft:[30,0],c2_tall:[22,50],c2_rest:[0,12],c2_sky:[0,12],c2_splash:[30,0],c3_wish:[8,0],c3_palm:[10,0],c3_people:[30,0],c3_silk:[50,45]};  // 그림별 초점 [가로%, 세로%] — 잘리는 화면에서도 얼굴이 보이도록 조정
 const IMG_EXT=["jpg","png","webp","gif","mp4"], imgCache={};
 /* 영상(mp4)이 있는 그림 이름: 이 이름은 jpg·png·webp·gif 를 먼저 뒤지지 않고(없는 파일을 4번 물어보느라 느려졌다) 바로 영상을 찾는다. 영상을 새로 넣으면 여기에 이름을 더한다 */
-const MP4_IDS=new Set(["c2_sky", "c1_walk", "c1_feel", "c1_push", "ai", "ai_result", "c1_dark", "c1_listen", "c2_dive", "c2_soil", "c3_people", "game_intro", "start", "w_baengnokdam", "w_camellia", "w_haenyeo", "w_hallasan", "w_hareubang", "w_rainbow", "w_shootingstar", "w_tangerine", "w_whale", "w_wind"]);
+const MP4_IDS=new Set(["c2_rest", "c2_orum", "c2_tall", "c2_sky", "c1_walk", "c1_feel", "c1_push", "ai", "ai_result", "c1_dark", "c1_listen", "c2_dive", "c2_soil", "c3_people", "game_intro", "start", "w_baengnokdam", "w_camellia", "w_haenyeo", "w_hallasan", "w_hareubang", "w_rainbow", "w_shootingstar", "w_tangerine", "w_whale", "w_wind"]);
 function findImage(id){ // images/<id>.jpg|png|webp 를 차례로 찾는다. 없으면 false (→ 코드 그림 사용)
   if(!id) return Promise.resolve(false);
   if(id in imgCache) return Promise.resolve(imgCache[id]);
@@ -1187,7 +1187,7 @@ function findImage(id){ // images/<id>.jpg|png|webp 를 차례로 찾는다. 없
     im.onload=()=>{imgCache[id]=u;res(u)}; im.onerror=next; im.src=u};
     next()})}
 /* 영상(mp4) 안에 좌우 검은 띠가 같이 들어 있는 장면: 장면 이름 → 한쪽 띠의 폭(영상 가로의 %). 예) 4:3 그림을 16:9 영상에 넣은 경우 12.5. 띠가 없어지도록 위쪽 기준으로 확대한다 */
-const VIDEO_PAD={c2_sky:7.8,c1_walk:7.8,c1_push:7.8,c1_listen:7.8,c2_soil:12.5,c3_people:7.8,w_rainbow:7.8,w_whale:7.8,w_camellia:7.8,w_hareubang:7.8,w_haenyeo:7.8,w_baengnokdam:7.8,w_hallasan:7.8,w_wind:10.9,ai_result:7.8,ai:7.8,w_shootingstar:7.8,c2_dive:7.8,game_intro:7.8};   // 연·바람 영상은 영상 속 그림이 8초 동안 서서히 작아져서 띠 폭이 7.7% → 10.6% 로 커진다. 가장 큰 폭(10.9%)에 맞춰 배율을 고정한다 (배율을 계속 바꾸면 화면이 흔들려 보임). 배열 [처음, 끝] 로 쓰면 재생에 맞춰 배율이 변한다
+const VIDEO_PAD={c2_orum:7.8,c2_tall:7.8,c2_sky:7.8,c1_walk:7.8,c1_push:7.8,c1_listen:7.8,c2_soil:12.5,c3_people:7.8,w_rainbow:7.8,w_whale:7.8,w_camellia:7.8,w_hareubang:7.8,w_haenyeo:7.8,w_baengnokdam:7.8,w_hallasan:7.8,w_wind:10.9,ai_result:7.8,ai:7.8,w_shootingstar:7.8,c2_dive:7.8,game_intro:7.8};   // 연·바람 영상은 영상 속 그림이 8초 동안 서서히 작아져서 띠 폭이 7.7% → 10.6% 로 커진다. 가장 큰 폭(10.9%)에 맞춰 배율을 고정한다 (배율을 계속 바꾸면 화면이 흔들려 보임). 배열 [처음, 끝] 로 쓰면 재생에 맞춰 배율이 변한다
 /* 영상이 도착하기 전에 먼저 보이는 첫 화면 사진(포스터): images/p_<이름>.jpg */
 const posterOf=id=>(typeof EMB!=="undefined"&&EMB["p_"+id+".jpg"])||`images/p_${id}.jpg`;
 let paintToken=0;
@@ -1710,7 +1710,7 @@ const MG=(()=>{
     ja:{t:"🧩 絵合わせパズル",win:"✨ 絵が完成しました！",wp:"ばらばらだった絵が、またひとつになりました。<br>雲をつらぬいてそびえるハルラ山があらわれました。"},
     zh:{t:"🧩 拼图",win:"✨ 图画完成了！",wp:"散落的图画又合而为一。<br>穿云而起的汉拿山显现出来了。"}};
   const tt=k=>(k==="puzzle"&&PZ_BG[cur])?(PZT[LANG]||PZT.ko).t:mt("t")[k], pzs=n=>PZ_BG[cur]?(PZT[LANG]||PZT.ko)[n]:mt(n==="win"?"winP":"winPp");
-  const MG_BG={c2_sky:"c2_sky_game"}, MG_SCENEVID={c2_sky:"c2_sky"}, PZ_BG={c2_tall:"c2_tall"};   // 이야기 속 장면에서 여는 별자리 잇기는 그 장면 그림을 배경으로 쓴다 (영상 없음)
+  const MG_BG={c2_sky:"c2_sky_game"}, MG_SCENEVID={c2_sky:"c2_sky"}, PZ_BG={c2_tall:"c2_tall_game"}, PZ_SCENEVID={c2_tall:"c2_tall"};   // 이야기 속 장면에서 여는 별자리 잇기는 그 장면 그림을 배경으로 쓴다 (영상 없음)
   vid.addEventListener("playing",()=>{if(vid.dataset.want==="1")vid.classList.add("on")});
   function vidShow(k,over,nm){const n=nm||MG_VIDEO[k];if(!n)return;const u=vsrc(n);if(vid.dataset.n!==n){vid.dataset.n=n;vid.src=u}
     vid.dataset.want="1";vid.classList.toggle("over",!!over);try{vid.currentTime=0}catch(_){}const p=vid.play();if(p&&p.catch)p.catch(()=>{})}
@@ -1812,7 +1812,8 @@ const MG=(()=>{
   function slotAt(x,y){const r=board.getBoundingClientRect();if(x<r.left||y<r.top||x>=r.right||y>=r.bottom)return -1;return(((y-r.top)/r.height*G.N)|0)*G.N+(((x-r.left)/r.width*G.N)|0)}
   function swap(a,b){if(a===b||a<0||b<0)return;[G.slots[a],G.slots[b]]=[G.slots[b],G.slots[a]];G.moves++;puzPaint();
     if(G.slots[a]===a||G.slots[b]===b){toast(rand(mt("pok")),900);sound(659,.6,.06)}
-    if(okCount()===G.N*G.N){on=false;board.classList.add("solved");if(!PZ_BG[cur])vidShow("puzzle",true);confetti();const sec=Math.round((performance.now()-G.t0)/1000);el("mgStage").classList.add("bright");setTimeout(()=>{if(kind==="puzzle"&&!el("mg").hidden)finishCard(pzs("win"),pzs("wp"),mt("noteP",G.N,G.moves,sec))},3200)}}
+    if(okCount()===G.N*G.N){on=false;board.classList.add("solved");if(!PZ_BG[cur])vidShow("puzzle",true);else if(PZ_SCENEVID[cur])vidShow("puzzle",true,PZ_SCENEVID[cur]);   // 다 맞추면 그 장면 영상이 퍼즐 위로 덮이며 움직인다
+    confetti();const sec=Math.round((performance.now()-G.t0)/1000);el("mgStage").classList.add("bright");setTimeout(()=>{if(kind==="puzzle"&&!el("mg").hidden)finishCard(pzs("win"),pzs("wp"),mt("noteP",G.N,G.moves,sec))},3200)}}
   function tapTile(t){if(!G.sel){G.sel=t;t.classList.add("sel")}else{const a=G.sel;a.classList.remove("sel");G.sel=null;if(a!==t)swap(slotOf(a),slotOf(t))}}
   board.addEventListener("pointerdown",e=>{const t=e.target.closest(".mg-tile");if(!t||!on)return;G.drag={t,x:e.clientX,y:e.clientY,moved:false};try{t.setPointerCapture(e.pointerId)}catch(_){}});
   board.addEventListener("pointermove",e=>{const d=G.drag;if(!d)return;const dx=e.clientX-d.x,dy=e.clientY-d.y;
